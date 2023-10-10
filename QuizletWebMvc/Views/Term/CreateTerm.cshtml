@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Create term";
+    Layout = null;
+}
+@using QuizletWebMvc.ViewModels.Terminology;
+@model TermViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="HeaderHome" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">@Model.LearningModule.LearningModuleName</h4>
+                                    <p class="card-description">New terminology</p>
+                                    <form asp-action="HandleCreateTerm" method="post" class="forms-sample">
+                                        <div class="form-group">
+                                            <label for="exampleInputName1">Name</label>
+                                            <input asp-for="TermName" type="text" class="form-control" id="exampleInputName1" placeholder="####">
+                                            <span asp-validation-for="TermName" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail3">Explanation</label>
+                                            <input asp-for="Explaination" type="text" class="form-control" placeholder="####">
+                                            <span asp-validation-for="Explaination" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group hidden">
+                                            <label for="exampleInputEmail3">TitleId</label>
+                                            <input asp-for="LearningModuleId" type="text" class="form-control" placeholder="####" value="@Model.LearningModule.LearningModuleId">
+                                        </div>
+                                        <button type="submit" class="btn btn-success mr-2">Create</button>
+                                        <a href="@Url.Action("Term", "Term",new{learningModuleId = Model.LearningModule.LearningModuleId})" class="btn btn-dark">Cancel</a>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <partial name="FooterHome" />
+</body>
+</html>

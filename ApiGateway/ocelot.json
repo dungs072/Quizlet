@@ -1,0 +1,197 @@
+{
+  "Routes": [
+    // QuizletWebAPI
+    {
+      "UpstreamPathTemplate": "/api/NGUOIDUNG",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/NGUOIDUNG"
+    },
+    {
+      "UpstreamPathTemplate": "/api/NGUOIDUNG/{MA_USER}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/NGUOIDUNG/{MA_USER}"
+    },
+    // QuizletAchivement API
+    {
+      "UpstreamPathTemplate": "/api/Achivement",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletachivement",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Achivement"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Achivement/{AchivementId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletachivement",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Achivement/{AchivementId}"
+    },
+
+    //QuizletClass API
+    {
+      "UpstreamPathTemplate": "/api/Class",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Class/{ClassId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/{ClassId}"
+    },
+
+    // QuizletTerminology API
+    {
+      "UpstreamPathTemplate": "/api/User",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/User"
+    },
+    {
+      "UpstreamPathTemplate": "/api/User/{UserId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/User/{UserId}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Title",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Title"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Title/{TitleId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Title/{TitleId}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Title/{UserId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Title/{UserId}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/LearningModule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LearningModule"
+    },
+    {
+      "UpstreamPathTemplate": "/api/LearningModule/{TitleId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LearningModule/{TitleId}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Term",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Term"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Term/{learningModuleId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Term/{learningModuleId}"
+    }
+
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:800"
+
+  }
+}

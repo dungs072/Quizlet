@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "quizletwebapi": "StartDebugging",
+        "apigateway": "StartDebugging",
+        "quizletwebmvc": "StartDebugging",
+        "quizletachivement": "StartDebugging",
+        "quizletclass": "StartDebugging",
+        "quizletterminology": "StartDebugging"
+      }
+    }
+  }
+}

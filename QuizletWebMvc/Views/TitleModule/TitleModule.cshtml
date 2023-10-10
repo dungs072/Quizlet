@@ -1,0 +1,92 @@
+﻿@using QuizletWebMvc.ViewModels.Terminology;
+@using QuizletWebMvc.ViewModels.User;
+@{
+    Layout = null;
+}
+@model ListTitleViewModel;
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <partial name="HeaderHome" />
+@*     <script>
+        $(document).ready(function () {
+            var dataToPass = ""; // Initialize an empty variable to store the data
+
+            // Handle the "Pass Data" button click
+            $('.deleteButton').on('click', function () {
+                // Get the data to pass from an input field, for example
+                dataToPass = $('.deleteButton').val(); // Replace '#dataInput' with the actual element you want to get data from
+                var yesDeleteButton = $(document).find('#confirmDelete')
+                yesDeleteButton.val(dataToPass)
+            });
+        });
+    </script> *@
+</head>
+<body>
+
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row ">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Tiles</h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th> Name </th>
+                                                    <th> Describe </th>
+                                                    <th> Functions </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.Titles)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @item.TitleName
+                                                        </td>
+                                                        <td> @item.Describe </td>
+                                                        <td>
+                                                            <a href="@Url.Action("EditTitleModule", "TitleModule", new { titleId = item.TitleId })" class="btn btn-secondary">Edit</a>
+                                                            <a href="@Url.Action("LearningModule", "LearningModule", new { titleId = item.TitleId, titleName = item.TitleName, describe = item.Describe })" class="btn btn-success">Modules</a>
+                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Title:@item.TitleId.ToString()">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <partial name="FooterHome" />
+    <partial name="Warnings" />
+    
+</body>
+</html>
+

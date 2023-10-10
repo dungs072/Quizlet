@@ -1,0 +1,102 @@
+version: '3.4'
+
+networks:
+   backend:
+   frontend:
+
+services:
+  # quizletDB:
+  #   container_name: quizlet_db
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   environment:
+  #       - ACCEPT_EULA=Y
+  #       - SA_PASSWORD=123
+  #   networks:
+  #       - backend
+  #   ports:
+  #       - 8001:1433
+  #   extra_hosts:
+  #   - "host.docker.internal:host-gateway"
+
+  quizletwebapi:
+    container_name: quizlet-api
+    image: ${DOCKER_REGISTRY-}quizletwebapi
+    build:
+      context: .
+      dockerfile: QuizletWebAPI/Dockerfile
+    networks:
+        - backend
+
+    environment:
+        - DB_HOST=host.docker.internal
+        - DB_NAME=Quizlet
+        - DB_SA_PASSWORD=123
+
+  quizletachivement:
+    container_name: quizlet-achivement-api
+    image: ${DOCKER_REGISTRY-}quizletachivement
+    build:
+      context: .
+      dockerfile: QuizletAchivement/Dockerfile
+    networks:
+        - backend
+    environment:
+        - DB_HOST=host.docker.internal
+        - DB_NAME=QuizletAchivement
+        - DB_SA_PASSWORD=123
+  
+  quizletclass:
+    container_name: quizlet-class-api
+    image: ${DOCKER_REGISTRY-}quizletclass
+    build:
+      context: .
+      dockerfile: QuizletClass/Dockerfile
+    networks:
+        - backend
+    environment:
+        - DB_HOST=host.docker.internal
+        - DB_NAME=QuizletClass
+        - DB_SA_PASSWORD=123
+
+  quizletterminology:
+    image: ${DOCKER_REGISTRY-}quizletterminology
+    build:
+      context: .
+      dockerfile: QuizletTerminology/Dockerfile
+    networks:
+        - backend
+    environment:
+        - DB_HOST=host.docker.internal
+        - DB_NAME=QuizletTerminology
+        - DB_SA_PASSWORD=123
+
+  apigateway:
+    container_name: api-gateway
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    ports:
+    - 8001:80
+    networks:
+    - backend
+    - frontend
+
+  quizletwebmvc:
+    image: ${DOCKER_REGISTRY-}quizletwebmvc
+    build:
+      context: .
+      dockerfile: QuizletWebMvc/Dockerfile
+    ports:
+    - 8003:80
+    networks:
+    - frontend
+
+
+
+
+
+
+
+
+

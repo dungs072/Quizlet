@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Edit Learning Module";
+    Layout = null;
+}
+@using QuizletWebMvc.ViewModels.Terminology;
+@model LearningModuleViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="HeaderHome" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Learning Module</h4>
+                                    <p class="card-description"> Edit learning module </p>
+                                    <form asp-action="HandleEditLearningModule" method="post" class="forms-sample">
+                                        <div class="form-group">
+                                            <label for="exampleInputName1">Name</label>
+                                            <input asp-for="LearningModuleName" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.LearningModuleName>
+                                            <span asp-validation-for="LearningModuleName" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail3">Describe</label>
+                                            <input asp-for="Describe" type="text" class="form-control" placeholder="####" value="@Model.Describe">
+                                        </div>
+                                        <div class="form-group hideDiv">
+                                            <label for="exampleInputName1">LearningModuleId</label>
+                                            <input asp-for="LearningModuleId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.LearningModuleId>
+                                        </div>
+                                        <div class="form-group hideDiv">
+                                            <label for="exampleInputName1">TitleId</label>
+                                            <input asp-for="TitleId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.TitleId>
+                                        </div>
+                                        <button type="submit" class="btn btn-success mr-2">Update</button>
+                                        <a href="@Url.Action("ReturnToLearningModule", "LearningModule",new{titleId = Model.TitleId})" class="btn btn-dark">Cancel</a>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <partial name="FooterHome" />
+</body>
+</html>
+
+

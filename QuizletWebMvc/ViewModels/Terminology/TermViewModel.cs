@@ -14,6 +14,7 @@ namespace QuizletWebMvc.ViewModels.Terminology
         public string Explaination { get; set; }
         public string? Image { get; set; }
         public int LearningModuleId { get; set; }
+        public int LevelId { get; set; } = 1;
         public LearningModuleViewModel LearningModule { get; set; }
     }
 }

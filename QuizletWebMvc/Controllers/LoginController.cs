@@ -30,10 +30,13 @@ namespace WebMVCQuizlet.Controllers
             if (!ModelState.IsValid) return View(loginViewModel);
 
             var user = await loginService.FindAccount(loginViewModel.EmailAddress,loginViewModel.Password);
-
-            if (user != null)
+            
+            if (user != null&&user.UserId!=0)
             {
+              
                 HttpContext.Session.SetString("UserId", user.ToString());
+                HttpContext.Session.SetString("UserName", user.LastName + " " + user.FirstName);
+                HttpContext.Session.SetString("TypeUser", user.TypeAccount);
                 return RedirectToAction("Index", "Home");
             }
             //User not found

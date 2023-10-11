@@ -18,6 +18,11 @@ namespace QuizletTerminology.Models
         [ForeignKey("HOCPHAN")]
         [Column("MA_HOCPHAN")]
         public int LearningModuleId { get; set; }
+
+        [ForeignKey("LEVEL")]
+        [Column("MA_LEVEL")]
+        public int LevelId { get; set; } = 1;
+
         //public HOCPHAN hocPHAN { get; set; }
     }
 }

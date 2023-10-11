@@ -1,4 +1,8 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string typeUser = HttpContextAccessor.HttpContext.Session.GetString("TypeUser");
+}
 <!-- partial:partials/_sidebar.html -->
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -14,7 +18,7 @@
                         <span class="count bg-success"></span>
                     </div>
                     <div class="profile-name">
-                        <h5 class="mb-0 font-weight-normal">Admin</h5>
+                        <h5 class="mb-0 font-weight-normal">@typeUser</h5>
                         <span>Gold Member</span>
                     </div>
                 </div>

@@ -72,6 +72,21 @@ namespace QuizletTerminology.Controllers
             var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
             return thuatngu != null;
         }
+        private void Shuffle<T>(List<T> list)
+        {
+            Random random = new Random();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                // Generate a random index between 0 and i (inclusive).
+                int randomIndex = random.Next(0, i + 1);
+
+                // Swap elements at randomIndex and i.
+                T temp = list[i];
+                list[i] = list[randomIndex];
+                list[randomIndex] = temp;
+            }
+        }
 
         [HttpGet("objective/{learningModuleId}")]
         public IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId)
@@ -102,6 +117,7 @@ namespace QuizletTerminology.Controllers
                     for(int k =0;k<4;k++)
                     {
                         int index = exclusions[random.Next(0, exclusions.Count)];
+                        exclusions.Remove(index);
                         if(k==0)
                         {
                             if(index==i)
@@ -172,7 +188,7 @@ namespace QuizletTerminology.Controllers
                     
                 }
             }
-            
+            Shuffle<ObjectivePack>(objectivePacks);
             return objectivePacks;
         }
     }

@@ -15,8 +15,9 @@ namespace QuizletWebMvc.Services.Login
 
         public async Task<UserAccountViewModel> FindAccount(string username, string password)
         {
-            var user =  await client.GetFromJsonAsync<UserAccountViewModel>(API.API.UserUrl + $"/{username}/{password}");
+            var user = await client.GetFromJsonAsync<UserAccountViewModel>(API.API.UserUrl + $"/{username}/{password}");
             return user;
+
         }
 
         public async Task<bool> HasDuplicateGmail(string gmail)

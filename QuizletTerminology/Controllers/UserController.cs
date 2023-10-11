@@ -28,6 +28,10 @@ namespace QuizletTerminology.Controllers
         public async Task<ActionResult<NGUOIDUNG>> GetUserByLogin(string Gmail, string Password)
         {
             var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail) && u.Password == Password);
+            if(NGUOIDUNG==null)
+            {
+                return Ok(new NGUOIDUNG());
+            }
             return NGUOIDUNG;
         }
         [HttpGet("check/{Gmail}")]

@@ -11,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://apigateway") });
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ITerminologyService, TerminologyService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 var app = builder.Build();
 
@@ -26,6 +27,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession();
+
 
 app.MapControllerRoute(
     name: "default",

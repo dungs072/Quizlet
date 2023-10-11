@@ -42,7 +42,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal
-        - DB_NAME=QuizletAchivement
+        - DB_NAME=Quizlet
         - DB_SA_PASSWORD=123
   
   quizletclass:
@@ -55,7 +55,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal
-        - DB_NAME=QuizletClass
+        - DB_NAME=Quizlet
         - DB_SA_PASSWORD=123
 
   quizletterminology:
@@ -67,7 +67,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal
-        - DB_NAME=QuizletTerminology
+        - DB_NAME=Quizlet
         - DB_SA_PASSWORD=123
 
   apigateway:

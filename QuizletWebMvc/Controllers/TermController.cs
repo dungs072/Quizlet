@@ -90,6 +90,7 @@ namespace QuizletWebMvc.Controllers
             ListObjectivePack listObjective = new ListObjectivePack();
             List<ObjectivePack> objectives =await terminologyService.GetObjectivePacks(learningModuleId);
             listObjective.ObjectivePacks = objectives;
+            listObjective.LearningModuleId = learningModuleId;
             return View(listObjective);
         }
     }

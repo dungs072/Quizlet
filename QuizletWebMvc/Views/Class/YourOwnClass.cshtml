@@ -1,0 +1,75 @@
+﻿@using QuizletWebMvc.ViewModels.Class;
+@{
+    Layout = null;
+}
+@model ListClassViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .stretch-button {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bigger-button {
+            font-size: 50px; /* Adjust the font size as needed */
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#createButton').on('click', function () {
+                window.location.href = '/Class/CreateYourOwnClass';
+            });
+        });
+    </script>
+    <partial name="HeaderHome" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        @foreach(var item in Model.Classes)
+                        {
+                            <div class="col-lg-3 grid-margin stretch-card">
+                                <div class="card" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.ClassName</h5>
+                                        <h5 class="card-title">@item.CreatedDate</h5>
+                                        <p class="card-text">@item.Describe</p>
+                                        <a href="#" class="btn btn-primary">Go to class</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-3 grid-margin stretch-card">
+                            <div class="card" style="width: 18rem;">
+                                <input type="button" value="+" class="btn-success stretch-button bigger-button" onclick="location.href='@Url.Action("CreateYourOwnClass", "Class")'" />
+                                @* <button class="btn-success " id="createButton">+</button> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <partial name="FooterHome" />
+    <partial name="Warnings" />
+</body>
+</html>

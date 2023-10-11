@@ -8,16 +8,19 @@ namespace QuizletClass.Models
     {
         [Key]
         [Column("MA_LOP")]
-        public string ClassId { get; set; }
+        public int ClassId { get; set; }
         [Column("TENLOP")]
         public string ClassName { get; set; }
         [Column("MOTA")]
-        public string Describe { get; set; }
+        public string? Describe { get; set; }
+        [Column("NGAYTAO")]
+        public DateTime CreatedDate { get; set; }
         [ForeignKey("NGUOIDUNG")]
         [Column("MA_USER")]
         public int UserId { get; set; }
 
-        public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
-        public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; }
+
+        //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
+        //public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; }
     }
 }

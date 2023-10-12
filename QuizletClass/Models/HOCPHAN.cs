@@ -8,16 +8,16 @@ namespace QuizletClass.Models
     {
         [Key]
         [Column("MA_HOCPHAN")]
-        public int LearningModuleId { get; set; }
-        //[Column("TEN_HOCPHAN")]
-        //public string TEN_HOCPHAN { get; set; }
-        //[Column("MOTA")]
-        //public string MOTA { get; set; }
-        //[ForeignKey("CHUDE")]
-        //[Column("MA_CHUDE")]
-        //public string MA_CHUDE { get; set; }
-        ////public CHUDE chuDe { get; set; }
-        ////public ICollection<THETHUATNGU> thethuatngu { get; set; }
-        //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
+        public int LearningModuleId { get; set; } = -1;
+        [Column("TEN_HOCPHAN")]
+        public string LearningModuleName { get; set; } = "";
+        [Column("MOTA")]
+        public string? Describe { get; set; }
+        [ForeignKey("CHUDE")]
+        [Column("MA_CHUDE")]
+        public int TitleId { get; set; } = -1;
+        //public CHUDE chuDe { get; set; }
+        public ICollection<THETHUATNGU> thethuatngus { get; set; }
+        public ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
     }
 }

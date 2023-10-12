@@ -15,7 +15,7 @@ namespace QuizletWebMvc.ViewModels.Class
         public DateTime CreatedDate { get; set; }
         public int UserId { get; set; }
 
-        public int NumberParticipants { get; set; }
-        public int NumberLearningModules { get; set; }
+        public int NumberParticipants { get; set; } = 0;
+        public int NumberLearningModules { get; set; } = 0;
     }
 }

@@ -6,7 +6,11 @@ namespace QuizletWebMvc.Services.Class
     public interface IClassService
     {
         Task<List<ClassViewModel>> GetClassesByUser(int UserId);
+        Task<ClassViewModel> GetClass(int classId);
         Task<bool> CreateClass(ClassViewModel classViewModel);
         Task<bool> UpdateClass(ClassViewModel classViewModel);
+        Task<bool> DeleteClass(int classId);
+
+        Task<List<ClassLearningModuleViewModel>> GetDetailLearningModuleClass(int classId);
     }
 }

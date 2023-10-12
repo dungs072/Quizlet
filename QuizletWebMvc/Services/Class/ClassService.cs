@@ -15,6 +15,10 @@ namespace QuizletWebMvc.Services.Class
         {
             return await client.GetFromJsonAsync<List<ClassViewModel>>(API.API.ClassUrl + $"/{UserId}");
         }
+        public async Task<ClassViewModel> GetClass(int classId)
+        {
+            return await client.GetFromJsonAsync<ClassViewModel>(API.API.ClassUrlFind + $"{classId}");
+        }
         public async Task<bool> CreateClass(ClassViewModel classViewModel)
         {
             HttpResponseMessage response = await client.PostAsJsonAsync<ClassViewModel>(API.API.ClassUrl, classViewModel);
@@ -37,5 +41,21 @@ namespace QuizletWebMvc.Services.Class
             }
             return true;
         }
+        public async Task<bool> DeleteClass(int classId)
+        {
+            HttpResponseMessage response = await client.DeleteAsync(API.API.ClassUrl + $"/{classId}");
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<List<ClassLearningModuleViewModel>> GetDetailLearningModuleClass(int classId)
+        {
+            return await client.GetFromJsonAsync<List<ClassLearningModuleViewModel>>(API.API.ClassDetailOwn + $"{classId}");
+        }
+
+
     }
 }

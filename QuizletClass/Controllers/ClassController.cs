@@ -16,7 +16,7 @@ namespace QuizletClass.Controllers
         {
             this.dBContext = dBContext;
         }
-
+        #region Class
         [HttpGet]
         public ActionResult<IEnumerable<ClassViewModel>> GetLOP()
         {
@@ -57,12 +57,6 @@ namespace QuizletClass.Controllers
             await dBContext.SaveChangesAsync();
             return Ok();
         }
-        //[HttpGet("findd/{userId}")]
-        //public async Task<NGUOIDUNG> GetNguoiDung(int userId)
-        //{
-        //    var nguoidung= await dBContext.nguoidungs.FindAsync(userId);
-        //    return nguoidung;
-        //}
         private bool HasDuplicateClassName(int userId, string className)
         {
             var lop = dBContext.lops.FirstOrDefault(u => (u.UserId == userId && u.ClassName == className));
@@ -76,6 +70,9 @@ namespace QuizletClass.Controllers
             {
                 return BadRequest();
             }
+            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
+            var prevClass = await dBContext.lops.FindAsync(lop.UserId);
+            lop.CreatedDate = prevClass.CreatedDate;
             dBContext.lops.Update(lop);
             await dBContext.SaveChangesAsync();
             return Ok();
@@ -93,5 +90,39 @@ namespace QuizletClass.Controllers
             await dBContext.SaveChangesAsync();
             return Ok();
         }
+        #endregion
+
+        #region DetailLearningModuleClass
+        [HttpGet("DetailOwnClass/{classId}")]
+        public IEnumerable<ClassLearningModuleViewModel> GetLearningModuleClassDetail(int classId)
+        {
+            List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
+            var hocphans = dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToList();
+            foreach(var item in hocphans)
+            {
+                ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
+                model.Copy(item);
+                models.Add(model);
+            }
+            return models;
+        }
+
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<ActionResult> CreateLOP(LOP lop)
+        //{
+        //    if (HasDuplicateClassName(lop.UserId, lop.ClassName))
+        //    {
+        //        return BadRequest();
+        //    }
+        //    lop.CreatedDate = DateTime.Now;
+        //    lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
+        //    await dBContext.lops.AddAsync(lop);
+        //    await dBContext.SaveChangesAsync();
+        //    return Ok();
+        //}
+
+
+        #endregion
     }
 }

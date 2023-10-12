@@ -50,5 +50,50 @@ namespace QuizletWebMvc.Controllers
             TempData["Success"] = "Create a class successfully";
             return RedirectToAction("YourOwnClass");
         }
+        public async Task<IActionResult> EditYourOwnClass(int classId)
+        {
+            ClassViewModel cla = await classService.GetClass(classId);
+            return View(cla);
+        }
+        public async Task<IActionResult> HandleEditYourOwnClass(ClassViewModel cla)
+        {
+            //ModelState.Remove("LearningModule");
+            if (!ModelState.IsValid) return View("EditYourOwnClass", cla);
+            var canUpdate = await classService.UpdateClass(cla);
+            if (!canUpdate)
+            {
+                TempData["Error"] = "Duplicate class name. Please fix it!!";
+                return View("EditYourOwnClass", cla);
+            }
+            TempData["Success"] = "Update class sucessfully";
+            return RedirectToAction("YourOwnClass");
+        }
+        public async Task<IActionResult> DeleteClass(int classId)
+        {
+            var canDelete = await classService.DeleteClass(classId);
+
+            if (!canDelete)
+            {
+                TempData["Error"] = "Delete this class failed because it does not exist";
+            }
+            else
+            {
+                TempData["Success"] = "Delete a class sucessfully";
+            }
+
+            return RedirectToAction("YourOwnClass");
+        }
+        public async Task<IActionResult> ShowDetailOwnClassLearningModule(int classId)
+        {
+            List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListClassLearningModuleViewModel listModels = new ListClassLearningModuleViewModel();
+            listModels.LearningModules = models;
+            listModels.Copy(cla);
+            listModels.ClassId = classId;
+            return View("DetailOwnClass", listModels);
+
+        }
+
     }
 }

@@ -18,6 +18,8 @@
         public static string TermUrlObjective { get { return TermUrl + "/objective/"; } }
 
         public static string ClassUrl { get { return $"/api/Class"; } }
+        public static string ClassUrlFind { get { return ClassUrl + "/find/"; } }
+        public static string ClassDetailOwn { get { return ClassUrl + "/DetailOwnClass/"; } }
 
     }
 }

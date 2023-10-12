@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizletClass.DBContexts;
 using QuizletClass.Models;
+using QuizletClass.ViewModels;
 
 namespace QuizletClass.Controllers
 {
@@ -17,9 +18,18 @@ namespace QuizletClass.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<LOP>> GetLOP()
+        public ActionResult<IEnumerable<ClassViewModel>> GetLOP()
         {
-            return dBContext.lops;
+            List<ClassViewModel> classes = new List<ClassViewModel>();
+            foreach(var lop in dBContext.lops)
+            {
+                ClassViewModel model = new ClassViewModel();
+                model.Copy(lop);
+                model.NumberParticipants = lop.chitietdangkilop.Count;
+                model.NumberLearningModules = lop.chitiethocphan.Count;
+                classes.Add(model);
+            }
+            return classes;
         }
         [HttpGet("{userId}")]
         public IEnumerable<LOP> GetLOPByUserId(int userId)
@@ -41,10 +51,18 @@ namespace QuizletClass.Controllers
             {
                 return BadRequest();
             }
+            lop.CreatedDate = DateTime.Now;
+            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
             await dBContext.lops.AddAsync(lop);
             await dBContext.SaveChangesAsync();
             return Ok();
         }
+        //[HttpGet("findd/{userId}")]
+        //public async Task<NGUOIDUNG> GetNguoiDung(int userId)
+        //{
+        //    var nguoidung= await dBContext.nguoidungs.FindAsync(userId);
+        //    return nguoidung;
+        //}
         private bool HasDuplicateClassName(int userId, string className)
         {
             var lop = dBContext.lops.FirstOrDefault(u => (u.UserId == userId && u.ClassName == className));

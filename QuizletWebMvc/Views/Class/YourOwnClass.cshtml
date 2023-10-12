@@ -18,6 +18,31 @@
         .bigger-button {
             font-size: 50px; /* Adjust the font size as needed */
         }
+
+        .my-card {
+            transition: transform 0.2s;
+            border: 1px solid transparent; /* Initially, the border is transparent */
+            background-color: transparent; /* Initially, the background is transparent */
+        }
+
+            /* Define the styles for the card when hovered */
+        .my-card:hover {
+                transform: scale(1.05); /* You can adjust the scaling factor as desired */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a box shadow for elevation */
+                border: 1px solid transparent; /* Initially, the border is transparent */
+                background-color: transparent; /* Initially, the background is transparent */
+        }
+
+        .card-item {
+            /* Styles for the card item */
+            font-size: 10px; /* Set the desired text size (in this case, 18 pixels) */
+        }
+
+        .btn-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust the spacing between buttons as needed */
+        }
     </style>
     <script>
         $(document).ready(function () {
@@ -43,19 +68,26 @@
                         @foreach(var item in Model.Classes)
                         {
                             <div class="col-lg-3 grid-margin stretch-card">
-                                <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
+                                <div class="card my-card" style="width: 18rem;">
+                                    <div class="card-body text-center">
                                         <h5 class="card-title">@item.ClassName</h5>
-                                        <h5 class="card-title">@item.CreatedDate</h5>
-                                        <p class="card-text">@item.Describe</p>
-                                        <a href="#" class="btn btn-primary">Go to class</a>
+                                        <h5 class="card-title card-item">Created at: @item.CreatedDate.ToString("dd/MM/yyyy")</h5>
+                                        <p class="card-text card-item">@item.Describe</p>
+                                        <p class="card-text card-item">Learning modules: @item.NumberLearningModules</p>
+                                        <p class="card-text card-item">Participants: @item.NumberParticipants</p>
+                                        <div class="btn-column">
+                                            <a href="#" class="btn btn-primary">Go to class</a>
+                                            <a href="#" class="btn btn-secondary">Edit</a>
+                                            <a href="#" class="btn btn-danger">Delete</a>
+                                        </div>
+                                       
                                     </div>
                                 </div>
                             </div>
                         }
                         <div class="col-lg-3 grid-margin stretch-card">
                             <div class="card" style="width: 18rem;">
-                                <input type="button" value="+" class="btn-success stretch-button bigger-button" onclick="location.href='@Url.Action("CreateYourOwnClass", "Class")'" />
+                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("CreateYourOwnClass", "Class")'" />
                                 @* <button class="btn-success " id="createButton">+</button> *@
                             </div>
                         </div>

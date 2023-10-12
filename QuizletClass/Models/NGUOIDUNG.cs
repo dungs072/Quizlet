@@ -9,6 +9,16 @@ namespace QuizletClass.Models
         [Key]
         [Column("MA_USER")]
         public int UserId { get; set; }
+        [Column("HO")]
+        public string LastName { get; set; } = "";
+        [Column("TEN")]
+        public string FirstName { get; set; } = "";
+        [Column("GMAIL")]
+        public string Gmail { get; set; } = "";
+        [Column("KIEU")]
+        public string TypeAccount { get; set; } = "";
+        [Column("MATKHAU")]
+        public string Password { get; set; } = "";
 
     }
 }

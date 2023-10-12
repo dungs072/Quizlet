@@ -15,12 +15,13 @@ namespace QuizletClass.Models
         public string? Describe { get; set; }
         [Column("NGAYTAO")]
         public DateTime CreatedDate { get; set; }
+        
         [ForeignKey("NGUOIDUNG")]
         [Column("MA_USER")]
         public int UserId { get; set; }
 
-
-        //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
-        //public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; }
+        public NGUOIDUNG NGUOIDUNG { get; set; } = new NGUOIDUNG();
+        public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; } = new List<CHITIETHOCPHAN>();
+        public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; } = new List<CHITIETDANGKILOP>();
     }
 }

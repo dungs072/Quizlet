@@ -120,20 +120,19 @@ namespace QuizletClass.Controllers
             return hocphans;
         }
 
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult> CreateLOP(LOP lop)
-        //{
-        //    if (HasDuplicateClassName(lop.UserId, lop.ClassName))
-        //    {
-        //        return BadRequest();
-        //    }
-        //    lop.CreatedDate = DateTime.Now;
-        //    lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
-        //    await dBContext.lops.AddAsync(lop);
-        //    await dBContext.SaveChangesAsync();
-        //    return Ok();
-        //}
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> AddModulesForClass(ModuleDetailWithList detail)
+        {
+            foreach(var learningModuleId in detail.LearningModuleIds)
+            {
+
+            }
+            //chitiethocphan.CreatedDate = DateTime.Now;
+            //await dBContext.chitiethocphans.AddAsync(chitiethocphan);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
 
 
         #endregion

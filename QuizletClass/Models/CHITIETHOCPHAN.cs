@@ -20,8 +20,8 @@ namespace QuizletClass.Models
         [Column("NGAYTAO")]
         public DateTime CreatedDate { get; set; }
 
-        public LOP Class { get; set; }
-        public HOCPHAN LearningModule { get; set; }
+        //public LOP Class { get; set; }
+        //public HOCPHAN LearningModule { get; set; }
 
     }
 }

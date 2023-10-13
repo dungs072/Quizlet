@@ -1,7 +1,7 @@
 ﻿@using QuizletWebMvc.ViewModels.Class;
 @{
     Layout = null;
-    int count = 1;
+    int count = 0;
 }
 @model ListLearningModuleViewModel;
 
@@ -45,16 +45,21 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var item in Model.Modules)
+                                                @using (Html.BeginForm("Index", "My", FormMethod.Post))
                                                 {
-                                                    <tr class="clickable-row" id="clickable-row(@count)">
-                                                        <td>@item.LearningModuleName</td>
-                                                        <td>@item.Describe</td>
-                                                        <td><a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class")" class="btn btn-outline-primary">Choose</a></td>
-                                                    </tr>
-
+                                                    @foreach (var item in Model.Modules)
+                                                    {
+                                                        <tr class="clickable-row" id="clickable-row(@count)">
+                                                            <td>@item.LearningModuleName</td>
+                                                            <td>@item.Describe</td>
+                                                            <td>
+                                                                @Html.RadioButtonFor(modeilItem=>Model.Modules[count].IsChoose, true)
+                                                            </td>    
+                                                        </tr>
+                                                        count++;
+                                                    }
+                                                    <input type="submit" value="Confirm" class="btn btn-primary" />
                                                 }
-
                                                 <!-- Add more data rows as needed -->
                                             </tbody>
                                         </table>

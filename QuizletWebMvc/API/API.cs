@@ -20,6 +20,7 @@
         public static string ClassUrl { get { return $"/api/Class"; } }
         public static string ClassUrlFind { get { return ClassUrl + "/find/"; } }
         public static string ClassDetailOwn { get { return ClassUrl + "/DetailOwnClass/"; } }
-
+        public static string ClassTitleDetailOwn { get { return ClassUrl + "/DetailTitle/"; } }
+        public static string ClassModuleDetailOwn { get { return ClassUrl + "/DetailModule/"; } }
     }
 }

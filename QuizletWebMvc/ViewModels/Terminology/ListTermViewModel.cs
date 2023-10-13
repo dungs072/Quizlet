@@ -2,7 +2,7 @@
 {
     public class ListTermViewModel
     {
-        public LearningModuleViewModel LearningModuleViewModel { get; set; }
+        public LearningModuleViewModel2 LearningModuleViewModel { get; set; }
         public IEnumerable<TermViewModel> Terms { get; set; }
     }
 }

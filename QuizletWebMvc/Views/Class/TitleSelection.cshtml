@@ -1,15 +1,19 @@
 ﻿@using QuizletWebMvc.ViewModels.Class;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    int classId = int.Parse(HttpContextAccessor.HttpContext.Session.GetString("CurrentClassId"));
+}
 @{
     Layout = null;
-    int count = 1;
 }
-@model ListLearningModuleViewModel;
+@model ListChoiceTitle;
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <partial name="HeaderHome" />
-
+    
 </head>
 <body>
     <div class="container-scroller">
@@ -28,37 +32,37 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Class room detail</h4>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-primary">Back</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class",new{classId = classId})" class="btn btn-outline-primary">Back</a>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title">Select your module you want</h4>
+                                    <h4 class="card-title">Select your title you want</h4>
                                     <p class="card-description">
                                     </p>
                                     <div class="table-responsive">
                                         <table class="table table-dark">
                                             <thead>
                                                 <tr>
-                                                    <th>Module name</th>
+                                                    <th>Title name</th>
                                                     <th>Describe</th>
                                                     <th>Function</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var item in Model.Modules)
+                                                @foreach(var item in Model.TitleChoiceViewModels)
                                                 {
-                                                    <tr class="clickable-row" id="clickable-row(@count)">
-                                                        <td>@item.LearningModuleName</td>
+                                                    <tr>
+                                                        <td>@item.TitleName</td>
                                                         <td>@item.Describe</td>
-                                                        <td><a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class")" class="btn btn-outline-primary">Choose</a></td>
+                                                        <td><a href="@Url.Action("LearningModuleSelection", "Class",new{titleId = item.TitleId})" class="btn btn-outline-primary">Choose</a></td>
                                                     </tr>
-
+                                                  
                                                 }
-
+                                                
                                                 <!-- Add more data rows as needed -->
                                             </tbody>
                                         </table>
-
+                                        
                                     </div>
                                 </div>
                             </div>

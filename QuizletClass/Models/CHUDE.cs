@@ -16,6 +16,7 @@ namespace QuizletClass.Models
         [ForeignKey("NGUOIDUNG")]
         [Column("MA_USER")]
         public int UserId { get; set; }
+        //public ICollection<HOCPHAN> hocphans { get; set; }
         //public NGUOIDUNG nguoiDUNG { get; set; }
     }
 }

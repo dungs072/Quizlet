@@ -2,7 +2,7 @@
 
 namespace QuizletWebMvc.ViewModels.Terminology
 {
-    public class LearningModuleViewModel
+    public class LearningModuleViewModel2
     {
         public int LearningModuleId { get; set; }
         [Display(Name = "Learning module name")]

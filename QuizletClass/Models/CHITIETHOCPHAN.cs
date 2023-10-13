@@ -22,5 +22,6 @@ namespace QuizletClass.Models
 
         public LOP Class { get; set; }
         public HOCPHAN LearningModule { get; set; }
+
     }
 }

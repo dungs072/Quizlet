@@ -71,18 +71,18 @@ namespace QuizletWebMvc.Services.Terminology
 
 
         #region LearningModule
-        public async Task<LearningModuleViewModel> GetLearningModuleViewModel(int learningModuleId)
+        public async Task<LearningModuleViewModel2> GetLearningModuleViewModel(int learningModuleId)
         {
-            var learningModule = await client.GetFromJsonAsync<LearningModuleViewModel>(API.API.LearningModuleUrlFind + $"{learningModuleId}");
+            var learningModule = await client.GetFromJsonAsync<LearningModuleViewModel2>(API.API.LearningModuleUrlFind + $"{learningModuleId}");
             return learningModule;
         }
-        public async Task<List<LearningModuleViewModel>> GetLearningModuleByTitleId(int TitleId)
+        public async Task<List<LearningModuleViewModel2>> GetLearningModuleByTitleId(int TitleId)
         {
-            return await client.GetFromJsonAsync<List<LearningModuleViewModel>>(API.API.LearningModuleUrl + $"/{TitleId}");
+            return await client.GetFromJsonAsync<List<LearningModuleViewModel2>>(API.API.LearningModuleUrl + $"/{TitleId}");
         }
-        public async Task<bool> CreateLearningModule(LearningModuleViewModel learningModuleViewModel)
+        public async Task<bool> CreateLearningModule(LearningModuleViewModel2 learningModuleViewModel)
         {
-            HttpResponseMessage response = await client.PostAsJsonAsync<LearningModuleViewModel>(API.API.LearningModuleUrl, learningModuleViewModel);
+            HttpResponseMessage response = await client.PostAsJsonAsync<LearningModuleViewModel2>(API.API.LearningModuleUrl, learningModuleViewModel);
             if (response.StatusCode == HttpStatusCode.BadRequest) 
             {
                 return false;
@@ -103,9 +103,9 @@ namespace QuizletWebMvc.Services.Terminology
             return true;
         }
 
-        public async Task<bool> UpdateLearningModule(LearningModuleViewModel learningModuleViewModel)
+        public async Task<bool> UpdateLearningModule(LearningModuleViewModel2 learningModuleViewModel)
         {
-            HttpResponseMessage response = await client.PutAsJsonAsync<LearningModuleViewModel>(API.API.LearningModuleUrl, learningModuleViewModel);
+            HttpResponseMessage response = await client.PutAsJsonAsync<LearningModuleViewModel2>(API.API.LearningModuleUrl, learningModuleViewModel);
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 return false;

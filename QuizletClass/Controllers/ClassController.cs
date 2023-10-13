@@ -101,10 +101,23 @@ namespace QuizletClass.Controllers
             foreach(var item in hocphans)
             {
                 ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
-                model.Copy(item);
+                model.Copy(item,classId);
                 models.Add(model);
             }
             return models;
+        }
+
+        [HttpGet("DetailTitle/{userId}")]
+        public IEnumerable<CHUDE> GetYourTitleData(int userId)
+        {
+            var chudes = dBContext.chudes.Where(e=>e.UserId == userId).ToList();
+            return chudes;
+        }
+        [HttpGet("DetailModule/{titleId}")]
+        public IEnumerable<HOCPHAN> GetYourModuleData(int titleId)
+        {
+            var hocphans = dBContext.hocphans.Where(e => e.TitleId == titleId).ToList();
+            return hocphans;
         }
 
         //[HttpPost]

@@ -1,5 +1,4 @@
 ﻿using QuizletWebMvc.ViewModels.Class;
-using QuizletWebMvc.ViewModels.Terminology;
 using System.Net;
 
 namespace QuizletWebMvc.Services.Class
@@ -56,6 +55,15 @@ namespace QuizletWebMvc.Services.Class
             return await client.GetFromJsonAsync<List<ClassLearningModuleViewModel>>(API.API.ClassDetailOwn + $"{classId}");
         }
 
+        public async Task<List<TitleChoiceViewModel>> GetTitleDatas(int userId)
+        {
+            return await client.GetFromJsonAsync<List<TitleChoiceViewModel>>(API.API.ClassTitleDetailOwn + $"{userId}");
+           
+        }
+        public async Task<List<LearningModuleViewModel>> GetModuleDatas(int titleId)
+        {
+            return await client.GetFromJsonAsync<List<LearningModuleViewModel>>(API.API.ClassModuleDetailOwn + $"{titleId}");
 
+        }
     }
 }

@@ -14,11 +14,11 @@ namespace QuizletWebMvc.Services.Terminology
         Task DeleteTitle(int TitleId);
         Task UpdateTitle(TitleViewModel titleViewModel);
 
-        Task<List<LearningModuleViewModel>> GetLearningModuleByTitleId(int TitleId);
-        Task<bool> CreateLearningModule(LearningModuleViewModel learningModuleViewModel);
+        Task<List<LearningModuleViewModel2>> GetLearningModuleByTitleId(int TitleId);
+        Task<bool> CreateLearningModule(LearningModuleViewModel2 learningModuleViewModel);
         Task<bool> DeleteLearningModule(int LearningModuleId);
-        Task<LearningModuleViewModel> GetLearningModuleViewModel(int learningModuleId);
-        Task<bool> UpdateLearningModule(LearningModuleViewModel learningModuleViewModel);
+        Task<LearningModuleViewModel2> GetLearningModuleViewModel(int learningModuleId);
+        Task<bool> UpdateLearningModule(LearningModuleViewModel2 learningModuleViewModel);
 
         Task<List<TermViewModel>> GetTermByLearningModuleId(int learningModuleId);
         Task<bool> CreateTerm(TermViewModel termViewModel);

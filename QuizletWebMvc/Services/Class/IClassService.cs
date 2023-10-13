@@ -12,5 +12,7 @@ namespace QuizletWebMvc.Services.Class
         Task<bool> DeleteClass(int classId);
 
         Task<List<ClassLearningModuleViewModel>> GetDetailLearningModuleClass(int classId);
+        Task<List<TitleChoiceViewModel>> GetTitleDatas(int userId);
+        Task<List<LearningModuleViewModel>> GetModuleDatas(int titleId);
     }
 }

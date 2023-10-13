@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Class;
-using QuizletWebMvc.Services.Terminology;
 using QuizletWebMvc.ViewModels.Class;
-using QuizletWebMvc.ViewModels.Terminology;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -85,6 +83,7 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> ShowDetailOwnClassLearningModule(int classId)
         {
+            HttpContext.Session.SetString("CurrentClassId",classId.ToString());
             List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
             ListClassLearningModuleViewModel listModels = new ListClassLearningModuleViewModel();
@@ -94,6 +93,24 @@ namespace QuizletWebMvc.Controllers
             return View("DetailOwnClass", listModels);
 
         }
+        public async Task<IActionResult> TitleSelection(int classId)
+        {
+            ListChoiceTitle listChoiceTitle = new ListChoiceTitle();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                listChoiceTitle.TitleChoiceViewModels = await classService.GetTitleDatas(userId);
+                listChoiceTitle.ClassId = classId;
+            }
+            return View(listChoiceTitle);
+        }
+        public async Task<IActionResult> LearningModuleSelection(int titleId)
+        {
+            ListLearningModuleViewModel listLearningModule = new ListLearningModuleViewModel();
+            listLearningModule.Modules = await classService.GetModuleDatas(titleId);
+            listLearningModule.TitleId = titleId;
+            return View(listLearningModule);
+        }
+
 
     }
 }

@@ -13,7 +13,7 @@ namespace QuizletWebMvc.Controllers
         }
         public IActionResult LearningModule(int titleId, string titleName, string describe)
         {
-            Task<List<LearningModuleViewModel>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
+            Task<List<LearningModuleViewModel2>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
             ListLearningModuleViewModel modulesList = new ListLearningModuleViewModel();
             TitleViewModel titleViewModel = new TitleViewModel() { TitleId = titleId, TitleName = titleName, Describe = describe };
             modulesList.Modules = modules.Result;
@@ -23,7 +23,7 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> ReturnToLearningModule(int titleId)
         {
-            Task<List<LearningModuleViewModel>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
+            Task<List<LearningModuleViewModel2>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
             ListLearningModuleViewModel modulesList = new ListLearningModuleViewModel();
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
             modulesList.Modules = modules.Result;
@@ -33,14 +33,14 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateLearningModule(int titleId)
         {
-            LearningModuleViewModel learningModuleViewModel = new LearningModuleViewModel();
+            LearningModuleViewModel2 learningModuleViewModel = new LearningModuleViewModel2();
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
             learningModuleViewModel.TitleId = titleId;
             learningModuleViewModel.TitleView = titleViewModel;
             return View(learningModuleViewModel);
         }
         [HttpPost]
-        public async Task<IActionResult> HandleCreateLearningModule(LearningModuleViewModel learningModuleViewModel)
+        public async Task<IActionResult> HandleCreateLearningModule(LearningModuleViewModel2 learningModuleViewModel)
         {
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(learningModuleViewModel.TitleId);
             learningModuleViewModel.TitleView = titleViewModel;
@@ -76,12 +76,12 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> EditLearningModule(int learningModuleId)
         {
-            LearningModuleViewModel learningModuleViewModel = await terminologyService.GetLearningModuleViewModel(learningModuleId);
+            LearningModuleViewModel2 learningModuleViewModel = await terminologyService.GetLearningModuleViewModel(learningModuleId);
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(learningModuleViewModel.TitleId);
             learningModuleViewModel.TitleView = titleViewModel;
             return View(learningModuleViewModel);
         }
-        public async Task<IActionResult> HandleEditLearningModule(LearningModuleViewModel learningModuleView)
+        public async Task<IActionResult> HandleEditLearningModule(LearningModuleViewModel2 learningModuleView)
         {
             ModelState.Remove("TitleView");
             if (!ModelState.IsValid) return View("EditLearningModule",learningModuleView);

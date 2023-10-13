@@ -15,9 +15,23 @@ namespace QuizletClass.Models
         public string? Describe { get; set; }
         [ForeignKey("CHUDE")]
         [Column("MA_CHUDE")]
-        public int TitleId { get; set; } = -1;
+        public int TitleId { get; set; }
         //public CHUDE chuDe { get; set; }
-        public ICollection<THETHUATNGU> thethuatngus { get; set; }
-        public ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
+   
+        //public ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
+
+        public int CountNumeberModulesPerClass(int classId)
+        {
+            int count = 0;
+            //foreach(var item in chitiethocphans)
+            //{
+            //    if(item.ClassId==classId)
+            //    {
+            //        count++;
+            //    }
+            //}
+            return count;
+        }
+
     }
 }

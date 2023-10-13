@@ -15,7 +15,7 @@ namespace QuizletWebMvc.Controllers
         public IActionResult Term(int learningModuleId)
         {
             Task<List<TermViewModel>> listTerm =  terminologyService.GetTermByLearningModuleId(learningModuleId);
-            Task<LearningModuleViewModel> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
+            Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
             ListTermViewModel listTermViewModel = new ListTermViewModel();
             listTermViewModel.LearningModuleViewModel = learningModuleViewModel.Result;
             listTermViewModel.Terms = listTerm.Result;
@@ -24,7 +24,7 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateTerm(int learningModuleId)
         {
-            LearningModuleViewModel learningModule = await terminologyService.GetLearningModuleViewModel(learningModuleId);
+            LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(learningModuleId);
             TermViewModel term = new TermViewModel();
             term.LearningModule = learningModule; 
             return View(term);
@@ -32,7 +32,7 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleCreateTerm(TermViewModel term)
         {
-            LearningModuleViewModel learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
+            LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
             ModelState.Remove("LearningModule");
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace QuizletWebMvc.Controllers
         public async Task<IActionResult> EditTerm(int termId)
         {
             TermViewModel term = await terminologyService.GetTermViewModel(termId);
-            LearningModuleViewModel learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
+            LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
             return View(term);
         }

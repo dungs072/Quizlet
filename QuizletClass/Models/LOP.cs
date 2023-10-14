@@ -21,7 +21,7 @@ namespace QuizletClass.Models
         public int UserId { get; set; }
 
         public NGUOIDUNG NGUOIDUNG { get; set; } = new NGUOIDUNG();
-        public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; } = new List<CHITIETHOCPHAN>();
-        public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; } = new List<CHITIETDANGKILOP>();
+        //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; } = new List<CHITIETHOCPHAN>();
+        //public ICollection<CHITIETDANGKILOP> chitietdangkilop { get; set; } = new List<CHITIETDANGKILOP>();
     }
 }

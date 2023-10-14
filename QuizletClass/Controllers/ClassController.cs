@@ -25,11 +25,19 @@ namespace QuizletClass.Controllers
             {
                 ClassViewModel model = new ClassViewModel();
                 model.Copy(lop);
-                model.NumberParticipants = lop.chitietdangkilop.Count;
-                model.NumberLearningModules = lop.chitiethocphan.Count;
+                model.NumberParticipants = GetCHITIETDANGKILOPS(lop.ClassId).Count;
+                model.NumberLearningModules = GetCHITIETHOCPHANS(lop.ClassId).Count;
                 classes.Add(model);
             }
             return classes;
+        }
+        private List<CHITIETDANGKILOP> GetCHITIETDANGKILOPS(int classId)
+        {
+            return dBContext.chitietdangkilops.Where(a=>a.ClassId==classId).ToList();
+        }
+        private List<CHITIETHOCPHAN> GetCHITIETHOCPHANS(int classId) 
+        {
+            return dBContext.chitiethocphans.Where(a => a.ClassId == classId).ToList();
         }
         [HttpGet("{userId}")]
         public IEnumerable<LOP> GetLOPByUserId(int userId)
@@ -100,11 +108,16 @@ namespace QuizletClass.Controllers
             var hocphans = dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToList();
             foreach(var item in hocphans)
             {
+                var hocphan = GetHOCPHAN(item.LearningModuleId);
                 ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
-                model.Copy(item,classId);
+                model.Copy(item,hocphan.Result);
                 models.Add(model);
             }
             return models;
+        }
+        private async Task<HOCPHAN> GetHOCPHAN(int learningModuleId)
+        {
+            return await dBContext.hocphans.FindAsync(learningModuleId);
         }
 
         [HttpGet("DetailTitle/{userId}")]
@@ -114,25 +127,38 @@ namespace QuizletClass.Controllers
             return chudes;
         }
         [HttpGet("DetailModule/{titleId}")]
-        public IEnumerable<HOCPHAN> GetYourModuleData(int titleId)
+        public IEnumerable<ModuleDetailWithList> GetYourModuleData(int titleId)
         {
+            List<ModuleDetailWithList> modules = new List<ModuleDetailWithList>();
             var hocphans = dBContext.hocphans.Where(e => e.TitleId == titleId).ToList();
-            return hocphans;
-        }
-
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddModulesForClass(ModuleDetailWithList detail)
-        {
-            foreach(var learningModuleId in detail.LearningModuleIds)
+            foreach(var item in hocphans)
             {
-
+                ModuleDetailWithList module = new ModuleDetailWithList();
+                module.Copy(item);
+                modules.Add(module);
+                var check = CheckLearningModuleIsRegistered(item.LearningModuleId);
+                module.IsChoose = check.Result;
             }
-            //chitiethocphan.CreatedDate = DateTime.Now;
-            //await dBContext.chitiethocphans.AddAsync(chitiethocphan);
-            await dBContext.SaveChangesAsync();
-            return Ok();
+            return modules;
         }
+        private async Task<bool> CheckLearningModuleIsRegistered(int learningModuleId)
+        {
+            return await dBContext.chitiethocphans.FindAsync(learningModuleId) !=null;
+        }
+
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<ActionResult> AddModulesForClass(ModuleDetailWithList detail)
+        //{
+        //    foreach(var learningModuleId in detail.LearningModuleIds)
+        //    {
+
+        //    }
+        //    //chitiethocphan.CreatedDate = DateTime.Now;
+        //    //await dBContext.chitiethocphans.AddAsync(chitiethocphan);
+        //    await dBContext.SaveChangesAsync();
+        //    return Ok();
+        //}
 
 
         #endregion

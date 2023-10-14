@@ -45,20 +45,24 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @using (Html.BeginForm("Index", "My", FormMethod.Post))
+
+                                                @foreach (var item in Model.Modules)
                                                 {
-                                                    @foreach (var item in Model.Modules)
-                                                    {
-                                                        <tr class="clickable-row" id="clickable-row(@count)">
-                                                            <td>@item.LearningModuleName</td>
-                                                            <td>@item.Describe</td>
-                                                            <td>
-                                                                @Html.RadioButtonFor(modeilItem=>Model.Modules[count].IsChoose, true)
-                                                            </td>    
-                                                        </tr>
-                                                        count++;
-                                                    }
-                                                    <input type="submit" value="Confirm" class="btn btn-primary" />
+                                                    <tr class="clickable-row" id="clickable-row(@count)">
+                                                        <td>@item.LearningModuleName</td>
+                                                        <td>@item.Describe</td>
+                                                        <td>
+                                                            @if(item.IsChoose)
+                                                            {
+                                                                <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-danger">Cancel</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-primary">Choose</a>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    count++;
                                                 }
                                                 <!-- Add more data rows as needed -->
                                             </tbody>

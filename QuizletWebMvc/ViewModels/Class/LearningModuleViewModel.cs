@@ -8,7 +8,6 @@ namespace QuizletWebMvc.ViewModels.Class
         public string LearningModuleName { get; set; }
         public string? Describe { get; set; }
         public int TitleId { get; set; }
-
         public bool IsChoose { get; set; }
     }
     public class ListLearningModuleViewModel

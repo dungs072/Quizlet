@@ -9,18 +9,18 @@ namespace QuizletClass.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("ID_CTL")]
-        public int ID_CTL { get; set; }
+        public int RegisterDetailClassId { get; set; }
         [ForeignKey("NGUOIDUNG")]
         [Column("MA_USER")]
-        public int MA_USER { get; set; }
-        public NGUOIDUNG nguoiDUNG { get; set; }
+        public int UserId { get; set; }
+        //public NGUOIDUNG nguoiDUNG { get; set; }
         [ForeignKey("LOP")]
         [Column("MA_LOP")]
-        public string MA_LOP { get; set; }
-        public LOP lop { get; set; }
+        public int ClassId { get; set; }
+        //public LOP lop { get; set; }
         [Column("NGAYDANGKI")]
-        public DateTime NGAYDANGKI { get; set; }
+        public DateTime RegisterDate { get; set; }
         [Column("CHAPTHUAN")]
-        public bool CHAPTHUAN { get; set; }
+        public bool IsAccepted { get; set; }
     }
 }

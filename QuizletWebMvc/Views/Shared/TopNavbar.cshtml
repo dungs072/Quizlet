@@ -32,6 +32,18 @@
             }, 3000);
         });
     </script>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputElement = document.getElementById('globalSearch');
+            inputElement.addEventListener('keydown', function (event) {
+                if (event.keyCode === 13) {
+                    alert(inputElement.value);
+                }
+            });
+        });
+       
+    </script>
 </header>
 <nav class="navbar p-0 fixed-top d-flex flex-row">
     @if (TempData["Success"] != null)
@@ -55,9 +67,9 @@
         </button>
         <ul class="navbar-nav w-100">
             <li class="nav-item w-100">
-                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                    <input type="text" class="form-control" placeholder="Search products">
-                </form>
+                <div class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                    <input type="text" class="form-control" placeholder="Class, Learning Module" id="globalSearch">
+                </div>
             </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">

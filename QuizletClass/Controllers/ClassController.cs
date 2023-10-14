@@ -270,5 +270,56 @@ namespace QuizletClass.Controllers
             return chitietdangki;
         }
         #endregion
+
+        #region Register class
+        [HttpGet("GlobalSearch/{userId}/{search}")]
+        public async Task<IEnumerable<RegisterClass>> GetRegisterClass(int userId,string search)
+        {
+            var models = new List<RegisterClass>();
+            List<HOCPHAN> hocphans = await GetHOCPHANOfUser(userId);
+            
+            foreach (var hocphan in hocphans)
+            {
+                if (!hocphan.LearningModuleName.Contains(search)) { continue; }
+                List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId);
+                foreach(LOP lop in lops)
+                {
+                    NGUOIDUNG nguoidung = await GetNGUOIDUNG(lop.UserId);
+                    int numberTerms = await GetNumberTermsInModules(hocphan.LearningModuleId);
+                    RegisterClass registerClass = new RegisterClass()
+                    {
+                        ClassId = lop.ClassId,
+                        ClassName = lop.ClassName,
+                        ClassDescribe = lop.Describe,
+                        LearningModuleId = hocphan.LearningModuleId,
+                        LearningModuleName = hocphan.LearningModuleName,
+                        OwnerFullName = nguoidung.LastName + " " + nguoidung.FirstName,
+                        NumberTerms = numberTerms
+
+                    };
+                }
+
+            }
+            return models;
+        }
+        private async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
+        {
+            var result = from a in (from c in dBContext.chudes where c.UserId !=userId select c)
+                         join b in dBContext.hocphans on a.TitleId equals b.TitleId
+                         select b;
+            return result.ToList();
+        }
+        private async Task<List<LOP>> GetLOPOfModule(int learningModuleId)
+        {
+            var result = from a in (from c in dBContext.chitiethocphans where c.LearningModuleId == learningModuleId select c)
+                         join b in dBContext.lops on a.ClassId equals b.ClassId
+                         select b;
+            return result.ToList();
+        }
+        private async Task<int> GetNumberTermsInModules(int learningModuleId)
+        {
+            return (await dBContext.thethuatngus.Where(a=>a.LearningModuleId==learningModuleId).ToListAsync()).Count;
+        }
+        #endregion
     }
 }

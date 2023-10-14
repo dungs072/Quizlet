@@ -16,5 +16,14 @@ namespace QuizletWebMvc.Services.Class
         Task<List<LearningModuleViewModel>> GetModuleDatas(int classId, int titleId);
         Task<bool> AddModuleToClass(LearningModuleDetail detail);
         Task<bool> DeleteModuleDetail(int classId, int moduleId);
+
+        Task<List<Participant>> GetDetailParticipantClass(int classId);
+        Task<List<UserParticipant>> GetUserParticipant(int classId, string search, int currentUserId);
+        Task<bool> AddParticipantToClass(RegisterDetailClass detail);
+        Task<bool> DeleteParticipantFromClass(int classId, int userId);
+
+        Task<List<Participant>> GetDetailPendingParticipantClass(int classId);
+        Task<bool> UpdateRegisterDetail(RegisterDetailClass detail);
+        Task<RegisterDetailClass> GetDetailPendingParticipant(int classId, int userId);
     }
 }

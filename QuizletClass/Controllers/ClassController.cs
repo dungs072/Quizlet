@@ -171,5 +171,104 @@ namespace QuizletClass.Controllers
             return Ok();
         }
         #endregion
+
+        #region Participants
+        [HttpGet("DetailParticipant/{classId}")]
+        public async Task<IEnumerable<Participant>> GetParticipant(int classId)
+        {
+            List<Participant> models = new List<Participant>();
+            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.ClassId == classId).ToListAsync();
+            foreach (var item in chitietdangkilops)
+            {
+                if (!item.IsAccepted) { continue; }
+                var nguoidung = await GetNGUOIDUNG(item.UserId);
+                Participant model = new Participant();
+                model.Copy(item);
+                model.Gmail = nguoidung.Gmail;
+                model.FirstName = nguoidung.FirstName;
+                model.LastName = nguoidung.LastName;
+                models.Add(model);
+            }
+            return models;
+        }
+        [HttpGet("DetailPendingParticipant/{classId}")]
+        public async Task<IEnumerable<Participant>> GetPendingParticipant(int classId)
+        {
+            List<Participant> models = new List<Participant>();
+            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.ClassId == classId).ToListAsync();
+            foreach (var item in chitietdangkilops)
+            {
+                if (item.IsAccepted) { continue; }
+                var nguoidung = await GetNGUOIDUNG(item.UserId);
+                Participant model = new Participant();
+                model.Copy(item);
+                model.Gmail = nguoidung.Gmail;
+                model.FirstName = nguoidung.FirstName;
+                model.LastName = nguoidung.LastName;
+                models.Add(model);
+            }
+            return models;
+        }
+        private async Task<NGUOIDUNG> GetNGUOIDUNG(int userId)
+        {
+            return await dBContext.nguoidungs.FindAsync(userId);
+        }
+        [HttpGet("SearchUser/{classId}/{search}/{currentUserId}")]
+        public async Task<IEnumerable<UserParticipant>> GetParticipants(int classId,string search,int currentUserId)
+        {
+            var models = new List<UserParticipant>();
+
+            List<NGUOIDUNG> nguoidungs =  dBContext.nguoidungs.ToList<NGUOIDUNG>();
+            foreach(var nguoidung in nguoidungs)
+            {
+                if (!nguoidung.Gmail.Contains(search)) { continue; }
+                if(nguoidung.UserId==currentUserId) { continue; }
+                if (CheckUserHasRegisterToClass(classId, nguoidung.UserId))
+                {
+                    continue;
+                }
+                UserParticipant user = new UserParticipant();
+                user.Copy(nguoidung);
+                models.Add(user);
+            }
+            return models;
+        }
+        private bool CheckUserHasRegisterToClass(int classId, int userId)
+        {
+            return dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId) != null;
+        }
+        [HttpPost("UserParticipant")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> AddParticipant(CHITIETDANGKILOP chitietdangkilop)
+        {
+            chitietdangkilop.RegisterDate = DateTime.Now;
+            await dBContext.chitietdangkilops.AddAsync(chitietdangkilop);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpDelete("UserParticipant/{classId}/{userId}")]
+        public async Task<ActionResult> DeleteUserParticipant(int classId, int userId)
+        {
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId);
+            dBContext.chitietdangkilops.Remove(chitietdangki);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpPut("DetailPendingParticipant")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> UpdateCHITIETDANGKI(CHITIETDANGKILOP chitietdangkilop)
+        {
+            dBContext.chitietdangkilops.Update(chitietdangkilop);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpGet("DetailPendingParticipant/{classId}/{userId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<CHITIETDANGKILOP> GetCHITIETDANGKILOP(int classId, int userId)
+        {
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId);
+            return chitietdangki;
+        }
+        #endregion
     }
 }

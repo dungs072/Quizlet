@@ -162,8 +162,105 @@ namespace QuizletWebMvc.Controllers
             
         }
 
+        public async Task<IActionResult> ShowDetailOwnClassParticipant(int classId)
+        {
+            HttpContext.Session.SetString("CurrentClassId", classId.ToString());
+            List<Participant> models = await classService.GetDetailParticipantClass(classId);
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListParticipant listModels = new ListParticipant();
+            listModels.Participants = models;
+            listModels.Copy(cla);
+            return View("ParticipantInYourOwnClass", listModels);
+        }
 
+        public async Task<IActionResult> SearchAddUserParticipant(string search = "")
+        {
+            ListUserParticipant listModels = new ListUserParticipant();
+            HttpContext.Session.SetString("Search", search);
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                int userId = int.Parse(HttpContext.Session.GetString("UserId"));
+                List<UserParticipant> models = await classService.GetUserParticipant(classId,search,userId);
+                listModels.UserParticipants = models;
+                listModels.ClassId = classId;
+            }
+            return View("AddParticipant", listModels);
+        }
+        [HttpGet]
+        public IActionResult SearchUser(ListUserParticipant listUserParticipant)
+        {
+            return RedirectToAction("SearchAddUserParticipant",new { search = listUserParticipant.Search});
+        }
 
+        public async Task<IActionResult> AddUserToClass(int userId,string search)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                RegisterDetailClass registerDetailClass = new RegisterDetailClass();
+                registerDetailClass.UserId = userId;
+                registerDetailClass.ClassId = classId;
+                registerDetailClass.IsAccepted = true;
+
+                var check = await classService.AddParticipantToClass(registerDetailClass);
+                if (!check)
+                {
+                    TempData["Error"] = "Cannot add this user to class. Server error";
+
+                }
+                else
+                {
+                    TempData["Success"] = "Add user to class successfully";
+                }
+            }
+
+            return RedirectToAction("SearchAddUserParticipant", new { search = search });
+        }
+        public async Task<IActionResult> DeleteParticipantFromClass(int userId)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                var check = await classService.DeleteParticipantFromClass(classId, userId);
+                if (!check)
+                {
+                    TempData["Error"] = "Cannot kick out paticipant from class. Server error";
+
+                }
+                else
+                {
+                    TempData["Success"] = "Kick out participant from class successfully";
+                }
+            }
+            return RedirectToAction("ShowDetailOwnClassParticipant", new { classId = classId });
+
+        }
+        public async Task<IActionResult> ShowDetailOwnClassPendingParticipant(int classId)
+        {
+            HttpContext.Session.SetString("CurrentClassId", classId.ToString());
+            List<Participant> models = await classService.GetDetailPendingParticipantClass(classId);
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListParticipant listModels = new ListParticipant();
+            listModels.Participants = models;
+            listModels.Copy(cla);
+            return View("PendingParticipant", listModels);
+        }
+
+        public async Task<IActionResult> UpdateRegisterDetail(int userId)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                var registerDetail = await classService.GetDetailPendingParticipant(classId, userId);
+                var canUpdate = await classService.UpdateRegisterDetail(registerDetail);
+                if (!canUpdate)
+                {
+                    TempData["Error"] = "Cannot hand your request. Server error";
+                }
+                else
+                {
+                    TempData["Success"] = "Accept participant sucessfully";
+                }
+            }
+            return RedirectToAction("ShowDetailOwnClassPendingParticipant",classId);
+        }
 
     }
 }

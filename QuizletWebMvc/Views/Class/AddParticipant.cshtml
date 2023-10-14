@@ -1,9 +1,15 @@
 ﻿@using QuizletWebMvc.ViewModels.Class;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string searchData = HttpContextAccessor.HttpContext.Session.GetString("Search");
+}
 @{
     Layout = null;
     int count = 1;
+
 }
-@model ListClassLearningModuleViewModel;
+@model ListUserParticipant;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,19 +26,22 @@
             <partial name="TopNavbar" />
             <!-- partial -->
             <div class="main-panel">
+               
                 <div class="content-wrapper">
                     <div class="row">
+                       
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">@Model.ClassName</h4>
-                                    <p class="card-description">@Model.Describe</p>
-                                    <p class="card-description">Created at @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
+                                    <h4 class="card-title">Add new user to your class</h4>
+                                    <div>
+                                        <form asp-action="SearchUser" method="get">
+                                            <input asp-for="Search" type="text" placeholder="Search gmail" id="searchBar">
+                                            <button type="submit" class="btn btn-outline-secondary">Search</button>
+                                        </form>
+                                    </div>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary">Back</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Learning Modules</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Participants</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Pending</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class",new{classId = Model.ClassId})" class="btn btn-outline-primary">Back</a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -45,33 +54,24 @@
                                             <thead>
                                                 <tr>
                                                     <th> # </th>
-                                                    <th> Name </th>
-                                                    <th> Describe </th>
-                                                    <th> Added date</th>
-                                                    <th> Terms amount </th>
+                                                    <th> Full name </th>
+                                                    <th> Gmail </th>
+                                                    <th> Function</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var item in Model.LearningModules)
+                                                @foreach (var item in Model.UserParticipants)
                                                 {
                                                     <tr>
                                                         <td> @count </td>
-                                                        <td>@item.LearningModuleName</td>
-                                                        <td>@item.Describe </td>
-                                                        <td>@item.AddedDate.ToString("dd/MM/yyyy")</td>
-                                                        <td>@item.NumberTerms</td>
+                                                        <td>@item.LastName @item.FirstName</td>
+                                                        <td>@item.Gmail</td>
                                                         <td>
-                                                            <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">More</a>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="DetailOwnClass:@item.LearningModuleId:@Model.ClassId">Delete</button>
+                                                            <a href="@Url.Action("AddUserToClass", "Class",new {userId = item.UserId, search = searchData})" class="btn btn-outline-primary">Choose</a>
                                                         </td>
                                                     </tr>
                                                     count++;
                                                 }
-                                                <tr>
-                                                    <td colspan="6">
-                                                        <a href="@Url.Action("TitleSelection", "Class", new{classId = Model.ClassId})" class="btn btn-success" style="display: block; width: 100%;">Add a learning module</a>
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

@@ -3,7 +3,7 @@
     Layout = null;
     int count = 1;
 }
-@model ListClassLearningModuleViewModel;
+@model ListParticipant;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,31 +45,28 @@
                                             <thead>
                                                 <tr>
                                                     <th> # </th>
-                                                    <th> Name </th>
-                                                    <th> Describe </th>
-                                                    <th> Added date</th>
-                                                    <th> Terms amount </th>
+                                                    <th> Full name </th>
+                                                    <th> Gmail </th>
+                                                    <th> Register date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var item in Model.LearningModules)
+                                                @foreach (var item in Model.Participants)
                                                 {
                                                     <tr>
                                                         <td> @count </td>
-                                                        <td>@item.LearningModuleName</td>
-                                                        <td>@item.Describe </td>
-                                                        <td>@item.AddedDate.ToString("dd/MM/yyyy")</td>
-                                                        <td>@item.NumberTerms</td>
+                                                        <td>@item.LastName @item.FirstName</td>
+                                                        <td>@item.Gmail</td>
+                                                        <td>@item.RegisterDate.ToString("dd/MM/yyyy")</td>
                                                         <td>
-                                                            <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">More</a>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="DetailOwnClass:@item.LearningModuleId:@Model.ClassId">Delete</button>
+                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="ParticipantOwnClass:@item.UserId">Kick out</button>
                                                         </td>
                                                     </tr>
                                                     count++;
                                                 }
                                                 <tr>
                                                     <td colspan="6">
-                                                        <a href="@Url.Action("TitleSelection", "Class", new{classId = Model.ClassId})" class="btn btn-success" style="display: block; width: 100%;">Add a learning module</a>
+                                                        <a href="@Url.Action("SearchAddUserParticipant", "Class", new{search = "~"})" class="btn btn-success" style="display: block; width: 100%;">Add participant</a>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -92,4 +89,5 @@
     <partial name="Warnings" />
 </body>
 </html>
+
 

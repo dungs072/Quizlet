@@ -23,5 +23,9 @@
         public static string ClassTitleDetailOwn { get { return ClassUrl + "/DetailTitle/"; } }
         public static string ClassModuleDetailOwn { get { return ClassUrl + "/DetailModule/"; } }
         public static string ClassModuleAdd { get { return ClassUrl + "/ModuleAdd"; } }
+        public static string ClassParticipant { get { return ClassUrl + "/DetailParticipant"; } }
+        public static string ClassParticipantSearch { get { return ClassUrl + "/SearchUser"; } }
+        public static string ClassParticipantAdd { get { return ClassUrl + "/UserParticipant"; } }
+        public static string ClassPendingParticipant { get { return ClassUrl + "/DetailPendingParticipant"; } }
     }
 }

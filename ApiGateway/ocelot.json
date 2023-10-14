@@ -101,6 +101,30 @@
       ],
       "DownstreamPathTemplate": "/api/Class/{ClassId}"
     },
+    {
+      "UpstreamPathTemplate": "/api/Class/UserParticipant",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/UserParticipant"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Class/DetailPendingParticipant",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/DetailPendingParticipant"
+    },
 
     // QuizletTerminology API
     {

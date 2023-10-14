@@ -88,5 +88,57 @@ namespace QuizletWebMvc.Services.Class
             return true;
         }
 
+        public async Task<List<Participant>> GetDetailParticipantClass(int classId)
+        {
+            return await client.GetFromJsonAsync<List<Participant>>(API.API.ClassParticipant + $"/{classId}");
+        }
+
+        public async Task<List<UserParticipant>> GetUserParticipant(int classId,string search,int currentUserId)
+        {
+            return await client.GetFromJsonAsync<List<UserParticipant>>(API.API.ClassParticipantSearch + $"/{classId}/{search}/{currentUserId}");
+        }
+
+        public async Task<bool> AddParticipantToClass(RegisterDetailClass detail)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<RegisterDetailClass>(API.API.ClassParticipantAdd, detail);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        public async Task<bool> DeleteParticipantFromClass(int classId, int userId)
+        {
+            HttpResponseMessage response = await client.DeleteAsync(API.API.ClassParticipantAdd + $"/{classId}/{userId}");
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<List<Participant>> GetDetailPendingParticipantClass(int classId)
+        {
+            return await client.GetFromJsonAsync<List<Participant>>(API.API.ClassPendingParticipant + $"/{classId}");
+        }
+
+        public async Task<bool> UpdateRegisterDetail(RegisterDetailClass detail)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<RegisterDetailClass>(API.API.ClassPendingParticipant,detail);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<RegisterDetailClass> GetDetailPendingParticipant(int classId,int userId)
+        {
+            return await client.GetFromJsonAsync<RegisterDetailClass>(API.API.ClassPendingParticipant + $"/{classId}/{userId}");
+        }
+
+
     }
 }

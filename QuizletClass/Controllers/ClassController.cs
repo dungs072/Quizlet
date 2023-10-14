@@ -100,19 +100,19 @@ namespace QuizletClass.Controllers
         }
         #endregion
 
-        // error there
         #region DetailLearningModuleClass
         [HttpGet("DetailOwnClass/{classId}")]
         public async Task<IEnumerable<ClassLearningModuleViewModel>> GetLearningModuleClassDetail(int classId)
         {
+
             List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
-            var hocphans = dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToList();
+            var hocphans = await dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToListAsync();
             foreach(var item in hocphans)
             {
-                var hocphan = GetHOCPHAN(item.LearningModuleId);
+                var hocphan = await GetHOCPHAN(item.LearningModuleId);
                 ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
                 int count = (await GetTHETHUATNGUS(item.LearningModuleId)).Count;
-                model.Copy(item,hocphan.Result,count);
+                model.Copy(item,hocphan,count);
                 models.Add(model);
             }
             return models;
@@ -121,7 +121,6 @@ namespace QuizletClass.Controllers
         {
             return await dBContext.thethuatngus.Where(a => a.LearningModuleId == learningModuleId).ToListAsync();
         }
-        //error above
 
         private async Task<HOCPHAN> GetHOCPHAN(int learningModuleId)
         {
@@ -171,9 +170,6 @@ namespace QuizletClass.Controllers
             await dBContext.SaveChangesAsync();
             return Ok();
         }
-
-
-
         #endregion
     }
 }

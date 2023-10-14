@@ -60,6 +60,7 @@
                                                         <td>@item.AddedDate.ToString("dd/MM/yyyy")</td>
                                                         <td>@item.NumberTerms</td>
                                                         <td>
+                                                            <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">More</a>
                                                             <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="DetailOwnClass:@item.LearningModuleId:@Model.ClassId">Delete</button>
                                                         </td>
                                                     </tr>

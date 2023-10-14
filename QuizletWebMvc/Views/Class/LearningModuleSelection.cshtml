@@ -54,11 +54,11 @@
                                                         <td>
                                                             @if(item.IsChoose)
                                                             {
-                                                                <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-danger">Cancel</a>
+                                                                <a href="@Url.Action("DeleteModuleFromClass", "Class",new{typePage = "choose",learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-danger">Cancel</a>
                                                             }
                                                             else
                                                             {
-                                                                <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-primary">Choose</a>
+                                                                <a href="@Url.Action("AddModuleToClass", "Class",new{learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-primary">Choose</a>
                                                             }
                                                         </td>
                                                     </tr>

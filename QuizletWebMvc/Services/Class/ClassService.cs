@@ -60,10 +60,33 @@ namespace QuizletWebMvc.Services.Class
             return await client.GetFromJsonAsync<List<TitleChoiceViewModel>>(API.API.ClassTitleDetailOwn + $"{userId}");
            
         }
-        public async Task<List<LearningModuleViewModel>> GetModuleDatas(int titleId)
+        public async Task<List<LearningModuleViewModel>> GetModuleDatas(int classId,int titleId)
         {
-            return await client.GetFromJsonAsync<List<LearningModuleViewModel>>(API.API.ClassModuleDetailOwn + $"{titleId}");
+            return await client.GetFromJsonAsync<List<LearningModuleViewModel>>(API.API.ClassModuleDetailOwn + $"{classId}/{titleId}");
 
         }
+        public async Task<bool> AddModuleToClass(LearningModuleDetail detail)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<LearningModuleDetail>(API.API.ClassModuleAdd, detail);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        public async Task<bool> DeleteModuleDetail(int classId, int moduleId)
+        {
+            HttpResponseMessage response = await client.DeleteAsync(API.API.ClassModuleAdd + $"/{classId}/{moduleId}");
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }

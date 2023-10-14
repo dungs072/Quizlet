@@ -100,9 +100,10 @@ namespace QuizletClass.Controllers
         }
         #endregion
 
+        // error there
         #region DetailLearningModuleClass
         [HttpGet("DetailOwnClass/{classId}")]
-        public IEnumerable<ClassLearningModuleViewModel> GetLearningModuleClassDetail(int classId)
+        public async Task<IEnumerable<ClassLearningModuleViewModel>> GetLearningModuleClassDetail(int classId)
         {
             List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
             var hocphans = dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToList();
@@ -110,11 +111,18 @@ namespace QuizletClass.Controllers
             {
                 var hocphan = GetHOCPHAN(item.LearningModuleId);
                 ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
-                model.Copy(item,hocphan.Result);
+                int count = (await GetTHETHUATNGUS(item.LearningModuleId)).Count;
+                model.Copy(item,hocphan.Result,count);
                 models.Add(model);
             }
             return models;
         }
+        private async Task<List<THETHUATNGU>> GetTHETHUATNGUS(int learningModuleId)
+        {
+            return await dBContext.thethuatngus.Where(a => a.LearningModuleId == learningModuleId).ToListAsync();
+        }
+        //error above
+
         private async Task<HOCPHAN> GetHOCPHAN(int learningModuleId)
         {
             return await dBContext.hocphans.FindAsync(learningModuleId);
@@ -126,8 +134,8 @@ namespace QuizletClass.Controllers
             var chudes = dBContext.chudes.Where(e=>e.UserId == userId).ToList();
             return chudes;
         }
-        [HttpGet("DetailModule/{titleId}")]
-        public IEnumerable<ModuleDetailWithList> GetYourModuleData(int titleId)
+        [HttpGet("DetailModule/{classId}/{titleId}")]
+        public IEnumerable<ModuleDetailWithList> GetYourModuleData(int classId,int titleId)
         {
             List<ModuleDetailWithList> modules = new List<ModuleDetailWithList>();
             var hocphans = dBContext.hocphans.Where(e => e.TitleId == titleId).ToList();
@@ -136,29 +144,34 @@ namespace QuizletClass.Controllers
                 ModuleDetailWithList module = new ModuleDetailWithList();
                 module.Copy(item);
                 modules.Add(module);
-                var check = CheckLearningModuleIsRegistered(item.LearningModuleId);
-                module.IsChoose = check.Result;
+                var check = CheckLearningModuleIsRegistered(classId,item.LearningModuleId);
+                module.IsChoose = check;
             }
             return modules;
         }
-        private async Task<bool> CheckLearningModuleIsRegistered(int learningModuleId)
+        private bool CheckLearningModuleIsRegistered(int classId,int learningModuleId)
         {
-            return await dBContext.chitiethocphans.FindAsync(learningModuleId) !=null;
+            return dBContext.chitiethocphans.FirstOrDefault(a=>a.ClassId==classId && a.LearningModuleId==learningModuleId)!=null;
         }
 
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult> AddModulesForClass(ModuleDetailWithList detail)
-        //{
-        //    foreach(var learningModuleId in detail.LearningModuleIds)
-        //    {
+        [HttpPost("ModuleAdd")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> AddModulesForClass(CHITIETHOCPHAN chitiethocphan)
+        {
+            chitiethocphan.CreatedDate = DateTime.Now;
+            await dBContext.chitiethocphans.AddAsync(chitiethocphan);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpDelete("ModuleAdd/{classId}/{learningModuleId}")]
+        public async Task<ActionResult> DeleteModuleDetail(int classId,int learningModuleId)
+        {
+            var chitiethocphan = dBContext.chitiethocphans.FirstOrDefault(a=>a.ClassId==classId && a.LearningModuleId ==learningModuleId);
+            dBContext.chitiethocphans.Remove(chitiethocphan);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
 
-        //    }
-        //    //chitiethocphan.CreatedDate = DateTime.Now;
-        //    //await dBContext.chitiethocphans.AddAsync(chitiethocphan);
-        //    await dBContext.SaveChangesAsync();
-        //    return Ok();
-        //}
 
 
         #endregion

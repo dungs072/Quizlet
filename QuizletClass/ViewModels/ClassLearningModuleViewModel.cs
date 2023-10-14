@@ -10,13 +10,13 @@ namespace QuizletClass.ViewModels
         public DateTime AddedDate { get; set; }
         public int NumberTerms { get; set; }
 
-        public void Copy(CHITIETHOCPHAN cthp,HOCPHAN hOCPHAN)
+        public void Copy(CHITIETHOCPHAN cthp,HOCPHAN hOCPHAN,int numberTerms)
         {
             LearningModuleId = cthp.LearningModuleId;
             LearningModuleName = hOCPHAN.LearningModuleName;
             Describe = hOCPHAN.Describe;
             AddedDate = cthp.CreatedDate;
-            NumberTerms = -1; /*cthp.LearningModule.CountNumeberModulesPerClass(classId);*/
+            NumberTerms = numberTerms; /*cthp.LearningModule.CountNumeberModulesPerClass(classId);*/
         }
     }
 }

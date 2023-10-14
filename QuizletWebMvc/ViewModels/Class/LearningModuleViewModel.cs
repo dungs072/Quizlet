@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizletWebMvc.ViewModels.Class
 {
@@ -14,5 +15,13 @@ namespace QuizletWebMvc.ViewModels.Class
     {
         public int TitleId { get; set; }
         public List<LearningModuleViewModel> Modules { get; set; }
+    }
+
+    public class LearningModuleDetail
+    {
+        public int LearningModuleDetailId { get; set; }
+        public int ClassId { get; set; }
+        public int LearningModuleId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

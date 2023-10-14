@@ -105,11 +105,63 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> LearningModuleSelection(int titleId)
         {
+            
             ListLearningModuleViewModel listLearningModule = new ListLearningModuleViewModel();
-            listLearningModule.Modules = await classService.GetModuleDatas(titleId);
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                listLearningModule.Modules = await classService.GetModuleDatas(classId,titleId);
+            }
             listLearningModule.TitleId = titleId;
             return View(listLearningModule);
         }
+        public async Task<IActionResult> AddModuleToClass(int learningModuleId,int titleId)
+        {
+            if(int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                LearningModuleDetail detail = new LearningModuleDetail();
+                detail.ClassId = classId;
+                detail.LearningModuleId = learningModuleId;
+                
+                var check = await classService.AddModuleToClass(detail);
+                if(!check)
+                {
+                    TempData["Error"] = "Cannot add module to class. Server error";
+                   
+                }
+                else
+                {
+                    TempData["Success"] = "Add module to class successfully";
+                }
+            }
+            
+            return RedirectToAction("LearningModuleSelection", new {titleId = titleId});
+        }
+        public async Task<IActionResult> DeleteModuleFromClass(int learningModuleId, int titleId,string typePage = "")
+        {
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+                var check = await classService.DeleteModuleDetail(classId,learningModuleId);
+                if (!check)
+                {
+                    TempData["Error"] = "Cannot delete module from class. Server error";
+
+                }
+                else
+                {
+                    TempData["Success"] = "Delete module from class successfully";
+                }
+            }
+            if(typePage=="choose")
+            {
+                return RedirectToAction("LearningModuleSelection", new { titleId = titleId });
+            }
+            else
+            {
+                return RedirectToAction("ShowDetailOwnClassLearningModule", new { classId = classId });
+            }
+            
+        }
+
 
 
 

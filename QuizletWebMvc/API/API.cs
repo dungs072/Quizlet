@@ -22,5 +22,6 @@
         public static string ClassDetailOwn { get { return ClassUrl + "/DetailOwnClass/"; } }
         public static string ClassTitleDetailOwn { get { return ClassUrl + "/DetailTitle/"; } }
         public static string ClassModuleDetailOwn { get { return ClassUrl + "/DetailModule/"; } }
+        public static string ClassModuleAdd { get { return ClassUrl + "/ModuleAdd"; } }
     }
 }

@@ -66,6 +66,30 @@
       "DownstreamPathTemplate": "/api/Class"
     },
     {
+      "UpstreamPathTemplate": "/api/Class/ModuleAdd",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/ModuleAdd"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Class/ModuleAdd/{classId}/{learningModuleId}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/ModuleAdd/{classId}/{learningModuleId}"
+    },
+    {
       "UpstreamPathTemplate": "/api/Class/{ClassId}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
       "DownstreamScheme": "http",

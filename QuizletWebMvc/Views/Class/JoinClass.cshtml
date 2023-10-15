@@ -1,0 +1,109 @@
+﻿@using QuizletWebMvc.ViewModels.Class;
+@{
+    Layout = null;
+}
+@model ListClassViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .stretch-button {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bigger-button {
+            font-size: 50px; /* Adjust the font size as needed */
+        }
+
+        .my-card {
+            transition: transform 0.2s;
+            border: 1px solid transparent; /* Initially, the border is transparent */
+            background-color: transparent; /* Initially, the background is transparent */
+        }
+
+            /* Define the styles for the card when hovered */
+            .my-card:hover {
+                transform: scale(1.05); /* You can adjust the scaling factor as desired */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a box shadow for elevation */
+                border: 1px solid transparent; /* Initially, the border is transparent */
+                background-color: transparent; /* Initially, the background is transparent */
+            }
+
+        .card-item {
+            /* Styles for the card item */
+            font-size: 10px; /* Set the desired text size (in this case, 18 pixels) */
+        }
+
+        .btn-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust the spacing between buttons as needed */
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#createButton').on('click', function () {
+                window.location.href = '/Class/CreateYourOwnClass';
+            });
+        });
+    </script>
+    <partial name="HeaderHome" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        @foreach (var item in Model.Classes)
+                        {
+                            <div class="col-lg-3 grid-margin stretch-card">
+                                <div class="card my-card" style="width: 18rem;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@item.ClassName</h5>
+                                        <h5 class="card-title card-item">Created at: @item.CreatedDate.ToString("dd/MM/yyyy")</h5>
+                                        <p class="card-text card-item">@item.Describe</p>
+                                        <p class="card-text card-item">Learning modules: @item.NumberLearningModules</p>
+                                        <p class="card-text card-item">Participants: @item.NumberParticipants</p>
+                                        <div class="btn-column">
+                                            <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class",new{classId = item.ClassId})" class="btn btn-primary">Go to class</a>
+                                            <a href="@Url.Action("EditYourOwnClass", "Class",new{classId = item.ClassId})" class="btn btn-secondary">Edit</a>
+                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="YourOwnClass:@item.ClassId.ToString()">Delete</button>
+                                            @* <a href="@Url.Action("DeleteClass", "Class",new{classId = item.ClassId})" class="btn btn-danger">Cancel</a> *@
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-3 grid-margin stretch-card">
+                            <div class="card" style="width: 18rem;">
+                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("CreateYourOwnClass", "Class")'" />
+                                @* <button class="btn-success " id="createButton">+</button> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <partial name="FooterHome" />
+    <partial name="Warnings" />
+</body>
+</html>
+

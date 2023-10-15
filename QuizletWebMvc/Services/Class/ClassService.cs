@@ -139,6 +139,11 @@ namespace QuizletWebMvc.Services.Class
             return await client.GetFromJsonAsync<RegisterDetailClass>(API.API.ClassPendingParticipant + $"/{classId}/{userId}");
         }
 
+        public async Task<List<RegisterClass>> GetRegisterClass(int userId,string search)
+        {
+            return await client.GetFromJsonAsync<List<RegisterClass>>(API.API.ClassRegister + $"/{userId}/{search}");
+        }
+
 
     }
 }

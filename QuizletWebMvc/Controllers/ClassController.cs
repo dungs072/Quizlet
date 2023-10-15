@@ -1,14 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Class;
+using QuizletWebMvc.Services.Terminology;
 using QuizletWebMvc.ViewModels.Class;
+using QuizletWebMvc.ViewModels.Terminology;
 
 namespace QuizletWebMvc.Controllers
 {
     public class ClassController : Controller
     {
         private readonly IClassService classService;
-        public ClassController(IClassService classService)
+        private readonly ITerminologyService terminologyService;
+        public ClassController(IClassService classService,ITerminologyService terminologyService)
         {
+            this.terminologyService = terminologyService;
             this.classService = classService;
         }
         public async Task<IActionResult> YourOwnClass()
@@ -105,8 +109,7 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> LearningModuleSelection(int titleId)
         {
-            
-            ListLearningModuleViewModel listLearningModule = new ListLearningModuleViewModel();
+            ViewModels.Class.ListLearningModuleViewModel listLearningModule = new ViewModels.Class.ListLearningModuleViewModel();
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 listLearningModule.Modules = await classService.GetModuleDatas(classId,titleId);
@@ -249,18 +252,83 @@ namespace QuizletWebMvc.Controllers
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 var registerDetail = await classService.GetDetailPendingParticipant(classId, userId);
+                registerDetail.IsAccepted = true;
                 var canUpdate = await classService.UpdateRegisterDetail(registerDetail);
                 if (!canUpdate)
                 {
-                    TempData["Error"] = "Cannot hand your request. Server error";
+                    TempData["Error"] = "Cannot handle your request. Server error";
                 }
                 else
                 {
                     TempData["Success"] = "Accept participant sucessfully";
                 }
             }
-            return RedirectToAction("ShowDetailOwnClassPendingParticipant",classId);
+            return RedirectToAction("ShowDetailOwnClassPendingParticipant", new { classId = classId });
         }
+        public async Task<IActionResult> RejectRegistration(int classId, int userId)
+        {
+            var check = await classService.DeleteParticipantFromClass(classId, userId);
+            if (!check)
+            {
+                TempData["Error"] = "Cannot handle your request. Server error";
+
+            }
+            else
+            {
+                TempData["Success"] = "reject successfully";
+            }
+            return RedirectToAction("ShowDetailOwnClassPendingParticipant", new { classId = classId });
+
+        }
+
+
+        public async Task<IActionResult> FindRegisterClass(string search)
+        {
+            HttpContext.Session.SetString("GlobalSearch",search);
+            ListRegisterClass listRegisterClass = new ListRegisterClass();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                List<RegisterClass> registerClasses = await classService.GetRegisterClass(userId, search);
+                listRegisterClass.RegisterClasses = registerClasses;
+            }
+            return View("RegisterClass", listRegisterClass);
+        }
+        public async Task<IActionResult> ReadFirstTerms(int learningModuleId,string learningModuleName,int classId)
+        {
+            ListTermViewModel listTermViewModel = new ListTermViewModel();
+            List<TermViewModel> models = await terminologyService.GetTermByLearningModuleId(learningModuleId);
+            listTermViewModel.LearningModuleName = learningModuleName;
+            listTermViewModel.Terms = models;
+            listTermViewModel.ClassId = classId;
+            string globalSearch = HttpContext.Session.GetString("GlobalSearch");
+            listTermViewModel.GlobalSearch = globalSearch;
+            return View("ReadFirstTerms", listTermViewModel);
+        }
+
+        public async Task<IActionResult> RegisterClass(int classId)
+        {
+            RegisterDetailClass registerDetailClass = new RegisterDetailClass();
+            registerDetailClass.ClassId = classId;
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                registerDetailClass.UserId = userId;
+            }
+            registerDetailClass.IsAccepted = false;
+            bool canRegister = await classService.AddParticipantToClass(registerDetailClass);
+            if (!canRegister)
+            {
+                TempData["Error"] = "Cannot handle your request. Server error";
+            }
+            else
+            {
+                TempData["Success"] = "Register this class sucessfully";
+            }
+            string globalSearch = HttpContext.Session.GetString("GlobalSearch");
+            return RedirectToAction("FindRegisterClass","Class", new { search = globalSearch });
+
+
+        }
+
 
     }
 }

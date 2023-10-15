@@ -25,5 +25,7 @@ namespace QuizletWebMvc.Services.Class
         Task<List<Participant>> GetDetailPendingParticipantClass(int classId);
         Task<bool> UpdateRegisterDetail(RegisterDetailClass detail);
         Task<RegisterDetailClass> GetDetailPendingParticipant(int classId, int userId);
+
+        Task<List<RegisterClass>> GetRegisterClass(int userId, string search);
     }
 }

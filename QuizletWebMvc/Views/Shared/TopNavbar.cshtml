@@ -38,7 +38,9 @@
             const inputElement = document.getElementById('globalSearch');
             inputElement.addEventListener('keydown', function (event) {
                 if (event.keyCode === 13) {
-                    alert(inputElement.value);
+                    var searchValue = inputElement.value;
+                    var url = '/Class/FindRegisterClass?search=' + searchValue;
+                    window.location.href = url;
                 }
             });
         });

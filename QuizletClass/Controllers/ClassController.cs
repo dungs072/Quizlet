@@ -221,7 +221,7 @@ namespace QuizletClass.Controllers
             List<NGUOIDUNG> nguoidungs =  dBContext.nguoidungs.ToList<NGUOIDUNG>();
             foreach(var nguoidung in nguoidungs)
             {
-                if (!nguoidung.Gmail.Contains(search)) { continue; }
+                if (!nguoidung.Gmail.Contains(search,StringComparison.OrdinalIgnoreCase)) { continue; }
                 if(nguoidung.UserId==currentUserId) { continue; }
                 if (CheckUserHasRegisterToClass(classId, nguoidung.UserId))
                 {
@@ -280,12 +280,13 @@ namespace QuizletClass.Controllers
             
             foreach (var hocphan in hocphans)
             {
-                if (!hocphan.LearningModuleName.Contains(search)) { continue; }
-                List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId);
+                if (!hocphan.LearningModuleName.Contains(search,StringComparison.OrdinalIgnoreCase)) { continue; }
+                List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId,userId);
                 foreach(LOP lop in lops)
                 {
                     NGUOIDUNG nguoidung = await GetNGUOIDUNG(lop.UserId);
                     int numberTerms = await GetNumberTermsInModules(hocphan.LearningModuleId);
+                    if (numberTerms == 0) { continue; }
                     RegisterClass registerClass = new RegisterClass()
                     {
                         ClassId = lop.ClassId,
@@ -297,6 +298,7 @@ namespace QuizletClass.Controllers
                         NumberTerms = numberTerms
 
                     };
+                    models.Add(registerClass);
                 }
 
             }
@@ -309,12 +311,15 @@ namespace QuizletClass.Controllers
                          select b;
             return result.ToList();
         }
-        private async Task<List<LOP>> GetLOPOfModule(int learningModuleId)
+        private async Task<List<LOP>> GetLOPOfModule(int learningModuleId,int userId)
         {
             var result = from a in (from c in dBContext.chitiethocphans where c.LearningModuleId == learningModuleId select c)
                          join b in dBContext.lops on a.ClassId equals b.ClassId
                          select b;
-            return result.ToList();
+            var result2 = from c in dBContext.chitietdangkilops where c.UserId == userId select c;
+            var excludedIds = result2.Select(c => c.ClassId);
+            var finalResult = result.Where(a => !excludedIds.Contains(a.ClassId));
+            return finalResult.ToList();
         }
         private async Task<int> GetNumberTermsInModules(int learningModuleId)
         {

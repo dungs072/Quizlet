@@ -41,6 +41,12 @@
                     var url = '/Class/DeleteParticipantFromClass?userId=' + userId;
                     window.location.href = url;
                 }
+                if (stringArray[0] == 'RejectRegister') {
+                    var userId = parseInt(stringArray[1], 10);
+                    var classId = parseInt(stringArray[2], 10);
+                    var url = '/Class/RejectRegistration?userId=' + userId + '&classId='+classId;
+                    window.location.href = url;
+                }
             });
         });
     </script>

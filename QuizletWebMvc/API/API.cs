@@ -27,5 +27,6 @@
         public static string ClassParticipantSearch { get { return ClassUrl + "/SearchUser"; } }
         public static string ClassParticipantAdd { get { return ClassUrl + "/UserParticipant"; } }
         public static string ClassPendingParticipant { get { return ClassUrl + "/DetailPendingParticipant"; } }
+        public static string ClassRegister { get { return ClassUrl + "/GlobalSearch"; } }
     }
 }

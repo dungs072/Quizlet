@@ -8,17 +8,15 @@ namespace QuizletAchivement.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("ID_CTTT")]
-        public int ID_CTTT { get; set; }
-        [ForeignKey("NGUOIDUNG")]
-        [Column("MA_USER")]
-        public int MA_USER { get; set; }
-        public NGUOIDUNG nguoiDung { get; set; }
-        [ForeignKey("THANHTUU")]
-        [Column("MA_THANHTUU")]
-        public string MA_THANHTUU { get; set; }
-        public THANHTUU thanhTUU { get; set; }
+        public int AchivementDetailId { get; set; }
+        [ForeignKey("MA_USER")]
+        public int UserId { get; set; }
+        //public NGUOIDUNG nguoiDung { get; set; }
+        [ForeignKey("MA_THANHTUU")]
+        public string AchivementId { get; set; }
+        //public THANHTUU thanhTUU { get; set; }
         [Column("NGAYDAT")]
-        public DateTime NGAYDAT { get; set; }
+        public DateTime AchieveDate { get; set; }
 
     }
 }

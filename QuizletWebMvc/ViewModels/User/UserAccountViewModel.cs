@@ -1,4 +1,5 @@
-﻿using QuizletWebMvc.ViewModels.Terminology;
+﻿using QuizletWebMvc.ViewModels.Achivement;
+using QuizletWebMvc.ViewModels.Terminology;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,6 +25,8 @@ namespace QuizletWebMvc.ViewModels.User
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        public List<LevelTerms> LevelTerms { get; set; }
+
 
         public override string ToString()
         {
@@ -34,6 +37,7 @@ namespace QuizletWebMvc.ViewModels.User
         {
             return data.Split(":");
         }
+
 
 
     }

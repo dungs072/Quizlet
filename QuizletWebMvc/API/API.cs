@@ -30,5 +30,8 @@
         public static string ClassRegister { get { return ClassUrl + "/GlobalSearch"; } }
 
         public static string ClassJoin { get { return ClassUrl + "/JoinClass"; } }
+
+        public static string AchivementUrl { get { return $"/api/Achivement"; } }
+        public static string AchivementUser { get { return AchivementUrl + "/UserAchieve"; } }
     }
 }

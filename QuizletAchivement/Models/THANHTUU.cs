@@ -11,8 +11,10 @@ namespace QuizletAchivement.Models
         public string AchivementId { get; set; }
         [Column("TENTHANHTUU")]
         public string AchivementName { get; set; }
-        [Column("MOTA")]
-        public string Describe { get; set; }
-        public ICollection<CHITIETTHANHTUU> chitietthanhtuu { get; set; }
+        [Column("DIEUKIEN")]
+        public int Condition { get; set; }
+        [Column("HINHANH")]
+        public string Image { get; set; }
+        public ICollection<CHITIETTHANHTUU> chitietthanhtuu { get; set; } = new List<CHITIETTHANHTUU>();
     }
 }

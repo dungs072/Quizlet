@@ -12,9 +12,8 @@ namespace QuizletAchivement.Models
         public int ID_CTC { get; set; }
         [Column("NGAYHOC")]
         public DateTime NGAYHOC { get; set; }
-        [ForeignKey("NGUOIDUNG")]
-        [Column("MA_USER")]
+        [ForeignKey("MA_USER")]
         public int MA_USER { get; set; }
-        public NGUOIDUNG nguoiDung { get; set; }
+        //public NGUOIDUNG nguoiDung { get; set; }
     }
 }

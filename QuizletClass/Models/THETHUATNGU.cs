@@ -22,6 +22,8 @@ namespace QuizletClass.Models
         [ForeignKey("LEVEL")]
         [Column("MA_LEVEL")]
         public int LevelId { get; set; } = 1;
+        [Column("TICHLUY")]
+        public int AC { get; set; }
 
         //public HOCPHAN hocPHAN { get; set; }
     }

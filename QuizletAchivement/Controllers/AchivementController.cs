@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizletAchivement.DBContexts;
 using QuizletAchivement.Models;
+using QuizletAchivement.ViewModels;
 
 namespace QuizletAchivement.Controllers
 {
@@ -14,6 +16,7 @@ namespace QuizletAchivement.Controllers
         {
             this.dBContext = dBContext;
         }
+        #region Achivement
 
         [HttpGet]
         public ActionResult<IEnumerable<THANHTUU>> GetTHANHTUU()
@@ -49,5 +52,32 @@ namespace QuizletAchivement.Controllers
             await dBContext.SaveChangesAsync();
             return Ok();
         }
+
+        #endregion
+
+        #region UserAchieve
+        [HttpGet("UserAchieve/{UserId}")]
+        public async Task<List<LevelTerms>> GetLevelTerms(int userId)
+        {
+            List<LevelTerms> levelTerms = new List<LevelTerms>();
+            var levelghinhos = await dBContext.levelghinhos.ToListAsync();
+            foreach(var levelghinho in levelghinhos)
+            {
+                LevelTerms levelterm = new LevelTerms();
+                levelterm.LevelName = levelghinho.LevelName;
+                levelterm.NumberTermsInLevel = await CountNumberTermsForLevel(levelghinho.LevelId,userId);
+                levelTerms.Add(levelterm);
+            }
+            return levelTerms;
+        }
+        private async Task<int> CountNumberTermsForLevel(int levelId, int userId)
+        {
+            var thuatngus = await dBContext.thethuatngus
+            .Where(a => a.hocphan.chuDe.nguoiDUNG.UserId == userId && a.levelghinho.LevelId == levelId)
+            .ToListAsync();
+
+            return thuatngus.Count;
+        }
+        #endregion
     }
 }

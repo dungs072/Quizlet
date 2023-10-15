@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure;
 using QuizletWebMvc.Services;
+using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Login;
 using QuizletWebMvc.Services.Terminology;
@@ -13,6 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ITerminologyService, TerminologyService>();
 builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IAchivement, Achivement>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 var app = builder.Build();

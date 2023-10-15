@@ -93,5 +93,14 @@ namespace QuizletWebMvc.Controllers
             listObjective.LearningModuleId = learningModuleId;
             return View(listObjective);
         }
+        public IActionResult TermParticipant(int learningModuleId)
+        {
+            Task<List<TermViewModel>> listTerm = terminologyService.GetTermByLearningModuleId(learningModuleId);
+            Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
+            ListTermViewModel listTermViewModel = new ListTermViewModel();
+            listTermViewModel.LearningModuleViewModel = learningModuleViewModel.Result;
+            listTermViewModel.Terms = listTerm.Result;
+            return View(listTermViewModel);
+        }
     }
 }

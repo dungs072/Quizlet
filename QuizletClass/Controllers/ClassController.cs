@@ -17,34 +17,35 @@ namespace QuizletClass.Controllers
             this.dBContext = dBContext;
         }
         #region Class
-        [HttpGet]
-        public ActionResult<IEnumerable<ClassViewModel>> GetLOP()
+        [HttpGet("{userId}")]
+        public async Task<IEnumerable<ClassViewModel>> GetLOP(int userId)
         {
             List<ClassViewModel> classes = new List<ClassViewModel>();
-            foreach(var lop in dBContext.lops)
+            var lops = await dBContext.lops.Where(e => e.UserId == userId).ToListAsync();
+            foreach(var lop in lops)
             {
                 ClassViewModel model = new ClassViewModel();
                 model.Copy(lop);
-                model.NumberParticipants = GetCHITIETDANGKILOPS(lop.ClassId).Count;
-                model.NumberLearningModules = GetCHITIETHOCPHANS(lop.ClassId).Count;
+                model.NumberParticipants = (await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
+                model.NumberLearningModules = (await GetCHITIETHOCPHANS(lop.ClassId)).Count;
                 classes.Add(model);
             }
             return classes;
         }
-        private List<CHITIETDANGKILOP> GetCHITIETDANGKILOPS(int classId)
+        private async Task<List<CHITIETDANGKILOP>> GetCHITIETDANGKILOPS(int classId)
         {
-            return dBContext.chitietdangkilops.Where(a=>a.ClassId==classId).ToList();
+            return await dBContext.chitietdangkilops.Where(a=>a.ClassId==classId).ToListAsync();
         }
-        private List<CHITIETHOCPHAN> GetCHITIETHOCPHANS(int classId) 
+        private async Task<List<CHITIETHOCPHAN>> GetCHITIETHOCPHANS(int classId) 
         {
-            return dBContext.chitiethocphans.Where(a => a.ClassId == classId).ToList();
+            return await dBContext.chitiethocphans.Where(a => a.ClassId == classId).ToListAsync();
         }
-        [HttpGet("{userId}")]
-        public IEnumerable<LOP> GetLOPByUserId(int userId)
-        {
-            var lops = dBContext.lops.Where(e => e.UserId == userId).ToList();
-            return lops;
-        }
+        //[HttpGet("{userId}")]
+        //public IEnumerable<LOP> GetLOPByUserId(int userId)
+        //{
+        //    var lops = dBContext.lops.Where(e => e.UserId == userId).ToList();
+        //    return lops;
+        //}
         [HttpGet("find/{ClassId}")]
         public async Task<ActionResult<LOP>> GetLOPById(int ClassId)
         {
@@ -324,6 +325,32 @@ namespace QuizletClass.Controllers
         private async Task<int> GetNumberTermsInModules(int learningModuleId)
         {
             return (await dBContext.thethuatngus.Where(a=>a.LearningModuleId==learningModuleId).ToListAsync()).Count;
+        }
+        #endregion
+
+        #region JoinClass
+        [HttpGet("JoinClass/{userId}")]
+        public async Task<IEnumerable<ClassViewModel>> GetJoinClass(int userId)
+        {
+            List<ClassViewModel> classes = new List<ClassViewModel>();
+            var lops = await GetJoinLOP(userId);
+            foreach(var lop in lops)
+            {
+                int numberParticipants = (await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
+                int numberModules = (await GetCHITIETHOCPHANS(lop.ClassId)).Count;
+                ClassViewModel classView = new ClassViewModel();
+                classView.Copy(lop);
+                classView.NumberParticipants= numberParticipants;
+                classView.NumberLearningModules= numberModules;
+                classes.Add(classView);
+            }
+            return classes;
+        }
+        public async Task<List<LOP>> GetJoinLOP(int userId)
+        {
+            var result = from a in dBContext.chitietdangkilops where a.UserId == userId select a.ClassId;
+            var result2 = dBContext.lops.Where(a=>result.Contains(a.ClassId));
+            return await result2.ToListAsync();
         }
         #endregion
     }

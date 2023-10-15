@@ -329,6 +329,54 @@ namespace QuizletWebMvc.Controllers
 
         }
 
+        public async Task<IActionResult> YourJoinClass()
+        {
+            ListClassViewModel listClassViewModel = new ListClassViewModel();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var classes = await classService.GetJoinClass(userId);
+                listClassViewModel.Classes = classes;
+            }
+            return View(listClassViewModel);
+        }
+        public async Task<IActionResult> ShowDetailJoinClassLearningModule(int classId)
+        {
+            HttpContext.Session.SetString("CurrentClassId", classId.ToString());
+            List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListClassLearningModuleViewModel listModels = new ListClassLearningModuleViewModel();
+            listModels.LearningModules = models;
+            listModels.Copy(cla);
+            listModels.ClassId = classId;
+            return View("DetailJoinClass", listModels);
+
+        }
+        public IActionResult BackToShowDetailJoinClassLearningModule()
+        {
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            {
+
+            }
+            return RedirectToAction("ShowDetailJoinClassLearningModule", new { classId = classId });
+        }
+        public async Task<IActionResult> QuitJoinClass(int classId)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var check = await classService.DeleteParticipantFromClass(classId, userId);
+                if (!check)
+                {
+                    TempData["Error"] = "Cannot quit from class. Server error";
+
+                }
+                else
+                {
+                    TempData["Success"] = "Quit from class successfully";
+                }
+            }
+            return RedirectToAction("YourJoinClass");
+
+        }
 
     }
 }

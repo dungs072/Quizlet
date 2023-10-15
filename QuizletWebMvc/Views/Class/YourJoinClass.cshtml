@@ -76,9 +76,8 @@
                                         <p class="card-text card-item">Learning modules: @item.NumberLearningModules</p>
                                         <p class="card-text card-item">Participants: @item.NumberParticipants</p>
                                         <div class="btn-column">
-                                            <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class",new{classId = item.ClassId})" class="btn btn-primary">Go to class</a>
-                                            <a href="@Url.Action("EditYourOwnClass", "Class",new{classId = item.ClassId})" class="btn btn-secondary">Edit</a>
-                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="YourOwnClass:@item.ClassId.ToString()">Delete</button>
+                                            <a href="@Url.Action("ShowDetailJoinClassLearningModule", "Class",new{classId = item.ClassId})" class="btn btn-primary">Go to class</a>
+                                            <button class="btn btn-danger quitButton" data-toggle="modal" data-target="#quitWarningModal" value="YourJoinClass:@item.ClassId.ToString()">Quit</button>
                                             @* <a href="@Url.Action("DeleteClass", "Class",new{classId = item.ClassId})" class="btn btn-danger">Cancel</a> *@
                                         </div>
 
@@ -86,12 +85,6 @@
                                 </div>
                             </div>
                         }
-                        <div class="col-lg-3 grid-margin stretch-card">
-                            <div class="card" style="width: 18rem;">
-                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("CreateYourOwnClass", "Class")'" />
-                                @* <button class="btn-success " id="createButton">+</button> *@
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <!-- content-wrapper ends -->

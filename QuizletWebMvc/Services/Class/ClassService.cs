@@ -144,6 +144,11 @@ namespace QuizletWebMvc.Services.Class
             return await client.GetFromJsonAsync<List<RegisterClass>>(API.API.ClassRegister + $"/{userId}/{search}");
         }
 
+        public async Task<List<ClassViewModel>> GetJoinClass(int userId)
+        {
+            return await client.GetFromJsonAsync<List<ClassViewModel>>(API.API.ClassJoin + $"/{userId}");
+        }
+
 
     }
 }

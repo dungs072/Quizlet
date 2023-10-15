@@ -27,5 +27,7 @@ namespace QuizletWebMvc.Services.Class
         Task<RegisterDetailClass> GetDetailPendingParticipant(int classId, int userId);
 
         Task<List<RegisterClass>> GetRegisterClass(int userId, string search);
+
+        Task<List<ClassViewModel>> GetJoinClass(int userId);
     }
 }

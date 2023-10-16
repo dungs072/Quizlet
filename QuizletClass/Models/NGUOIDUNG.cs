@@ -20,5 +20,8 @@ namespace QuizletClass.Models
         [Column("MATKHAU")]
         public string Password { get; set; } = "";
 
+        public virtual ICollection<LOP> lops { get; set; } 
+        public virtual ICollection<CHUDE> chudes { get; set; }
+
     }
 }

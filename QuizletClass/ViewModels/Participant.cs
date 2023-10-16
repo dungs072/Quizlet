@@ -17,10 +17,10 @@ namespace QuizletClass.ViewModels
         public void Copy(CHITIETDANGKILOP ctdkl)
         {
             RegisterDetailClassId = ctdkl.RegisterDetailClassId;
-            ClassId = ctdkl.ClassId;
+            ClassId = ctdkl.lop.ClassId;
             RegisterDate = ctdkl.RegisterDate;
             IsAccepted = ctdkl.IsAccepted;
-            UserId = ctdkl.UserId;
+            UserId = ctdkl.nguoidung.UserId;
         }
     }
     public class UserParticipant

@@ -13,25 +13,12 @@ namespace QuizletClass.Models
         public string LearningModuleName { get; set; } = "";
         [Column("MOTA")]
         public string? Describe { get; set; }
-        [ForeignKey("CHUDE")]
-        [Column("MA_CHUDE")]
-        public int TitleId { get; set; }
-        //public CHUDE chuDe { get; set; }
+        [ForeignKey("MA_CHUDE")]
+        public virtual CHUDE chude { get; set; } = null!;
    
-        //public ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
+        public virtual ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
+        public virtual ICollection<THETHUATNGU> thethuatngus { get; set; }
 
-        public int CountNumeberModulesPerClass(int classId)
-        {
-            int count = 0;
-            //foreach(var item in chitiethocphans)
-            //{
-            //    if(item.ClassId==classId)
-            //    {
-            //        count++;
-            //    }
-            //}
-            return count;
-        }
 
     }
 }

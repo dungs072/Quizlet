@@ -10,17 +10,14 @@ namespace QuizletClass.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("ID_CTL")]
         public int RegisterDetailClassId { get; set; }
-        [ForeignKey("NGUOIDUNG")]
-        [Column("MA_USER")]
-        public int UserId { get; set; }
-        //public NGUOIDUNG nguoiDUNG { get; set; }
-        [ForeignKey("LOP")]
-        [Column("MA_LOP")]
-        public int ClassId { get; set; }
-        //public LOP lop { get; set; }
         [Column("NGAYDANGKI")]
         public DateTime RegisterDate { get; set; }
         [Column("CHAPTHUAN")]
         public bool IsAccepted { get; set; }
+        [ForeignKey("MA_USER")]
+        public virtual NGUOIDUNG nguoidung { get; set; } = null!;
+        [ForeignKey("MA_LOP")]
+        public virtual LOP lop { get; set; } = null!;
+
     }
 }

@@ -10,18 +10,13 @@ namespace QuizletClass.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("ID_CTHP")]
         public int LearningModuleDetailId { get; set; }
-        [ForeignKey("LOP")]
-        [Column("MA_LOP")]
-        public int ClassId { get; set; }
-        
-        [ForeignKey("HOCPHAN")]
-        [Column("MA_HOCPHAN")]
-        public int LearningModuleId { get; set; }
+        [ForeignKey("MA_LOP")]
+        public virtual LOP lop { get; set; } = null!;
+
+        [ForeignKey("MA_HOCPHAN")]
+        public virtual HOCPHAN hocphan { get; set; } = null!;
         [Column("NGAYTAO")]
         public DateTime CreatedDate { get; set; }
-
-        //public LOP Class { get; set; }
-        //public HOCPHAN LearningModule { get; set; }
 
     }
 }

@@ -21,66 +21,62 @@ namespace QuizletClass.Controllers
         public async Task<IEnumerable<ClassViewModel>> GetLOP(int userId)
         {
             List<ClassViewModel> classes = new List<ClassViewModel>();
-            var lops = await dBContext.lops.Where(e => e.UserId == userId).ToListAsync();
+            var lops = await dBContext.lops.Where(e => e.NGUOIDUNG.UserId == userId).ToListAsync();
             foreach(var lop in lops)
             {
                 ClassViewModel model = new ClassViewModel();
                 model.Copy(lop);
-                model.NumberParticipants = (await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
-                model.NumberLearningModules = (await GetCHITIETHOCPHANS(lop.ClassId)).Count;
+                model.NumberParticipants = lop.chitietdangkilop.Count; //(await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
+                model.NumberLearningModules = lop.chitiethocphan.Count; //(await GetCHITIETHOCPHANS(lop.ClassId)).Count;
                 classes.Add(model);
             }
             return classes;
         }
         private async Task<List<CHITIETDANGKILOP>> GetCHITIETDANGKILOPS(int classId)
         {
-            return await dBContext.chitietdangkilops.Where(a=>a.ClassId==classId).ToListAsync();
+            return await dBContext.chitietdangkilops.Where(a=>a.lop.ClassId==classId).ToListAsync();
         }
         private async Task<List<CHITIETHOCPHAN>> GetCHITIETHOCPHANS(int classId) 
         {
-            return await dBContext.chitiethocphans.Where(a => a.ClassId == classId).ToListAsync();
+            return await dBContext.chitiethocphans.Where(a => a.lop.ClassId == classId).ToListAsync();
         }
-        //[HttpGet("{userId}")]
-        //public IEnumerable<LOP> GetLOPByUserId(int userId)
-        //{
-        //    var lops = dBContext.lops.Where(e => e.UserId == userId).ToList();
-        //    return lops;
-        //}
         [HttpGet("find/{ClassId}")]
-        public async Task<ActionResult<LOP>> GetLOPById(int ClassId)
+        public async Task<ActionResult<ClassViewModel>> GetLOPById(int ClassId)
         {
             var LOP = await dBContext.lops.FindAsync(ClassId);
-            return LOP;
+            ClassViewModel classViewModel = new ClassViewModel();
+            classViewModel.Copy(LOP);
+            return classViewModel;
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateLOP(LOP lop)
         {
-            if(HasDuplicateClassName(lop.UserId,lop.ClassName))
+            if(HasDuplicateClassName(lop.NGUOIDUNG.UserId,lop.ClassName))
             {
                 return BadRequest();
             }
             lop.CreatedDate = DateTime.Now;
-            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
+            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.NGUOIDUNG.UserId);
             await dBContext.lops.AddAsync(lop);
             await dBContext.SaveChangesAsync();
             return Ok();
         }
         private bool HasDuplicateClassName(int userId, string className)
         {
-            var lop = dBContext.lops.FirstOrDefault(u => (u.UserId == userId && u.ClassName == className));
+            var lop = dBContext.lops.FirstOrDefault(u => (u.NGUOIDUNG.UserId == userId && u.ClassName == className));
             return lop != null;
         }
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateLOP(LOP lop)
         {
-            if (HasDuplicateClassNameForUpdate(lop.UserId,lop.ClassId, lop.ClassName))
+            if (HasDuplicateClassNameForUpdate(lop.NGUOIDUNG.UserId,lop.ClassId, lop.ClassName))
             {
                 return BadRequest();
             }
-            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.UserId);
-            var prevClass = await dBContext.lops.FindAsync(lop.UserId);
+            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.NGUOIDUNG.UserId);
+            var prevClass = await dBContext.lops.FindAsync(lop.NGUOIDUNG.UserId);
             lop.CreatedDate = prevClass.CreatedDate;
             dBContext.lops.Update(lop);
             await dBContext.SaveChangesAsync();
@@ -88,7 +84,7 @@ namespace QuizletClass.Controllers
         }
         private bool HasDuplicateClassNameForUpdate(int userId, int classId, string className)
         {
-            var cl = dBContext.lops.FirstOrDefault(u => (u.UserId == userId && u.ClassName == className && u.ClassId != classId));
+            var cl = dBContext.lops.FirstOrDefault(u => (u.NGUOIDUNG.UserId == userId && u.ClassName == className && u.ClassId != classId));
             return cl != null;
         }
         [HttpDelete("{ClassId}")]
@@ -107,38 +103,36 @@ namespace QuizletClass.Controllers
         {
 
             List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
-            var hocphans = await dBContext.chitiethocphans.Where(e => e.ClassId == classId).ToListAsync();
+            var hocphans = await dBContext.chitiethocphans.Where(e => e.lop.ClassId == classId).ToListAsync();
             foreach(var item in hocphans)
             {
-                var hocphan = await GetHOCPHAN(item.LearningModuleId);
+                var hocphan = item.hocphan;
                 ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
-                int count = (await GetTHETHUATNGUS(item.LearningModuleId)).Count;
+                int count = item.hocphan.thethuatngus.Count;
                 model.Copy(item,hocphan,count);
                 models.Add(model);
             }
             return models;
         }
-        private async Task<List<THETHUATNGU>> GetTHETHUATNGUS(int learningModuleId)
-        {
-            return await dBContext.thethuatngus.Where(a => a.LearningModuleId == learningModuleId).ToListAsync();
-        }
-
-        private async Task<HOCPHAN> GetHOCPHAN(int learningModuleId)
-        {
-            return await dBContext.hocphans.FindAsync(learningModuleId);
-        }
 
         [HttpGet("DetailTitle/{userId}")]
-        public IEnumerable<CHUDE> GetYourTitleData(int userId)
+        public IEnumerable<TitleViewModel> GetYourTitleData(int userId)
         {
-            var chudes = dBContext.chudes.Where(e=>e.UserId == userId).ToList();
-            return chudes;
+            var chudes = dBContext.chudes.Where(e=>e.nguoidung.UserId == userId).ToList();
+            List<TitleViewModel> titles = new List<TitleViewModel>();
+            foreach(var chude in chudes)
+            {
+                TitleViewModel titleViewModel = new TitleViewModel();
+                titleViewModel.Copy(chude);
+                titles.Add(titleViewModel);
+            }
+            return titles;
         }
         [HttpGet("DetailModule/{classId}/{titleId}")]
         public IEnumerable<ModuleDetailWithList> GetYourModuleData(int classId,int titleId)
         {
             List<ModuleDetailWithList> modules = new List<ModuleDetailWithList>();
-            var hocphans = dBContext.hocphans.Where(e => e.TitleId == titleId).ToList();
+            var hocphans = dBContext.hocphans.Where(e => e.chude.TitleId == titleId).ToList();
             foreach(var item in hocphans)
             {
                 ModuleDetailWithList module = new ModuleDetailWithList();
@@ -151,13 +145,18 @@ namespace QuizletClass.Controllers
         }
         private bool CheckLearningModuleIsRegistered(int classId,int learningModuleId)
         {
-            return dBContext.chitiethocphans.FirstOrDefault(a=>a.ClassId==classId && a.LearningModuleId==learningModuleId)!=null;
+            return dBContext.chitiethocphans.FirstOrDefault(a=>a.lop.ClassId==classId && a.hocphan.LearningModuleId==learningModuleId)!=null;
         }
 
         [HttpPost("ModuleAdd")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddModulesForClass(CHITIETHOCPHAN chitiethocphan)
+        public async Task<ActionResult> AddModulesForClass(LearningModuleDetail learningModuleDetail)
         {
+            CHITIETHOCPHAN chitiethocphan = new CHITIETHOCPHAN();
+            HOCPHAN hocphan = await dBContext.hocphans.FindAsync(learningModuleDetail.LearningModuleId);
+            LOP lop = await dBContext.lops.FindAsync(learningModuleDetail.ClassId);
+            chitiethocphan.hocphan = hocphan;
+            chitiethocphan.lop = lop;
             chitiethocphan.CreatedDate = DateTime.Now;
             await dBContext.chitiethocphans.AddAsync(chitiethocphan);
             await dBContext.SaveChangesAsync();
@@ -166,7 +165,7 @@ namespace QuizletClass.Controllers
         [HttpDelete("ModuleAdd/{classId}/{learningModuleId}")]
         public async Task<ActionResult> DeleteModuleDetail(int classId,int learningModuleId)
         {
-            var chitiethocphan = dBContext.chitiethocphans.FirstOrDefault(a=>a.ClassId==classId && a.LearningModuleId ==learningModuleId);
+            var chitiethocphan = dBContext.chitiethocphans.FirstOrDefault(a=>a.lop.ClassId==classId && a.hocphan.LearningModuleId ==learningModuleId);
             dBContext.chitiethocphans.Remove(chitiethocphan);
             await dBContext.SaveChangesAsync();
             return Ok();
@@ -178,11 +177,11 @@ namespace QuizletClass.Controllers
         public async Task<IEnumerable<Participant>> GetParticipant(int classId)
         {
             List<Participant> models = new List<Participant>();
-            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.ClassId == classId).ToListAsync();
+            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.lop.ClassId == classId).ToListAsync();
             foreach (var item in chitietdangkilops)
             {
                 if (!item.IsAccepted) { continue; }
-                var nguoidung = await GetNGUOIDUNG(item.UserId);
+                var nguoidung = await GetNGUOIDUNG(item.nguoidung.UserId);
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -196,11 +195,11 @@ namespace QuizletClass.Controllers
         public async Task<IEnumerable<Participant>> GetPendingParticipant(int classId)
         {
             List<Participant> models = new List<Participant>();
-            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.ClassId == classId).ToListAsync();
+            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e => e.lop.ClassId == classId).ToListAsync();
             foreach (var item in chitietdangkilops)
             {
                 if (item.IsAccepted) { continue; }
-                var nguoidung = await GetNGUOIDUNG(item.UserId);
+                var nguoidung = await GetNGUOIDUNG(item.nguoidung.UserId);
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -236,12 +235,16 @@ namespace QuizletClass.Controllers
         }
         private bool CheckUserHasRegisterToClass(int classId, int userId)
         {
-            return dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId) != null;
+            return dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId) != null;
         }
         [HttpPost("UserParticipant")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddParticipant(CHITIETDANGKILOP chitietdangkilop)
+        public async Task<ActionResult> AddParticipant(RegisterClassDetail registerClassDetail)
         {
+            CHITIETDANGKILOP chitietdangkilop = new CHITIETDANGKILOP();
+            chitietdangkilop.lop = await dBContext.lops.FindAsync(registerClassDetail.ClassId);
+            chitietdangkilop.nguoidung = await dBContext.nguoidungs.FindAsync(registerClassDetail.UserId);
+            chitietdangkilop.IsAccepted = registerClassDetail.IsAccepted;
             chitietdangkilop.RegisterDate = DateTime.Now;
             await dBContext.chitietdangkilops.AddAsync(chitietdangkilop);
             await dBContext.SaveChangesAsync();
@@ -250,7 +253,7 @@ namespace QuizletClass.Controllers
         [HttpDelete("UserParticipant/{classId}/{userId}")]
         public async Task<ActionResult> DeleteUserParticipant(int classId, int userId)
         {
-            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId);
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId);
             dBContext.chitietdangkilops.Remove(chitietdangki);
             await dBContext.SaveChangesAsync();
             return Ok();
@@ -267,7 +270,7 @@ namespace QuizletClass.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<CHITIETDANGKILOP> GetCHITIETDANGKILOP(int classId, int userId)
         {
-            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.ClassId == classId && a.UserId == userId);
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId);
             return chitietdangki;
         }
         #endregion
@@ -285,7 +288,7 @@ namespace QuizletClass.Controllers
                 List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId,userId);
                 foreach(LOP lop in lops)
                 {
-                    NGUOIDUNG nguoidung = await GetNGUOIDUNG(lop.UserId);
+                    NGUOIDUNG nguoidung = await GetNGUOIDUNG(lop.NGUOIDUNG.UserId);
                     int numberTerms = await GetNumberTermsInModules(hocphan.LearningModuleId);
                     if (numberTerms == 0) { continue; }
                     RegisterClass registerClass = new RegisterClass()
@@ -307,24 +310,24 @@ namespace QuizletClass.Controllers
         }
         private async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
         {
-            var result = from a in (from c in dBContext.chudes where c.UserId !=userId select c)
-                         join b in dBContext.hocphans on a.TitleId equals b.TitleId
+            var result = from a in (from c in dBContext.chudes where c.nguoidung.UserId !=userId select c)
+                         join b in dBContext.hocphans on a.TitleId equals b.chude.TitleId
                          select b;
             return result.ToList();
         }
         private async Task<List<LOP>> GetLOPOfModule(int learningModuleId,int userId)
         {
-            var result = from a in (from c in dBContext.chitiethocphans where c.LearningModuleId == learningModuleId select c)
-                         join b in dBContext.lops on a.ClassId equals b.ClassId
+            var result = from a in (from c in dBContext.chitiethocphans where c.hocphan.LearningModuleId == learningModuleId select c)
+                         join b in dBContext.lops on a.lop.ClassId equals b.ClassId
                          select b;
-            var result2 = from c in dBContext.chitietdangkilops where c.UserId == userId select c;
-            var excludedIds = result2.Select(c => c.ClassId);
+            var result2 = from c in dBContext.chitietdangkilops where c.nguoidung.UserId == userId select c;
+            var excludedIds = result2.Select(c => c.lop.ClassId);
             var finalResult = result.Where(a => !excludedIds.Contains(a.ClassId));
             return finalResult.ToList();
         }
         private async Task<int> GetNumberTermsInModules(int learningModuleId)
         {
-            return (await dBContext.thethuatngus.Where(a=>a.LearningModuleId==learningModuleId).ToListAsync()).Count;
+            return (await dBContext.thethuatngus.Where(a=>a.hocphan.LearningModuleId==learningModuleId).ToListAsync()).Count;
         }
         #endregion
 
@@ -348,7 +351,7 @@ namespace QuizletClass.Controllers
         }
         public async Task<List<LOP>> GetJoinLOP(int userId)
         {
-            var result = from a in dBContext.chitietdangkilops where a.UserId == userId select a.ClassId;
+            var result = from a in dBContext.chitietdangkilops where a.nguoidung.UserId == userId select a.lop.ClassId;
             var result2 = dBContext.lops.Where(a=>result.Contains(a.ClassId));
             return await result2.ToListAsync();
         }

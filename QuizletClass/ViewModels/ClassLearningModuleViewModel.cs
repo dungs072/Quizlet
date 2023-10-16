@@ -12,7 +12,7 @@ namespace QuizletClass.ViewModels
 
         public void Copy(CHITIETHOCPHAN cthp,HOCPHAN hOCPHAN,int numberTerms)
         {
-            LearningModuleId = cthp.LearningModuleId;
+            LearningModuleId = cthp.hocphan.LearningModuleId;
             LearningModuleName = hOCPHAN.LearningModuleName;
             Describe = hOCPHAN.Describe;
             AddedDate = cthp.CreatedDate;

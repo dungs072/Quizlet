@@ -16,7 +16,7 @@ namespace QuizletClass.ViewModels
             LearningModuleId = hOCPHAN.LearningModuleId;
             LearningModuleName = hOCPHAN.LearningModuleName;
             Describe = hOCPHAN.Describe;
-            TitleId = hOCPHAN.TitleId;
+            TitleId = hOCPHAN.chude.TitleId;
         }
     }
 }

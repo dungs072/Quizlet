@@ -133,7 +133,7 @@ namespace QuizletAchivement.Controllers
                     maxCount = count;
                 }
             }
-            statistics.LongestSquence = maxCount;
+            statistics.LongestSquence = maxCount+1;
         }
 
         [HttpGet("GetSequenceCalender/{userId}")]
@@ -146,22 +146,21 @@ namespace QuizletAchivement.Controllers
         }
         [HttpPost("MarkAttendance")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> MarkAttendance(int userId)
+        public async Task<ActionResult> MarkAttendance(MarkAttendance mark)
         {
-            if (IsMarked(userId))
+            if (IsMarked(mark.UserId))
             {
                 return NoContent();
             }
             DateTime currentDate = DateTime.Now;
             CHITIETCHUOI chitietchuoi = new CHITIETCHUOI();
-            chitietchuoi.nguoidung = await dBContext.nguoidungs.FindAsync(userId);
+            chitietchuoi.nguoidung = await dBContext.nguoidungs.FindAsync(mark.UserId);
             chitietchuoi.LearningDay = currentDate;
             chitietchuoi.SequenceId = 0;
             await dBContext.chitietchuois.AddAsync(chitietchuoi);
             await dBContext.SaveChangesAsync();
             return Ok();
         }
-        [HttpGet("MarkAttendance/{userId}")]
         private bool IsMarked(int userId)
         {
             DateTime currentDate = DateTime.Now;

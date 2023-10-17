@@ -21,6 +21,8 @@
     const currentDate = new Date();
     let currentYear = currentDate.getFullYear();
     let currentMonth = currentDate.getMonth();
+    let currentMonthh = currentDate.getMonth();
+    let currentYearr = currentDate.getFullYear();
 
     const prevMonthButton = document.getElementById('prevMonth');
     const nextMonthButton = document.getElementById('nextMonth');
@@ -37,6 +39,9 @@
     }
 
     function showNextMonth() {
+        if (currentMonth == currentMonthh && currentYear == currentYearr) { 
+            return;
+        }
         currentMonth++;
         if (currentMonth > 11) {
             currentMonth = 0;
@@ -74,7 +79,7 @@
     function createDayCell(day, index) {
         const cell = document.createElement('div');
         cell.classList.add('day');
-        cell.textContent = day;
+        cell.textContent = day-1;
 
         const date = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
 

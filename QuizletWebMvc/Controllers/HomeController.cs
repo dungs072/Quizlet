@@ -28,7 +28,9 @@ namespace QuizletWebMvc.Controllers
                
                 userAchivement.LevelTerms = levelTerms;
             }
-            bool canMark = await achivement.MarkAttendance(userId);
+            MarkAttendance mark = new MarkAttendance();
+            mark.UserId = userId;
+            bool canMark = await achivement.MarkAttendance(mark);
             if (canMark)
             {
                 TempData["Success"] = "Hello my friend. Your attendance today is marked!!";

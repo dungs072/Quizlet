@@ -23,9 +23,9 @@ namespace QuizletWebMvc.Services.Achivement
         {
             return await client.GetFromJsonAsync<List<string>>(API.API.SequenceCalender + $"/{userId}");
         }
-        public async Task<bool> MarkAttendance(int userId)
+        public async Task<bool> MarkAttendance(MarkAttendance mark)
         {
-            HttpResponseMessage response = await client.PostAsJsonAsync<int>(API.API.MarkAttendance, userId);
+            HttpResponseMessage response = await client.PostAsJsonAsync<MarkAttendance>(API.API.MarkAttendance, mark);
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return false;

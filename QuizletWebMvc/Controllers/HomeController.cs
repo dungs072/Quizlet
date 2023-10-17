@@ -54,6 +54,12 @@ namespace QuizletWebMvc.Controllers
                 userAchivement.SequenceDates = sequenceDates;
                 return PartialView("PartialView2",userAchivement);
             }
+            if(pageNumber==3)
+            {
+                List<Badge> badges = await achivement.GetBadges(userId);
+                userAchivement.badges = badges;
+                return PartialView("PartialView3", userAchivement);
+            }
             return Json(false);
             
         }

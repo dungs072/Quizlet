@@ -8,5 +8,6 @@ namespace QuizletWebMvc.Services.Achivement
         Task<AchieveStatistics> GetAchieveStatistics(int UserId);
         Task<List<string>> GetSequenceDates(int userId);
         Task<bool> MarkAttendance(MarkAttendance mark);
+        Task<List<Badge>> GetBadges(int UserId);
     }
 }

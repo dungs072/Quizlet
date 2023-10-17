@@ -36,5 +36,10 @@ namespace QuizletWebMvc.Services.Achivement
             }
 
         }
+        public async Task<List<Badge>> GetBadges(int UserId)
+        {
+            return await client.GetFromJsonAsync<List<Badge>>(API.API.Badges + $"/{UserId}");
+        }
+
     }
 }

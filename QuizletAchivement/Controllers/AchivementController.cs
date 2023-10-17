@@ -167,6 +167,32 @@ namespace QuizletAchivement.Controllers
             var value = dBContext.chitietchuois.FirstOrDefault(a=>a.nguoidung.UserId==userId && a.LearningDay.Date == currentDate.Date);
             return value != null;
         }
+
+        [HttpGet("GetBadges/{userId}")]
+        public async Task<List<Badge>> GetBadges(int userId)
+        {
+            List<Badge> badgeList = new List<Badge>();
+            var badges = await dBContext.thanhtuus.ToListAsync();
+            foreach(var b in badges)
+            {
+                var badge = new Badge();
+                badge.NameBadge = b.AchivementName;
+                badge.IsAchieved = IsAchieve(b.AchivementId, userId);
+                badgeList.Add(badge);
+            }
+            return badgeList;
+        }
+        //[HttpGet("GetBadges/{userId}")]
+        public async Task<int> GetLength()
+        {
+            var badges = await dBContext.thanhtuus.ToListAsync();
+            return badges.Count;
+        }
+        private bool IsAchieve(int achievementId,int userId)
+        {
+            var check = dBContext.chitietthanhtuus.FirstOrDefault(a => a.nguoidung.UserId == userId && a.thanhtuu.AchivementId == achievementId);
+            return check != null;
+        }
         #endregion
     }
 }

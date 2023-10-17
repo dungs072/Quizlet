@@ -11,12 +11,13 @@ namespace QuizletAchivement.Models
         public int AchivementDetailId { get; set; }
         [ForeignKey("MA_USER")]
         public virtual NGUOIDUNG nguoidung { get; set; }
-        //public NGUOIDUNG nguoiDung { get; set; }
         [ForeignKey("MA_THANHTUU")]
-        public string AchivementId { get; set; }
-        //public THANHTUU thanhTUU { get; set; }
+        public virtual THANHTUU thanhtuu { get; set; }
+        
         [Column("NGAYDAT")]
         public DateTime AchieveDate { get; set; }
+
+        
 
     }
 }

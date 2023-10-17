@@ -1,4 +1,6 @@
-﻿namespace QuizletClass.ViewModels
+﻿using QuizletClass.Models;
+
+namespace QuizletClass.ViewModels
 {
     public class RegisterClassDetail
     {
@@ -8,6 +10,13 @@
         public DateTime RegisterDate { get; set; }
         public bool IsAccepted { get; set; }
 
-        
+        public void Copy(CHITIETDANGKILOP ctdkl)
+        {
+            RegisterDetailClassId = ctdkl.RegisterDetailClassId;
+            UserId = ctdkl.nguoidung.UserId;
+            ClassId = ctdkl.lop.ClassId;
+            RegisterDate = ctdkl.RegisterDate;
+            IsAccepted = ctdkl.IsAccepted;
+        }
     }
 }

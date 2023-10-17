@@ -10,6 +10,10 @@ namespace QuizletAchivement.DBContexts
         {
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+        }
         public DbSet<CHITIETCHUOI> chitietchuois { get; set; }
         public DbSet<CHITIETTHANHTUU> chitietthanhtuus { get; set; }
         public DbSet<NGUOIDUNG> nguoidungs { get; set; }
@@ -18,6 +22,6 @@ namespace QuizletAchivement.DBContexts
         public DbSet<THETHUATNGU> thethuatngus { get; set; }
         public DbSet<CHUDE> chudes { get; set; }
         public DbSet<HOCPHAN> hocphans { get; set; }
-
+        public DbSet<LOP> lops { get; set; }
     }
 }

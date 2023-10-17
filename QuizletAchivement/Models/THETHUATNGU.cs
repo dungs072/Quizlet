@@ -16,10 +16,10 @@ namespace QuizletAchivement.Models
         [Column("HINHANH")]
         public string? Image { get; set; }
         [ForeignKey("MA_HOCPHAN")]
-        public HOCPHAN hocphan { get; set; } = new HOCPHAN();
+        public virtual HOCPHAN hocphan { get; set; }
 
         [ForeignKey("MA_LEVEL")]
-        public LEVELGHINHO levelghinho { get; set; } = new LEVELGHINHO();
+        public virtual LEVELGHINHO levelghinho { get; set; }
 
 
     }

@@ -26,7 +26,7 @@ namespace QuizletClass.Controllers
             {
                 ClassViewModel model = new ClassViewModel();
                 model.Copy(lop);
-                model.NumberParticipants = lop.chitietdangkilop.Count; //(await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
+                model.NumberParticipants = (lop.chitietdangkilop.Where(a=>a.IsAccepted)).Count(); //(await GetCHITIETDANGKILOPS(lop.ClassId)).Count;
                 model.NumberLearningModules = lop.chitiethocphan.Count; //(await GetCHITIETHOCPHANS(lop.ClassId)).Count;
                 classes.Add(model);
             }
@@ -50,14 +50,20 @@ namespace QuizletClass.Controllers
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateLOP(LOP lop)
+        public async Task<ActionResult> CreateLOP(ClassViewModel classView)
         {
-            if(HasDuplicateClassName(lop.NGUOIDUNG.UserId,lop.ClassName))
+
+            if(HasDuplicateClassName(classView.UserId,classView.ClassName))
             {
                 return BadRequest();
             }
+            LOP lop = new LOP();
+            NGUOIDUNG nguoidung = await dBContext.nguoidungs.FindAsync(classView.UserId);
+            lop.NGUOIDUNG = nguoidung;
             lop.CreatedDate = DateTime.Now;
-            lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.NGUOIDUNG.UserId);
+            lop.ClassName = classView.ClassName;
+            lop.Describe = classView.Describe;
+            lop.ClassId = classView.ClassId;  
             await dBContext.lops.AddAsync(lop);
             await dBContext.SaveChangesAsync();
             return Ok();
@@ -260,18 +266,22 @@ namespace QuizletClass.Controllers
         }
         [HttpPut("DetailPendingParticipant")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateCHITIETDANGKI(CHITIETDANGKILOP chitietdangkilop)
+        public async Task<ActionResult> UpdateCHITIETDANGKI(RegisterClassDetail registerClassDetail)
         {
+            CHITIETDANGKILOP chitietdangkilop = await dBContext.chitietdangkilops.FindAsync(registerClassDetail.RegisterDetailClassId);
+            chitietdangkilop.IsAccepted = registerClassDetail.IsAccepted;
             dBContext.chitietdangkilops.Update(chitietdangkilop);
             await dBContext.SaveChangesAsync();
             return Ok();
         }
         [HttpGet("DetailPendingParticipant/{classId}/{userId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<CHITIETDANGKILOP> GetCHITIETDANGKILOP(int classId, int userId)
+        public async Task<RegisterClassDetail> GetCHITIETDANGKILOP(int classId, int userId)
         {
             var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId);
-            return chitietdangki;
+            RegisterClassDetail register = new RegisterClassDetail();
+            register.Copy(chitietdangki);
+            return register;
         }
         #endregion
 
@@ -279,6 +289,7 @@ namespace QuizletClass.Controllers
         [HttpGet("GlobalSearch/{userId}/{search}")]
         public async Task<IEnumerable<RegisterClass>> GetRegisterClass(int userId,string search)
         {
+            // need to improve here
             var models = new List<RegisterClass>();
             List<HOCPHAN> hocphans = await GetHOCPHANOfUser(userId);
             
@@ -310,13 +321,15 @@ namespace QuizletClass.Controllers
         }
         private async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
         {
-            var result = from a in (from c in dBContext.chudes where c.nguoidung.UserId !=userId select c)
-                         join b in dBContext.hocphans on a.TitleId equals b.chude.TitleId
-                         select b;
+            var result = from a in dBContext.hocphans where a.chude.nguoidung.UserId != userId select a;
+            //var result = from a in (from c in dBContext.chudes where c.nguoidung.UserId !=userId select c)
+            //             join b in dBContext.hocphans on a.TitleId equals b.chude.TitleId
+            //             select b;
             return result.ToList();
         }
         private async Task<List<LOP>> GetLOPOfModule(int learningModuleId,int userId)
         {
+            //need to improve here
             var result = from a in (from c in dBContext.chitiethocphans where c.hocphan.LearningModuleId == learningModuleId select c)
                          join b in dBContext.lops on a.lop.ClassId equals b.ClassId
                          select b;

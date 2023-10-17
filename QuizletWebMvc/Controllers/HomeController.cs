@@ -4,6 +4,7 @@ using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.User;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -18,15 +19,41 @@ namespace QuizletWebMvc.Controllers
             this.achivement = achivement;
         }
 
-        public async  Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             UserAchivement userAchivement = new UserAchivement();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 List<LevelTerms> levelTerms = await achivement.GetLevelTerm(userId);
+               
                 userAchivement.LevelTerms = levelTerms;
             }
+            bool canMark = await achivement.MarkAttendance(userId);
+            if (canMark)
+            {
+                TempData["Success"] = "Hello my friend. Your attendance today is marked!!";
+            }
             return View(userAchivement);
+        }
+        [HttpGet]
+        public async Task<IActionResult> LoadMoreAchivement(int pageNumber)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
+            UserAchivement userAchivement = new UserAchivement();
+            if(pageNumber==1) 
+            {
+                AchieveStatistics achieveStatistics = await achivement.GetAchieveStatistics(userId);
+                userAchivement.AchieveStatistics = achieveStatistics;
+                return PartialView("PartialView1", userAchivement);
+            }
+            if(pageNumber==2)
+            {
+                List<string> sequenceDates = await achivement.GetSequenceDates(userId);
+                userAchivement.SequenceDates = sequenceDates;
+                return PartialView("PartialView2",userAchivement);
+            }
+            return Json(false);
+            
         }
 
         public IActionResult Privacy()

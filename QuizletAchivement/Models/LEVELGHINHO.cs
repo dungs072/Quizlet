@@ -16,6 +16,6 @@ namespace QuizletAchivement.Models
         [Column("DIEUKIEN")]
         public int Condition { get; set; }
 
-        public ICollection<THETHUATNGU> thethuatngus { get; set; } = new List<THETHUATNGU>();
+        public virtual ICollection<THETHUATNGU> thethuatngus { get; set; }
     }
 }

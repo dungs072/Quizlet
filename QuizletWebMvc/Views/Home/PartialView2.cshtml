@@ -1,0 +1,102 @@
+﻿@using QuizletWebMvc.ViewModels.Achivement;
+@model UserAchivement;
+<div class="row ">
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Sequence attendance</h4>
+                <div>
+                    <button id="prevMonth" class="btn btn-outline-secondary">Previous Month</button>
+                    <button id="nextMonth" class="btn btn-outline-secondary">Next Month</button>
+                </div>
+                <div class="month-year" id="monthYear"></div>
+                <div class="calendar" id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Array to store marked dates in the format 'YYYY-MM-DD'
+    const markedDates = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SequenceDates));
+    const currentDate = new Date();
+    let currentYear = currentDate.getFullYear();
+    let currentMonth = currentDate.getMonth();
+
+    const prevMonthButton = document.getElementById('prevMonth');
+    const nextMonthButton = document.getElementById('nextMonth');
+    prevMonthButton.addEventListener('click', showPreviousMonth);
+    nextMonthButton.addEventListener('click', showNextMonth);
+
+    function showPreviousMonth() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    function showNextMonth() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    // Function to generate the calendar
+    function generateCalendar(year, month) {
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay();
+
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+
+        // Display the current month and year
+        const monthYear = document.getElementById('monthYear');
+        const options = { year: 'numeric', month: 'long' };
+        monthYear.textContent = new Date(year, month).toLocaleDateString('en-US', options);
+
+        for (let i = 0; i < firstDay; i++) {
+            calendar.appendChild(createDayCell('', i));
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day).toISOString().split('T')[0];
+            const cell = createDayCell(day, firstDay + day - 1);
+            // cell.addEventListener('click', () => toggleMarkedDate(date));
+            calendar.appendChild(cell);
+        }
+    }
+
+    // Function to create a day cell
+    function createDayCell(day, index) {
+        const cell = document.createElement('div');
+        cell.classList.add('day');
+        cell.textContent = day;
+
+        const date = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+
+        if (markedDates.includes(date)) {
+            const marker = document.createElement('div');
+            marker.classList.add('event-marker');
+            cell.appendChild(marker);
+        }
+
+        return cell;
+    }
+
+    // Function to toggle marking/unmarking a date
+    function toggleMarkedDate(date) {
+        if (markedDates.includes(date)) {
+            markedDates.splice(markedDates.indexOf(date), 1);
+        } else {
+            markedDates.push(date);
+        }
+        generateCalendar(currentYear, currentMonth); // Refresh the calendar display
+    }
+
+    // Initialize the calendar for the current year and month
+    generateCalendar(currentYear, currentMonth);
+</script>

@@ -15,6 +15,6 @@ namespace QuizletAchivement.Models
         public int Condition { get; set; }
         [Column("HINHANH")]
         public string Image { get; set; }
-        public ICollection<CHITIETTHANHTUU> chitietthanhtuu { get; set; } = new List<CHITIETTHANHTUU>();
+        public virtual ICollection<CHITIETTHANHTUU> chitietthanhtuu { get; set; } 
     }
 }

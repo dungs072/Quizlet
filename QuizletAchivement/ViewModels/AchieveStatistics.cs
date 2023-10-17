@@ -1,0 +1,14 @@
+﻿namespace QuizletAchivement.ViewModels
+{
+    public class AchieveStatistics
+    {
+        public int NumberTitle { get; set; }
+        public int NumberModule { get; set; }
+        public int NumberTerms { get; set; }
+
+        public int LongestSquence { get; set; }
+
+        public int TotalClass { get; set; }
+
+    }
+}

@@ -14,11 +14,10 @@ namespace QuizletAchivement.Models
         [Column("MOTA")]
         public string? Describe { get; set; }
         [ForeignKey("MA_USER")]
-        //public int UserId { get; set; }
-        public NGUOIDUNG nguoiDUNG { get; set; } = new NGUOIDUNG();
+        public virtual NGUOIDUNG nguoidung { get; set; }
 
 
-        public ICollection<HOCPHAN> hocphans { get; set; } = new List<HOCPHAN>();
+        public virtual ICollection<HOCPHAN> hocphans { get; set; }
         
     }
 }

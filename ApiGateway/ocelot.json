@@ -40,6 +40,18 @@
       "DownstreamPathTemplate": "/api/Achivement"
     },
     {
+      "UpstreamPathTemplate": "/api/Achivement/MarkAttendance",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletachivement",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Achivement/MarkAttendance"
+    },
+    {
       "UpstreamPathTemplate": "/api/Achivement/{AchivementId}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
       "DownstreamScheme": "http",

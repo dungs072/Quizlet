@@ -15,10 +15,9 @@ namespace QuizletAchivement.Models
         [Column("MOTA")]
         public string? Describe { get; set; }
         [ForeignKey("MA_CHUDE")]
-        //public int TitleId { get; set; }
-        public CHUDE chuDe { get; set; } = new CHUDE();
+        public virtual CHUDE chude { get; set; }
    
-        public ICollection<THETHUATNGU> thethuatngus { get; set; } = new List<THETHUATNGU>();
+        public virtual ICollection<THETHUATNGU> thethuatngus { get; set; } = new List<THETHUATNGU>();
 
     }
 }

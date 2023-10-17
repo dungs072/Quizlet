@@ -8,5 +8,8 @@
     public class UserAchivement
     {
         public List<LevelTerms> LevelTerms { get; set; }
+        public List<string> SequenceDates { get; set; }
+        public AchieveStatistics AchieveStatistics { get; set; }
+
     }
 }

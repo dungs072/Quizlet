@@ -4,9 +4,9 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "quizletwebapi": "StartDebugging",
+        "quizletwebapi": "DoNotStart",
         "apigateway": "StartDebugging",
-        "quizletwebmvc": "StartDebugging",
+        "quizletwebmvc": "DoNotStart",
         "quizletachivement": "StartDebugging",
         "quizletclass": "StartDebugging",
         "quizletterminology": "StartDebugging"

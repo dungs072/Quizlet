@@ -7,7 +7,7 @@ namespace QuizletWebMvc.Services.Terminology
     {
         Task<List<TitleViewModel>> GetTitlesBaseOnUserId(int UserId);
         Task<List<TitleViewModel>> GetTitles();
-        Task CreateTitle(TitleViewModel titleViewModel);
+        Task<bool> CreateTitle(TitleViewModel titleViewModel);
         Task<bool> HasDuplicateTitlePerUser(int userId, string titleName);
         Task<bool> HasDuplicateTitlePerUserForUpdate(int titleId, int userId, string titleName);
         Task<TitleViewModel> GetTitleViewModel(int titleId);

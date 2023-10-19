@@ -42,15 +42,15 @@ namespace QuizletWebMvc.Controllers
             if (!ModelState.IsValid) return View(titleViewModel);
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
-                var isDuplicate = await terminologyService.HasDuplicateTitlePerUser(userId, titleViewModel.TitleName);
+                titleViewModel.UserId = userId;
+                var isDuplicate = await terminologyService.CreateTitle(titleViewModel);
                 if (isDuplicate)
                 {
                     TempData["Error"] = "Duplicate title name. Please fix it!!";
                     return View(titleViewModel);
                 }
-                titleViewModel.UserId = userId;
             }
-            await terminologyService.CreateTitle(titleViewModel);
+            
             TempData["Success"] = "Create title sucessfully";
             return RedirectToAction("TitleModule");
         }

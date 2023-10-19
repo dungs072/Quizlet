@@ -24,9 +24,17 @@ namespace QuizletWebMvc.Services.Terminology
         {
             return await client.GetFromJsonAsync<List<TitleViewModel>>(API.API.TitleUrlUser + $"{UserId}");
         }
-        public async Task CreateTitle(TitleViewModel titleViewModel)
+        public async Task<bool> CreateTitle(TitleViewModel titleViewModel)
         {
-            await client.PostAsJsonAsync<TitleViewModel>(API.API.TitleUrl,titleViewModel);
+            HttpResponseMessage response = await client.PostAsJsonAsync<TitleViewModel>(API.API.TitleUrl, titleViewModel);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         public async Task<bool> HasDuplicateTitlePerUser(int userId, string titleName)
         {

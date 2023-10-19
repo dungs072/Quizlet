@@ -51,11 +51,21 @@ namespace QuizletTerminology.Controllers
             return dbContext.chudes;
         }
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateCHUDE(CHUDE chude)
         {
+            if(HasDuplicateTitleNamePerUserr(chude.UserId,chude.TitleName))
+            {
+                return BadRequest();
+            }
             await dbContext.chudes.AddAsync(chude);
             await dbContext.SaveChangesAsync();
             return Ok();
+        }
+        public bool HasDuplicateTitleNamePerUserr(int userId, string titleName)
+        {
+            var chude = dbContext.chudes.FirstOrDefault(u => (u.UserId == userId && u.TitleName == titleName));
+            return chude != null;
         }
         [HttpDelete("{TitleId}")]
         public async Task<ActionResult> DeleteCHUDE(int TitleId)

@@ -12,7 +12,7 @@ namespace QuizletWebMvc.Services.Terminology
         Task<bool> HasDuplicateTitlePerUserForUpdate(int titleId, int userId, string titleName);
         Task<TitleViewModel> GetTitleViewModel(int titleId);
         Task DeleteTitle(int TitleId);
-        Task UpdateTitle(TitleViewModel titleViewModel);
+        Task<bool> UpdateTitle(TitleViewModel titleViewModel);
 
         Task<List<LearningModuleViewModel2>> GetLearningModuleByTitleId(int TitleId);
         Task<bool> CreateLearningModule(LearningModuleViewModel2 learningModuleViewModel);

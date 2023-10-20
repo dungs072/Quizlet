@@ -65,9 +65,18 @@ namespace QuizletWebMvc.Services.Terminology
             var title = await client.GetFromJsonAsync<TitleViewModel>(API.API.TitleUrlFind + $"{titleId}");
             return title;
         }
-        public async Task UpdateTitle(TitleViewModel titleViewModel)
+        public async Task<bool> UpdateTitle(TitleViewModel titleViewModel)
         {
-            await client.PutAsJsonAsync<TitleViewModel>(API.API.TitleUrl, titleViewModel);
+            HttpResponseMessage response = await client.PutAsJsonAsync<TitleViewModel>(API.API.TitleUrl, titleViewModel);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+           
         }
     
 

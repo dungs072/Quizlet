@@ -43,8 +43,8 @@ namespace QuizletWebMvc.Controllers
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 titleViewModel.UserId = userId;
-                var isDuplicate = await terminologyService.CreateTitle(titleViewModel);
-                if (isDuplicate)
+                var canCreate = await terminologyService.CreateTitle(titleViewModel);
+                if (!canCreate)
                 {
                     TempData["Error"] = "Duplicate title name. Please fix it!!";
                     return View(titleViewModel);
@@ -67,13 +67,13 @@ namespace QuizletWebMvc.Controllers
         public async Task<IActionResult> UpdateTitleModule(TitleViewModel titleViewModel)
         {
             if (!ModelState.IsValid) return View(titleViewModel);
-            var isDuplicate = await terminologyService.HasDuplicateTitlePerUserForUpdate(titleViewModel.TitleId, titleViewModel.UserId, titleViewModel.TitleName);
-            if (isDuplicate)
+            var canUpdate = await terminologyService.UpdateTitle(titleViewModel);
+            if (!canUpdate)
             {
                 TempData["Error"] = "Duplicate title name. Please fix it!!";
                 return EditTitleModule2(titleViewModel);
             }
-            await terminologyService.UpdateTitle(titleViewModel);
+            
             TempData["Success"] = "Update title sucessfully";
             return RedirectToAction("TitleModule");
         }

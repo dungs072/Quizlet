@@ -79,9 +79,14 @@
     function createDayCell(day, index) {
         const cell = document.createElement('div');
         cell.classList.add('day');
-        cell.textContent = day-1;
-
-        const date = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+        if (day - 1 < 0) {
+            cell.textContent = '';
+        }
+        else { 
+            cell.textContent = day;
+        }
+        
+        const date = new Date(currentYear, currentMonth, day+1).toISOString().split('T')[0];
 
         if (markedDates.includes(date)) {
             const marker = document.createElement('div');

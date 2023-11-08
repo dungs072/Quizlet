@@ -82,7 +82,7 @@ namespace QuizletClass.Controllers
                 return BadRequest();
             }
             lop.NGUOIDUNG = await dBContext.nguoidungs.FindAsync(lop.NGUOIDUNG.UserId);
-            var prevClass = await dBContext.lops.FindAsync(lop.NGUOIDUNG.UserId);
+            var prevClass = await dBContext.lops.FindAsync(lop.ClassId);
             lop.CreatedDate = prevClass.CreatedDate;
             dBContext.lops.Update(lop);
             await dBContext.SaveChangesAsync();

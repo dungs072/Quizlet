@@ -180,6 +180,16 @@ namespace QuizletWebMvc.Services.Terminology
         {
             return await client.GetFromJsonAsync<List<ObjectivePack>>(API.API.TermUrlObjective + $"{learningModuleId}");
         }
+
+        public async Task<bool> UpdateTermTest(ResultQuestion resultQuestion)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<ResultQuestion>(API.API.TermTest, resultQuestion);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
         #endregion
     }
 }

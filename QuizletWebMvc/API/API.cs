@@ -16,6 +16,7 @@
         public static string TermUrl { get { return $"/api/Term"; } }
         public static string TermUrlFind { get { return TermUrl + "/find/"; } }
         public static string TermUrlObjective { get { return TermUrl + "/objective/"; } }
+        public static string TermTest { get { return TermUrl + "/test"; } }
 
         public static string ClassUrl { get { return $"/api/Class"; } }
         public static string ClassUrlFind { get { return ClassUrl + "/find/"; } }

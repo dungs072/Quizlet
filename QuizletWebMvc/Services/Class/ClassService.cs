@@ -58,7 +58,6 @@ namespace QuizletWebMvc.Services.Class
         public async Task<List<TitleChoiceViewModel>> GetTitleDatas(int userId)
         {
             return await client.GetFromJsonAsync<List<TitleChoiceViewModel>>(API.API.ClassTitleDetailOwn + $"{userId}");
-           
         }
         public async Task<List<LearningModuleViewModel>> GetModuleDatas(int classId,int titleId)
         {

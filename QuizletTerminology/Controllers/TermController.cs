@@ -100,6 +100,7 @@ namespace QuizletTerminology.Controllers
                 ObjectivePack objectivePack = new ObjectivePack();
                 objectivePacks.Add(objectivePack);
                 objectivePack.Question = thuatngus[i].TermName;
+                objectivePack.TermId = thuatngus[i].TermId;
                 int randomNumber = -1;
                 List<int> exclusions = new List<int>();
                 if (thuatngus.Count>4)
@@ -190,6 +191,32 @@ namespace QuizletTerminology.Controllers
             }
             Shuffle<ObjectivePack>(objectivePacks);
             return objectivePacks;
+        }
+
+        [HttpPut("test")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> UpdateTHUATNGUTest(ResultQuestion resultQuestion)
+        {
+            var thuatngu = await dbContext.thethuatngus.FindAsync(resultQuestion.TermId);
+            if(thuatngu == null) { return BadRequest(); }
+            if(resultQuestion.IsRightAnswer)
+            {
+                thuatngu.Accumulate++;
+            }
+            else
+            {
+                thuatngu.Accumulate = Math.Max(thuatngu.Accumulate - 1, 0);
+            }
+            foreach(var level in dbContext.levelghinhos)
+            {
+                if(thuatngu.Accumulate>=level.Condition)
+                {
+                    thuatngu.LevelId = level.LevelId;
+                }
+            }
+            dbContext.thethuatngus.Update(thuatngu);
+            await dbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

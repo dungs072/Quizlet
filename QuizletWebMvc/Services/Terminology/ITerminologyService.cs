@@ -27,5 +27,7 @@ namespace QuizletWebMvc.Services.Terminology
         Task<TermViewModel> GetTermViewModel(int termId);
         Task<List<ObjectivePack>> GetObjectivePacks(int learningModuleId);
 
+        Task<bool> UpdateTermTest(ResultQuestion resultQuestion);
+
     }
 }

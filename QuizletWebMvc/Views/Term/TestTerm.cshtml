@@ -1,0 +1,448 @@
+﻿@{
+    ViewData["Title"] = "Practice Term";
+    Layout = null;
+    int count = 1;
+}
+@using QuizletWebMvc.ViewModels.Terminology;
+@model ListObjectivePack
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <partial name="HeaderHome" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #000000;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .top-left-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
+        }
+
+        .option {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 20px;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .option label {
+            display: flex;
+            align-items: center;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+
+        .top-right-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .scrollable-container {
+            width: 100%; /* Set the width of the container as needed */
+            height: 300px; /* Set the desired height to trigger the scrollbar */
+            overflow-y: scroll; /* Add a vertical scrollbar when content overflows vertically */
+    </style>
+    <style>
+        .explanation {
+            float: right;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var currentQuestion = 1;
+        var numberRight = 0;
+        var numberWrong = 0;
+        var itemsArray = @Html.Raw(Json.Serialize(Model.ObjectivePacks));
+        function sendUserAnswer(termId, isRightAnswer) {
+            itemsArray[currentQuestion - 1].isChooseRight = isRightAnswer;
+            var dataToSend = {
+                termId: termId,
+                isRightAnswer: isRightAnswer
+            };
+
+            $.ajax({
+                url: '@Url.Action("PassDataTest", "Term")',
+                type: 'POST', // Use POST or GET as per your requirements.
+                data: dataToSend,
+                dataType: 'json', // You can specify the data type you expect in the response.
+                success: function (response) {
+                    //alert("success");
+                },
+                error: function () {
+                    //alert("fail");  
+                }
+            });
+        }
+        function checkAnswer(questionNumber) {
+            var selectedAnswer = document.querySelector('input[name="answer' + questionNumber + '"]:checked');
+            if (selectedAnswer) {
+                var userAnswer = selectedAnswer.value;
+                var correctAnswer = itemsArray[currentQuestion - 1].answer;
+                if (userAnswer === correctAnswer) {
+                    document.getElementById("right_result").innerHTML = "Question " + questionNumber + ": Right choice!";
+                    sendUserAnswer(itemsArray[currentQuestion - 1].termId,true);
+                    document.getElementById("right_result").style.display = "block";
+                    numberRight++;
+                } else {
+                    document.getElementById("wrong_result").innerHTML = "Question " + questionNumber + ": Wrong!! " + itemsArray[currentQuestion - 1].answer;
+                    sendUserAnswer(itemsArray[currentQuestion - 1].termId, false);
+                    document.getElementById("wrong_result").style.display = "block";
+                    numberWrong++;
+                }
+                document.querySelector('.check').style.display = 'none';
+                document.getElementById("next-button").style.display = "block";
+               
+
+                if (currentQuestion === itemsArray.length) {
+                    createChart();
+                    document.getElementById("resultChartValue").innerHTML = numberRight + "/" + (numberRight + numberWrong);
+                    addListWrongAnswer();
+                    var myModal = new bootstrap.Modal(document.getElementById('resultModal'));
+                    myModal.show();
+                }
+                
+            } else {
+                alert("Please choose your answer.");
+            }
+        }
+        
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                document.getElementById("question" + currentQuestion).classList.add("hidden");
+                currentQuestion--;
+                document.getElementById("question" + currentQuestion).classList.remove("hidden");
+                document.getElementById("right_result").style.display = "none";
+                document.getElementById("wrong_result").style.display = "none";
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < itemsArray.length) {
+                document.getElementById("question" + currentQuestion).classList.add("hidden");
+                currentQuestion++;
+                document.getElementById("question" + currentQuestion).classList.remove("hidden");
+                document.getElementById("right_result").style.display = "none";
+                document.getElementById("wrong_result").style.display = "none";
+                document.querySelector('.check').style.display = 'block';
+                document.getElementById("next-button").style.display = "none";
+            }
+            
+        }
+        function createChart(){
+            // JavaScript code to create the doughnut chart
+            var ctx = document.getElementById('doughnutChart').getContext('2d');
+
+            var bookData = {
+                labels: ['True', 'False'],
+                datasets: [{
+                    data: [numberRight, numberWrong],
+                    backgroundColor: ['#337BFF', '#808080'],
+                }]
+            };
+            var options = {
+                responsive: true
+            };
+            var doughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: bookData,
+                options: {
+                    responsive: true,
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                var dataset = data.datasets[tooltipItem.datasetIndex];
+                                var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
+                                    return previousValue + currentValue;
+                                });
+                                var currentValue = dataset.data[tooltipItem.index];
+                                var percentage = Math.round((currentValue / total) * 100);
+                                return percentage + "%";
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function createItem(term,expla) {
+            const itemHTML = `
+                       <div class="preview-item border-bottom">
+                                    <div class="preview-item-content d-sm-flex flex-grow">
+                                         <div class = "col-6">
+                                                      <h6 class="preview-subject">${term}</h6>
+                                         </div>
+                                         <div class="mr-auto text-sm-left pt-2 pt-sm-0 explanation">
+                                              <p class="text-muted explanation">${expla}</p>
+                                         </div>
+                                    </div>
+                             </div>
+              `;
+
+            const item = document.createElement('div');
+            item.innerHTML = itemHTML;
+            return item;
+        }
+        function addListWrongAnswer() { 
+            const previewList = document.querySelector('.preview-list-t');
+            for (let i = 0; i < itemsArray.length; i++) {
+                if (!itemsArray[i].isChooseRight) {
+                    const newItem = createItem(itemsArray[i].question, itemsArray[i].getAnswer); // Change the title dynamically
+                    previewList.appendChild(newItem);
+                }
+                
+            }
+        }
+        function backToTerms(){
+            window.location.href = "/Term/Term?" + @Model.LearningModuleId;
+        }
+    </script>
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Test</h4>
+                                    <p class="card-description result" id="wrong_result" style="color: red;"></p>
+                                    <p class="card-description result" id="right_result" style="color: green;"></p>
+                                    @foreach (var item in Model.ObjectivePacks)
+                                    {
+                                        if (count == 1)
+                                        {
+                                            <div class="container" id="question@(count)">
+                                                <div class="question">
+                                                    @item.Question
+                                                </div>
+                                                <div class="options">
+                                                    <div class="option">
+                                                        <label>
+                                                            A
+                                                            <input type="radio" name="answer1" value="A"> @item.ChoiceA
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            B
+                                                            <input type="radio" name="answer1" value="B"> @item.ChoiceB
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            C
+                                                            <input type="radio" name="answer1" value="C"> @item.ChoiceC
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            D
+                                                            <input type="radio" name="answer1" value="D"> @item.ChoiceD
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="container hidden" id="question@(count)">
+                                                <div class="question">
+                                                    @item.Question
+                                                </div>
+                                                <div class="options">
+                                                    <div class="option">
+                                                        <label>
+                                                            A
+                                                            <input type="radio" name="answer1" value="A"> @item.ChoiceA
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            B
+                                                            <input type="radio" name="answer1" value="B"> @item.ChoiceB
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            C
+                                                            <input type="radio" name="answer1" value="C"> @item.ChoiceC
+                                                        </label>
+                                                    </div>
+                                                    <div class="option">
+                                                        <label>
+                                                            D
+                                                            <input type="radio" name="answer1" value="D"> @item.ChoiceD
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        }
+                                        
+                                        count++;
+                                    }
+                                    
+                                    <div class="center-button">
+                                        <button class="check" onclick="checkAnswer(1)">Check</button>
+                                    </div>
+                                    <div id="navigation">
+                                        @* <button onclick="previousQuestion()">Previous</button> *@
+                                        <div class="top-right-button">
+                                            <button id="next-button" onclick="nextQuestion()" style="display:none">Next</button>
+                                        </div>
+                                        <a class="top-left-link btn btn-primary" href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <partial name="FooterHome" />
+    <!--Modal-->
+    <div class="modal" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Your result</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="scrollable-container">
+                        <div class="row">
+                            <div class="col-md-4 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Transaction History</h4>
+                                        <div style="position: relative;">
+                                            <canvas id="doughnutChart" width="300" height="300"></canvas>
+                                            <div id="chartText" style="position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                                <span id="resultChartValue" style="font-size: 25px; font-weight: bold;"></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row justify-content-between">
+                                            <p>Let remember them!!!</p>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="preview-list-t">                         
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Term", "Term", new{learningModuleId = Model.LearningModuleId})" class="btn btn-outline-primary">OK</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+    </script>
+</body>
+</html>
+
+
+
+
+
+

@@ -93,6 +93,22 @@ namespace QuizletWebMvc.Controllers
             listObjective.LearningModuleId = learningModuleId;
             return View(listObjective);
         }
+        public async Task<IActionResult> TestTerm(int learningModuleId)
+        {
+            ListObjectivePack listObjective = new ListObjectivePack();
+            List<ObjectivePack> objectives = await terminologyService.GetObjectivePacks(learningModuleId);
+            listObjective.ObjectivePacks = objectives;
+            listObjective.LearningModuleId = learningModuleId;
+            return View(listObjective);
+        }
+        public async Task<IActionResult> PassDataTest(int termId, bool isRightAnswer)
+        {
+            ResultQuestion question = new ResultQuestion();
+            question.TermId = termId;
+            question.IsRightAnswer = isRightAnswer;
+            var state = await terminologyService.UpdateTermTest(question);
+            return Json(new { success = state });
+        }
         public IActionResult TermParticipant(int learningModuleId)
         {
             Task<List<TermViewModel>> listTerm = terminologyService.GetTermByLearningModuleId(learningModuleId);

@@ -31,7 +31,7 @@
                                     <div class="template-demo">
                                         <a href="@Url.Action("ReturnToLearningModule", "LearningModule", new{titleId = Model.LearningModuleViewModel.TitleId})" class="btn btn-outline-primary">Back</a>
                                         <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Practice</a>
-                                        <button type="button" class="btn btn-primary btn-fw">Primary</button>
+                                        <a href="@Url.Action("TestTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Test</a>
                                     </div>
                                 </div>
                                 <div class="card-body">

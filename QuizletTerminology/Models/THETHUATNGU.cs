@@ -13,6 +13,8 @@ namespace QuizletTerminology.Models
         public string TermName { get; set; }
         [Column("GIAITHICH")]
         public string Explaination { get; set; }
+        [Column("TICHLUY")]
+        public int Accumulate { get; set; }
         [Column("HINHANH")]
         public string? Image { get; set; }
         [ForeignKey("HOCPHAN")]

@@ -4,6 +4,8 @@
     {
         public string NameBadge { get; set; }
         public bool IsAchieved { get; set; }
+
+        public string DateAchieved { get; set; } 
     }
     public class AchivementBadge
     {

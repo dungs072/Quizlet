@@ -177,7 +177,8 @@ namespace QuizletAchivement.Controllers
             {
                 var badge = new Badge();
                 badge.NameBadge = b.AchivementName;
-                badge.IsAchieved = IsAchieve(b.AchivementId, userId);
+                badge.IsAchieved = IsAchieve(b.AchivementId, userId,badge);
+                
                 badgeList.Add(badge);
             }
             return badgeList;
@@ -188,9 +189,13 @@ namespace QuizletAchivement.Controllers
             var badges = await dBContext.thanhtuus.ToListAsync();
             return badges.Count;
         }
-        private bool IsAchieve(int achievementId,int userId)
+        private bool IsAchieve(int achievementId,int userId,Badge badge)
         {
             var check = dBContext.chitietthanhtuus.FirstOrDefault(a => a.nguoidung.UserId == userId && a.thanhtuu.AchivementId == achievementId);
+            if(check!=null)
+            {
+                badge.DateAchieved = check.AchieveDate.ToString("dd/MM/yyyy");
+            }
             return check != null;
         }
         [HttpGet("UpdateBadge/{userId}/{typeBadge}")]

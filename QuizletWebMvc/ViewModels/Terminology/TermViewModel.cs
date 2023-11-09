@@ -12,7 +12,7 @@ namespace QuizletWebMvc.ViewModels.Terminology
         [Display(Name = "Term Explanation")]
         [Required(ErrorMessage = "Explanation is required")]
         public string Explaination { get; set; }
-        public string? Image { get; set; }
+        public string Image { get; set; }
         public int LearningModuleId { get; set; }
         public int LevelId { get; set; } = 1;
         public LearningModuleViewModel2 LearningModule { get; set; }

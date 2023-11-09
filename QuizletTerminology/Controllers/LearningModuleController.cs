@@ -36,6 +36,7 @@ namespace QuizletTerminology.Controllers
             {
                 return BadRequest();
             }
+
             await dbContext.hocphans.AddAsync(hocphan);
             await dbContext.SaveChangesAsync();
             return Ok();

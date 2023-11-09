@@ -11,4 +11,9 @@
         public int TotalClass { get; set; }
 
     }
+    public class AchieveBadge
+    {
+        public int UserId { get; set; }
+        public int AchivementId { get; set; }
+    }
 }

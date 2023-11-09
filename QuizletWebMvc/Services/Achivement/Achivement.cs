@@ -1,4 +1,6 @@
-﻿using QuizletWebMvc.ViewModels.Achivement;
+﻿using Firebase.Auth;
+using QuizletWebMvc.ViewModels.Achivement;
+using QuizletWebMvc.ViewModels.Class;
 using System.Net;
 
 namespace QuizletWebMvc.Services.Achivement
@@ -39,6 +41,23 @@ namespace QuizletWebMvc.Services.Achivement
         public async Task<List<Badge>> GetBadges(int UserId)
         {
             return await client.GetFromJsonAsync<List<Badge>>(API.API.Badges + $"/{UserId}");
+        }
+        public async Task<AchivementBadge> AchieveBadge(int userId, string typeBadge)
+        {
+            return await client.GetFromJsonAsync<AchivementBadge>(API.API.AchieveBadge + $"/{userId}/{typeBadge}");
+        }
+        public async Task<bool> AddUpdateAchieve(AchieveBadge detail)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<AchieveBadge>(API.API.AchieveBadge, detail);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
         }
 
     }

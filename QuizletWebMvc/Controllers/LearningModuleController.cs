@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
 
 namespace QuizletWebMvc.Controllers
@@ -7,9 +9,11 @@ namespace QuizletWebMvc.Controllers
     public class LearningModuleController : Controller
     {
         private readonly ITerminologyService terminologyService;
-        public LearningModuleController(ITerminologyService terminologyService)
+        private readonly IAchivement achivement;
+        public LearningModuleController(ITerminologyService terminologyService,IAchivement achivement)
         {
             this.terminologyService = terminologyService;
+            this.achivement = achivement;
         }
         public IActionResult LearningModule(int titleId, string titleName, string describe)
         {
@@ -37,6 +41,7 @@ namespace QuizletWebMvc.Controllers
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
             learningModuleViewModel.TitleId = titleId;
             learningModuleViewModel.TitleView = titleViewModel;
+          
             return View(learningModuleViewModel);
         }
         [HttpPost]
@@ -55,8 +60,24 @@ namespace QuizletWebMvc.Controllers
                 TempData["Error"] = "Duplicate learning module name in current title. Please fix it!!";
                 return View("CreateLearningModule", learningModuleViewModel);
             }
-            
             TempData["Success"] = "Create learning module sucessfully";
+
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var state = await achivement.AchieveBadge(userId, "modules");
+                if (state != null)
+                {
+                    AchieveBadge ac = new AchieveBadge();
+                    ac.AchievementId = state.AchivementId;
+                    ac.UserId = userId;
+                    var s = await achivement.AddUpdateAchieve(ac);
+                    if(s)
+                    {
+                        TempData["Success"] = "Successfully, You just achieved new badge. " + state.AchivementName;
+                    }
+                    
+                }
+            }
             return RedirectToAction("ReturnToLearningModule", new { titleId = learningModuleViewModel.TitleId});
         }
         public async Task<IActionResult> DeleteLearningModule(int learningModuleId,int TitleId)

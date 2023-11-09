@@ -104,7 +104,13 @@ namespace QuizletWebMvc.Controllers
         public async Task<IActionResult> HandleEditTerm(TermViewModel term, IFormFile imageFile)
         {
             ModelState.Remove("LearningModule");
-            if (!ModelState.IsValid) return View("EditTerm", term);
+            ModelState.Remove("Image");
+            ModelState.Remove("imageFile");
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Error. Please fix it!!";
+                return View("EditTerm", term);
+            }
             if (imageFile != null && imageFile.Length > 0)
             {
                 using (var stream = new MemoryStream())
@@ -140,7 +146,7 @@ namespace QuizletWebMvc.Controllers
                 TempData["Error"] = "Duplicate term name. Please fix it!!";
                 return View("EditTerm", term);
             }
-            TempData["Success"] = "Update term sucessfully"+ imageFile.ContentType;
+            TempData["Success"] = "Edit terminology successfully";
             return RedirectToAction("Term", new { learningModuleId = term.LearningModuleId });
         }
         static string ExtractFileNameFromUrl(string url)

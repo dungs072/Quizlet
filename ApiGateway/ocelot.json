@@ -52,6 +52,18 @@
       "DownstreamPathTemplate": "/api/Achivement/MarkAttendance"
     },
     {
+      "UpstreamPathTemplate": "/api/Achivement/UpdateBadge",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletachivement",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Achivement/UpdateBadge"
+    },
+    {
       "UpstreamPathTemplate": "/api/Achivement/{AchivementId}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
       "DownstreamScheme": "http",

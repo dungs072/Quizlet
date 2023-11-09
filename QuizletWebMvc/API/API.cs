@@ -38,5 +38,6 @@
         public static string SequenceCalender { get { return AchivementUrl + "/GetSequenceCalender"; } }
         public static string MarkAttendance { get { return AchivementUrl + "/MarkAttendance"; } }
         public static string Badges { get { return AchivementUrl + "/GetBadges"; } }
+        public static string AchieveBadge { get { return AchivementUrl + "/UpdateBadge"; } }
     }
 }

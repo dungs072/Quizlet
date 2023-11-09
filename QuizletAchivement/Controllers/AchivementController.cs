@@ -193,6 +193,54 @@ namespace QuizletAchivement.Controllers
             var check = dBContext.chitietthanhtuus.FirstOrDefault(a => a.nguoidung.UserId == userId && a.thanhtuu.AchivementId == achievementId);
             return check != null;
         }
+        [HttpGet("UpdateBadge/{userId}/{typeBadge}")]
+        public async Task<AchivementBadge> GetUpdateBadge(int userId, string typeBadge)
+        {
+            AchieveStatistics achiveStatistics = new AchieveStatistics();
+            await GetLibraryStatistics(achiveStatistics, userId);
+            var badges = await dBContext.thanhtuus.ToListAsync();
+            foreach (var badge in badges)
+            {
+                if(badge.AchivementName.Contains(typeBadge))
+                {
+                    if (typeBadge == "modules")
+                    {
+                        if (badge.Condition < achiveStatistics.NumberModule)
+                        {
+                          
+                            if(!CheckIsExistBadge(userId, badge.AchivementId))
+                            {
+                                return new AchivementBadge { AchivementId = badge.AchivementId,AchivementName = badge.AchivementName};
+                            }
+                            
+                        }
+                    }
+                }
+              
+            }
+            return null;
+        }
+        private bool CheckIsExistBadge(int userId, int badgeId)
+        {
+            var exists = dBContext.chitietthanhtuus
+                .Any(ctt => ctt.nguoidung.UserId == userId && ctt.thanhtuu.AchivementId == badgeId);
+
+            return exists;
+        }
+        [HttpPost("UpdateBadge")]
+        public async Task<ActionResult> AddUpdateBadge(AchieveBadge achieveBadge)
+        {
+            DateTime currentDate = DateTime.Now;
+            CHITIETTHANHTUU chitietthanhtuu = new CHITIETTHANHTUU();
+            chitietthanhtuu.nguoidung = await dBContext.nguoidungs.FindAsync(achieveBadge.UserId);
+            chitietthanhtuu.AchieveDate = currentDate;
+            chitietthanhtuu.thanhtuu = await dBContext.thanhtuus.FindAsync(achieveBadge.AchivementId);
+            await dBContext.chitietthanhtuus.AddAsync(chitietthanhtuu);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+
         #endregion
+
     }
 }

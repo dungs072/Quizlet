@@ -9,4 +9,10 @@
     {
         public List<Badge> Badges  { get; set; }
     }
+    public class AchivementBadge
+    {
+        public int AchivementId { get; set; }
+        public string AchivementName { get; set; }
+
+    }
 }

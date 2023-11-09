@@ -234,7 +234,7 @@ namespace QuizletAchivement.Controllers
             CHITIETTHANHTUU chitietthanhtuu = new CHITIETTHANHTUU();
             chitietthanhtuu.nguoidung = await dBContext.nguoidungs.FindAsync(achieveBadge.UserId);
             chitietthanhtuu.AchieveDate = currentDate;
-            chitietthanhtuu.thanhtuu = await dBContext.thanhtuus.FindAsync(achieveBadge.AchivementId);
+            chitietthanhtuu.thanhtuu = await dBContext.thanhtuus.FindAsync(achieveBadge.AchievementId);
             await dBContext.chitietthanhtuus.AddAsync(chitietthanhtuu);
             await dBContext.SaveChangesAsync();
             return Ok();

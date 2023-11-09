@@ -14,6 +14,6 @@
     public class AchieveBadge
     {
         public int UserId { get; set; }
-        public int AchivementId { get; set; }
+        public int AchievementId { get; set; }
     }
 }

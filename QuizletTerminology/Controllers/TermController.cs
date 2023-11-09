@@ -63,6 +63,7 @@ namespace QuizletTerminology.Controllers
             {
                 return BadRequest();
             }
+
             dbContext.thethuatngus.Update(thuatngu);
             await dbContext.SaveChangesAsync();
             return Ok();

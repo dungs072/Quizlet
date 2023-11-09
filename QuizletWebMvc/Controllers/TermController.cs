@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Firebase.Auth;
+using Firebase.Storage;
+using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Terminology;
 using QuizletWebMvc.ViewModels.Terminology;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace QuizletWebMvc.Controllers
 {
     public class TermController : Controller
     {
         private readonly ITerminologyService terminologyService;
+        private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
+        private readonly string bucket = "quizlet-c9cab.appspot.com";
+        private readonly string gmail = "sa123@gmail.com";
+        private readonly string password = "123456";
         public TermController(ITerminologyService terminologyService)
         {
             this.terminologyService = terminologyService;
@@ -30,7 +37,7 @@ namespace QuizletWebMvc.Controllers
             return View(term);
         }
         [HttpPost]
-        public async Task<IActionResult> HandleCreateTerm(TermViewModel term)
+        public async Task<IActionResult> HandleCreateTerm(TermViewModel term,IFormFile imageFile)
         {
             LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
@@ -38,6 +45,29 @@ namespace QuizletWebMvc.Controllers
             if (!ModelState.IsValid)
             {
                 return View("CreateTerm", term);
+            }
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await imageFile.CopyToAsync(stream);
+                    var cancellation = new CancellationTokenSource();
+                    // Initialize Firebase Storage
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                    var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
+
+                    var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
+                    });
+
+                    // Specify the path in Firebase Storage
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+                    string path = $"images/{fileName}";
+                    stream.Seek(0, SeekOrigin.Begin);
+                    await firebaseStorage.Child(path).PutAsync(stream, cancellation.Token);
+                    term.Image = await firebaseStorage.Child(path).GetDownloadUrlAsync();
+                }
             }
             var canCreate = await terminologyService.CreateTerm(term);
             if (!canCreate)
@@ -71,20 +101,59 @@ namespace QuizletWebMvc.Controllers
             term.LearningModule = learningModule;
             return View(term);
         }
-        public async Task<IActionResult> HandleEditTerm(TermViewModel term)
+        public async Task<IActionResult> HandleEditTerm(TermViewModel term, IFormFile imageFile)
         {
             ModelState.Remove("LearningModule");
             if (!ModelState.IsValid) return View("EditTerm", term);
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await imageFile.CopyToAsync(stream);
+                    var cancellation = new CancellationTokenSource();
+                    // Initialize Firebase Storage
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                    var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
+
+                    var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
+                    });
+
+                    // Specify the path in Firebase Storage
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+                    string path = $"images/{fileName}";
+                    stream.Seek(0, SeekOrigin.Begin);
+                    await firebaseStorage.Child(path).PutAsync(stream, cancellation.Token);
+                    if (term.Image != null)
+                    {
+                        string fileNameDelete = ExtractFileNameFromUrl(term.Image);
+                        string deletePath = $"images/{fileNameDelete}";
+                        await firebaseStorage.Child(deletePath).DeleteAsync();
+                    }
+                    term.Image = await firebaseStorage.Child(path).GetDownloadUrlAsync();
+                }
+            }
             var canUpdate = await terminologyService.UpdateTerm(term);
             if (!canUpdate)
             {
                 TempData["Error"] = "Duplicate term name. Please fix it!!";
                 return View("EditTerm", term);
             }
-            TempData["Success"] = "Update term sucessfully";
+            TempData["Success"] = "Update term sucessfully"+ imageFile.ContentType;
             return RedirectToAction("Term", new { learningModuleId = term.LearningModuleId });
         }
-        
+        static string ExtractFileNameFromUrl(string url)
+        {
+            // Use Uri to parse the URL
+            Uri uri = new Uri(url);
+
+            // Get the filename from the URL using Path.GetFileName
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            return fileName;
+        }
+
         public async Task<IActionResult> PracticeTerm(int learningModuleId)
         {
             ListObjectivePack listObjective = new ListObjectivePack();

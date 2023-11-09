@@ -107,6 +107,7 @@
             width: 100%; /* Set the width of the container as needed */
             height: 300px; /* Set the desired height to trigger the scrollbar */
             overflow-y: scroll; /* Add a vertical scrollbar when content overflows vertically */
+        }
     </style>
     <style>
         .explanation {
@@ -384,7 +385,7 @@
     <partial name="FooterHome" />
     <!--Modal-->
     <div class="modal" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg " role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="warningModalLabel">Your result</h5>
@@ -393,7 +394,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="scrollable-container">
                         <div class="row">
                             <div class="col-md-4 grid-margin stretch-card">
                                 <div class="card">
@@ -415,18 +415,19 @@
                                         <div class="d-flex flex-row justify-content-between">
                                             <p>Let remember them!!!</p>
                                         </div>
+                                    <div class="scrollable-container">
                                         <div class="row">
                                             <div class="col-12">
-                                                <div class="preview-list-t">                         
-                                                   
+                                                <div class="preview-list-t">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                       
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     
                 </div>
                 <div class="modal-footer">

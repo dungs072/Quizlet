@@ -27,7 +27,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Terminology</h4>
                                     <p class="card-description"> Edit term </p>
-                                    <form asp-action="HandleEditTerm" method="post" class="forms-sample">
+                                    <form asp-action="HandleEditTerm" method="post" class="forms-sample" enctype="multipart/form-data">
                                         <div class="form-group">
                                             <label for="exampleInputName1">Term name</label>
                                             <input asp-for="TermName" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.TermName>
@@ -37,6 +37,9 @@
                                             <label for="exampleInputEmail3">Explanation</label>
                                             <input asp-for="Explaination" type="text" class="form-control" placeholder="####" value="@Model.Explaination">
                                         </div>
+                                        <div class ="form-group">
+                                            <input asp-for="Image" type="file" id="image" name="imageFile" accept="image/*">
+                                        </div>
                                         <div class="form-group hideDiv">
                                             <label for="exampleInputName1">TermId</label>
                                             <input asp-for="TermId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.TermId>
@@ -44,6 +47,10 @@
                                         <div class="form-group hideDiv">
                                             <label for="exampleInputName1">LearningModuleId</label>
                                             <input asp-for="LearningModuleId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.LearningModuleId>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="exampleInputName1">Image</label>
+                                            <input asp-for="Image" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.Image>
                                         </div>
                                         <button type="submit" class="btn btn-success mr-2">Update</button>
                                         <a href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })" class="btn btn-dark">Cancel</a>

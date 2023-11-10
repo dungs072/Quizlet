@@ -247,5 +247,25 @@ namespace QuizletAchivement.Controllers
 
         #endregion
 
+        #region Admin
+        [HttpGet("Admin/LevelTerm")]
+        public async Task<ActionResult<IEnumerable<LEVELGHINHO>>> GetListLEVELGHINHO()
+        {
+            return await dBContext.levelghinhos.ToListAsync();
+        }
+        [HttpGet("Admin/LevelTerm/{levelId}")]
+        public async Task<ActionResult<LEVELGHINHO>> GetLEVELGHINHO(int levelId)
+        {
+            return await dBContext.levelghinhos.FindAsync(levelId);
+        }
+        [HttpPut("Admin/LevelTerm")]
+        public async Task<ActionResult> UpdateLEVELGHINHO(LEVELGHINHO level)
+        {
+            dBContext.levelghinhos.Update(level);
+            await dBContext.SaveChangesAsync();
+            return Ok();
+        }
+        #endregion
+
     }
 }

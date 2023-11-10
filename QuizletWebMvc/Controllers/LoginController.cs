@@ -38,6 +38,10 @@ namespace WebMVCQuizlet.Controllers
                 HttpContext.Session.SetString("UserName", user.LastName + " " + user.FirstName);
                 HttpContext.Session.SetString("TypeUser", user.TypeAccount);
 
+                if(user.TypeAccount=="Admin")
+                {
+                    return RedirectToAction("LevelTerm", "Admin");
+                }
                 return RedirectToAction("Index", "Home");
             }
             //User not found

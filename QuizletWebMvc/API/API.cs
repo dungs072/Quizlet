@@ -42,5 +42,9 @@
         public static string MarkAttendance { get { return AchivementUrl + "/MarkAttendance"; } }
         public static string Badges { get { return AchivementUrl + "/GetBadges"; } }
         public static string AchieveBadge { get { return AchivementUrl + "/UpdateBadge"; } }
+
+
+        public static string AdminUrl { get { return AchivementUrl + "/Admin"; } }
+        public static string AdminLevelTermUrl { get { return AdminUrl + "/LevelTerm"; } }
     }
 }

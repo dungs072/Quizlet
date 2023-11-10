@@ -9,4 +9,9 @@ namespace QuizletTerminology.Models
         public string NewPassword { get; set; }
         public string ConfirmPassword { get; set; }
     }
+    public class ForgetPasswordViewModel
+    {
+        public string Email { get; set; }
+
+    }
 }

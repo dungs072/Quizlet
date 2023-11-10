@@ -11,5 +11,7 @@ namespace QuizletWebMvc.Services.Login
         Task<UserAccountViewModel> GetProfile(int userId);
         Task<bool> UpdateProfile(UserAccountViewModel user);
         Task<bool> ChangePassword(ChangePasswordViewModel model);
+        Task<string> GetEmailCode(string email);
+        Task<bool> HandleForgetPassword(ForgetPasswordViewModel model);
     }
 }

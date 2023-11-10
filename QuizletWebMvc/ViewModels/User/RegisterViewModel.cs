@@ -11,5 +11,11 @@ namespace QuizletWebMvc.ViewModels.User
         [Compare("Password", ErrorMessage = "Password do not match")]
         public string ConfirmPassword { get; set; }
 
+
+        public string GmailCode { get; set; }
+        [Required(ErrorMessage = "Confirm Gmail Code is required")]
+        public string ConfirmGmailCode { get; set; }
+        public string TempPass { get; set; }
+
     }
 }

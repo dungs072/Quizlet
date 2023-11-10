@@ -2,6 +2,7 @@
 using QuizletWebMvc.ViewModels.User;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 namespace QuizletWebMvc.Services.Login
 {
@@ -61,6 +62,20 @@ namespace QuizletWebMvc.Services.Login
         public async Task RegisterUser(UserAccountViewModel userAccountView)
         {
             await client.PostAsJsonAsync<UserAccountViewModel>(API.API.UserUrl, userAccountView);
+        }
+        public async Task<string> GetEmailCode(string email)
+        {
+            return await client.GetStringAsync(API.API.UserEmailExist+$"/{email}");
+        }
+
+        public async Task<bool> HandleForgetPassword(ForgetPasswordViewModel model)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<ForgetPasswordViewModel>(API.API.UserForgetPassword, model);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

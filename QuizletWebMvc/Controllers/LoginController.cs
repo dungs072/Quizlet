@@ -54,6 +54,10 @@ namespace WebMVCQuizlet.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
+            ModelState.Remove("ConfirmGmailCode");
+            ModelState.Remove("GmailCode");
+            ModelState.Remove("LevelTerms");
+            ModelState.Remove("TempPass");
             if (!ModelState.IsValid) return View(registerViewModel);
             var isDuplicated = await loginService.HasDuplicateGmail(registerViewModel.Gmail);
             if (isDuplicated)
@@ -61,10 +65,62 @@ namespace WebMVCQuizlet.Controllers
                 TempData["Error"] = "This email address is already in use";
                 return View(registerViewModel);
             }
+            registerViewModel.TempPass = registerViewModel.Password;
+            return RedirectToAction("GmailChecking", "Login",registerViewModel);
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> GmailChecking(RegisterViewModel registerViewModel)
+        {
+
+            string gmailCode = await loginService.GetEmailCode(registerViewModel.Gmail);
+            registerViewModel.GmailCode = gmailCode;
+            return View(registerViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PostGmailChecking(RegisterViewModel registerViewModel)
+        {
+
+            ModelState.Remove("GmailCode");
+            ModelState.Remove("LevelTerms");
+            ModelState.Remove("ConfirmPassword");
+            ModelState.Remove("Password");
+            ModelState.Remove("TempPass");
+            if (!ModelState.IsValid) return View("GmailChecking", registerViewModel);
+            if(registerViewModel.ConfirmGmailCode!=registerViewModel.GmailCode)
+            {
+                TempData["Error"] = "Confirm gmail code does not match";
+                return View("GmailChecking", registerViewModel);
+            }
+            registerViewModel.Password = registerViewModel.TempPass;
             UserAccountViewModel user = registerViewModel;
             await loginService.RegisterUser(user);
-
+            TempData["Success"] = "Create new account successfully";
             return RedirectToAction("Index", "Login");
         }
+
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            ForgetPasswordViewModel forgetPasswordViewModel = new ForgetPasswordViewModel();
+            return View(forgetPasswordViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) { return View(model); }
+            bool state = await loginService.HandleForgetPassword(model);
+            if(state)
+            {
+                TempData["Success"] = "Successfully, reset password";
+                return RedirectToAction("Index", "Login");
+            }
+            else
+            {
+                TempData["Error"] = "Error, Your email you enter is not registered in Quizlet";
+                return View(model);
+            }
+        }
+
     }
 }

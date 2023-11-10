@@ -1,0 +1,112 @@
+﻿
+@using QuizletWebMvc.ViewModels;
+@using QuizletWebMvc.ViewModels.User;
+@{
+    ViewData["Title"] = "Checking Gmail";
+    Layout = null;
+}
+@model RegisterViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Corona Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../../assets/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="../../assets/images/favicon.png" />
+</head>
+<body>
+    @if (TempData["Error"] != null)
+    {
+        <div class="col-md-12 alert alert-danger">
+            <span><b>Sorry!</b> - @TempData["Error"]</span>
+        </div>
+    }
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="row w-100 m-0">
+                <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+                    <div class="card col-lg-4 mx-auto">
+                        <div class="card-body px-5 py-5">
+                            <h3 class="card-title text-left mb-3">Confirm</h3>
+                            <form asp-action="PostGmailChecking" method="post">
+                                <div class="form-group" style="display: none">
+                                    <label>Last Name</label>
+                                    <input asp-for="LastName" class="form-control p_input">
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label>First Name</label>
+                                    <input asp-for="FirstName" class="form-control p_input">
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label>Email</label>
+                                    <input asp-for="Gmail" type="email" class="form-control p_input">
+                                    <span asp-validation-for="Gmail" class="text-danger"></span>
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label for="role">Select Role</label>
+                                    <select asp-for="TypeAccount">
+                                        <option value="Student">Student</option>
+                                        <option value="Teacher">Teacher</option>
+                                    </select>
+                                    <span asp-validation-for="TypeAccount" class="text-danger"></span>
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label>TempPass</label>
+                                    <input asp-for="TempPass" class="form-control p_input">
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label for="name">gg</label>
+                                    <input asp-for="GmailCode" class="form-control p_input">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Gmail code with 6 digits</label>
+                                    <input asp-for="ConfirmGmailCode" class="form-control p_input">
+                                    <span asp-validation-for="ConfirmGmailCode" class="text-danger"></span>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-block enter-btn">Confirm</button>
+                                </div>
+                               
+                                <p class="sign-up text-center">Already have an Account?<a href="@Url.Action("Index", "Login")"> Sign In</a></p>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+            </div>
+            <!-- row ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="../../assets/js/off-canvas.js"></script>
+    <script src="../../assets/js/hoverable-collapse.js"></script>
+    <script src="../../assets/js/misc.js"></script>
+    <script src="../../assets/js/settings.js"></script>
+    <script src="../../assets/js/todolist.js"></script>
+    <!-- endinject -->
+</body>
+</html>
+

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Models;
 using QuizletWebMvc.Services.Achivement;
+using QuizletWebMvc.Services.Login;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.User;
 using System.Diagnostics;
@@ -12,11 +13,13 @@ namespace QuizletWebMvc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAchivement achivement;
+        private readonly ILoginService loginService;
 
-        public HomeController(ILogger<HomeController> logger, IAchivement achivement)
+        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService)
         {
             _logger = logger;
             this.achivement = achivement;
+            this.loginService = loginService;
         }
 
         public async Task<IActionResult> Index()
@@ -63,6 +66,70 @@ namespace QuizletWebMvc.Controllers
             return Json(false);
             
         }
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) 
+            {
+                var user = await loginService.GetProfile(userId);
+                return View(user);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserAccountViewModel model)
+        {
+            ModelState.Remove("LevelTerms");
+            if(!ModelState.IsValid)
+            {
+                TempData["Error"] = "Error while updating your profile";
+                return View(model);
+            }
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                model.UserId = userId;
+                var state = await loginService.UpdateProfile(model);
+                if(state)
+                {
+                    TempData["Success"] = "Update profile successfully";
+                    HttpContext.Session.SetString("UserName", model.LastName + " " + model.FirstName);
+                    HttpContext.Session.SetString("TypeUser", model.TypeAccount);
+                    return View(model);
+                }
+
+            }
+            TempData["Error"] = "Error while update your profile";
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            ChangePasswordViewModel model = new ChangePasswordViewModel();
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid) { return View(model); }
+            if(model.NewPassword!=model.ConfirmPassword)
+            {
+                TempData["Error"] = "Your new password does not match with confirm password";
+                return View(model);
+            }
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
+            model.UserId = userId;
+            var state = await loginService.ChangePassword(model);
+            if(state)
+            {
+                TempData["Success"] = "Change password successfully";
+            }
+            else
+            {
+                TempData["Error"] = "Your old password does not right";
+            }
+            return View(model);
+
+        }
 
         public IActionResult Privacy()
         {
@@ -79,5 +146,6 @@ namespace QuizletWebMvc.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

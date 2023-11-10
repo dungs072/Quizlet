@@ -55,6 +55,24 @@ namespace QuizletTerminology.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
         }
+        [HttpPut("ChangePassword")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var user = await dbContext.nguoidungs.FindAsync(model.UserId);
+            if(user.Password.Trim()!=model.OldPassword)
+            {
+                return NoContent();
+            }
+            else
+            {
+                user.Password = model.NewPassword;
+                dbContext.nguoidungs.Update(user);
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            
+        }
         [HttpDelete("{MA_USER}")]
         public async Task<ActionResult> Delete(int MA_USER)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using QuizletWebMvc.ViewModels.User;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 namespace QuizletWebMvc.Services.Login
@@ -17,6 +18,30 @@ namespace QuizletWebMvc.Services.Login
         {
             var user = await client.GetFromJsonAsync<UserAccountViewModel>(API.API.UserUrl + $"/{username}/{password}");
             return user;
+
+        }
+        public async Task<UserAccountViewModel> GetProfile(int userId)
+        {
+            var user = await client.GetFromJsonAsync<UserAccountViewModel>(API.API.UserUrl + $"/{userId}");
+            return user;
+        }
+        public async Task<bool> UpdateProfile(UserAccountViewModel user)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<UserAccountViewModel>(API.API.UserUrl, user);
+            if(response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> ChangePassword(ChangePasswordViewModel model)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<ChangePasswordViewModel>(API.API.UserChangePassword, model);
+            if(response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
 
         }
 

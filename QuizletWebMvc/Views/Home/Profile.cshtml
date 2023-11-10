@@ -1,1 +1,81 @@
-﻿
+﻿@using QuizletWebMvc.ViewModels.User;
+@model UserAccountViewModel;
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="HeaderHome" />
+
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <partial name="_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            <partial name="TopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper" id="contentContainer">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2>User Profile</h2>
+
+                                    @using (Html.BeginForm("Profile", "Home", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.FirstName)
+                                            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.LastName)
+                                            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Gmail)
+                                            @Html.TextBoxFor(model => model.Gmail, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Gmail, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TypeAccount)
+                                            @Html.DropDownListFor(model => model.TypeAccount, Model.SelectedRole, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            @Html.LabelFor(model => model.Password)
+                                            @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
+                                        </div>
+
+                                        <!-- Add other form fields as needed -->
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="loading" style="display: none;">Loading...</div>
+                <!-- content-wrapper ends -->
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <partial name="FooterHome" />
+</body>
+</html>

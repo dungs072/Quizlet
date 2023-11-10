@@ -9,7 +9,7 @@ using QuizletWebMvc.Services.Terminology;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://apigateway") });
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ITerminologyService, TerminologyService>();

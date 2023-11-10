@@ -1,4 +1,5 @@
-﻿using QuizletWebMvc.ViewModels.Achivement;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,6 +18,7 @@ namespace QuizletWebMvc.ViewModels.User
         public string FirstName { get; set; }
         [Display(Name = "Email address")]
         [Required(ErrorMessage = "Email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Gmail { get; set; }
         [Display(Name = "Type account")]
         [Required(ErrorMessage = "Type account is required")]
@@ -32,10 +34,16 @@ namespace QuizletWebMvc.ViewModels.User
         {
             return UserId.ToString();
         }
-
-        public static string[] Datas(string data)
+        public List<SelectListItem> SelectedRole 
         {
-            return data.Split(":");
+            get 
+            {
+                return new List<SelectListItem>
+                {
+                new SelectListItem { Text = "Teacher", Value = "Teacher" },
+                new SelectListItem { Text = "Student", Value = "Student" }
+                };
+            } 
         }
 
 

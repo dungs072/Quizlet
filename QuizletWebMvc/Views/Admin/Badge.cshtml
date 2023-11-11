@@ -1,0 +1,178 @@
+﻿@using QuizletWebMvc.ViewModels.Admin;
+@{
+    Layout = null;
+}
+@model ListBadges;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .stretch-button {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bigger-button {
+            font-size: 50px; /* Adjust the font size as needed */
+        }
+
+        .my-card {
+            transition: transform 0.2s;
+            border: 1px solid transparent; /* Initially, the border is transparent */
+            background-color: transparent; /* Initially, the background is transparent */
+        }
+
+            /* Define the styles for the card when hovered */
+            .my-card:hover {
+                transform: scale(1.05); /* You can adjust the scaling factor as desired */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a box shadow for elevation */
+                border: 1px solid transparent; /* Initially, the border is transparent */
+                background-color: transparent; /* Initially, the background is transparent */
+            }
+
+        .card-item {
+            /* Styles for the card item */
+            font-size: 10px; /* Set the desired text size (in this case, 18 pixels) */
+        }
+        .card img {
+            width: 100px; /* Adjust the width of the image as needed */
+            height: auto; /* Maintain the aspect ratio */
+            margin-bottom: 10px;
+        }
+
+
+        .btn-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust the spacing between buttons as needed */
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#createButton').on('click', function () {
+                window.location.href = '/Class/CreateYourOwnClass';
+            });
+        });
+    </script>
+    <partial name="HeaderHome" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_sidebar.html -->
+        <partial name="Admin_Navigation" />
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_navbar.html -->
+            <partial name="AdminTopNavbar" />
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <h4>Modules</h4>
+                    </div>
+                    <div class="row">   
+                        @foreach (var item in Model.ModuleBadges)
+                        {
+                            <div class="col-lg-3 grid-margin stretch-card">
+                                <div class="card my-card" style="width: 18rem;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@item.AchivementName</h5>
+                                        @if(item.Image!=null)
+                                        {
+                                            <img src="@item.Image" alt="Card Image 1">
+                                        }
+                                        <h5 class="card-title card-item">Condition: @item.Condition</h5>
+                                        <div class="btn-column">
+                                            <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "modules"})" class="btn btn-secondary">Edit</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-3 grid-margin stretch-card">
+                            <div class="card" style="width: 18rem;">
+                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("AddBadge", "Admin", new {typeBadge = "modules"})'" />
+                                @* <button class="btn-success " id="createButton">+</button> *@
+                            </div>
+                        </div>
+
+                        
+                <!-- content-wrapper ends -->
+
+            </div>
+                    <div class="row">
+                        <h4>Terms</h4>
+                    </div>
+                    <div class="row">
+                        @foreach (var item in Model.TermBadges)
+                        {
+                            <div class="col-lg-3 grid-margin stretch-card">
+                                <div class="card my-card" style="width: 18rem;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@item.AchivementName</h5>
+                                        @if (item.Image != null)
+                                        {
+                                            <img src="@item.Image" alt="Card Image 1">
+                                        }
+                                        <h5 class="card-title card-item">Condition: @item.Condition</h5>
+                                        <div class="btn-column">
+                                            <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "terms"})" class="btn btn-secondary">Edit</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-3 grid-margin stretch-card">
+                            <div class="card" style="width: 18rem;">
+                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("AddBadge", "Admin", new {typeBadge = "terms"})'" />
+                                @* <button class="btn-success " id="createButton">+</button> *@
+                            </div>
+                        </div>
+
+                       
+                    </div>
+                    <div class="row">
+                        <h4>Participants</h4>
+                    </div>
+                    <div class="row">
+                        @foreach (var item in Model.ParticipantBadges)
+                        {
+                            <div class="col-lg-3 grid-margin stretch-card">
+                                <div class="card my-card" style="width: 18rem;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@item.AchivementName</h5>
+                                        @if (item.Image != null)
+                                        {
+                                            <img src="@item.Image" alt="Card Image 1">
+                                        }
+                                        <h5 class="card-title card-item">Condition: @item.Condition</h5>
+                                        <div class="btn-column">
+                                            <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "participants"})" class="btn btn-secondary">Edit</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-3 grid-margin stretch-card">
+                            <div class="card" style="width: 18rem;">
+                                <input type="button" value="+" class="btn-outline-success stretch-button bigger-button" onclick="location.href='@Url.Action("AddBadge", "Admin", new {typeBadge = "participants"})'" />
+                                @* <button class="btn-success " id="createButton">+</button> *@
+                            </div>
+                        </div>
+                    </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <partial name="FooterHome" />
+    <partial name="Warnings" />
+</body>
+</html>
+

@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Edit Level Term";
+    ViewData["Title"] = "Add Badge";
     Layout = null;
 }
 @using QuizletWebMvc.ViewModels.Admin;
-@model LevelTerm
+@model Badge
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,20 +25,16 @@
                         <div class="col-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">Level Term</h4>
-                                    <p class="card-description"> Edit Level Term </p>
-                                    <form asp-action="EditLevelTerm" method="post" class="forms-sample">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail3">@Model.LevelName</label>
-                                            
-                                        </div>
-                                        <div class="form-group hideDiv">
-                                            <label for="exampleInputEmail3">@Model.LevelName</label>
-                                            <input asp-for="LevelName" type="text" class="form-control" placeholder="####" value="@Model.LevelName">
+                                    <h4 class="card-title">Badge</h4>
+                                    <p class="card-description"> @Model.TypeBadge </p>
+                                    <form asp-action="AddBadge" method="post" class="forms-sample" enctype="multipart/form-data">
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail3">Badge name</label>
+                                            <input asp-for="AchivementName" type="text" class="form-control" placeholder="####" value="@Model.AchivementName">
+                                            <span asp-validation-for="AchivementName" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputEmail3">Describe</label>
-                                            <input asp-for="Describe" type="text" class="form-control" placeholder="####" value="@Model.Describe">
+                                            <input asp-for="Image" type="file" id="image" name="imageFile" accept="image/*">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputName1">Condition</label>
@@ -46,11 +42,15 @@
                                             <span asp-validation-for="Condition" class="text-danger"></span>
                                         </div>
                                         <div class="form-group hideDiv">
-                                            <label for="exampleInputName1">LevelId</label>
-                                            <input asp-for="LevelId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.LevelId>
+                                            <label for="exampleInputName1">AchivementId</label>
+                                            <input asp-for="AchivementId" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.AchivementId>
                                         </div>
-                                        <button type="submit" class="btn btn-success mr-2">Update</button>
-                                        <a href="@Url.Action("LevelTerm", "Admin")" class="btn btn-dark">Cancel</a>
+                                        <div class="form-group hideDiv">
+                                            <label for="exampleInputName1">TypeBadge</label>
+                                            <input asp-for="TypeBadge" type="text" class="form-control" id="exampleInputName1" placeholder="####" value=@Model.TypeBadge>
+                                        </div>
+                                        <button type="submit" class="btn btn-success mr-2">Add</button>
+                                        <a href="@Url.Action("Badge", "Admin")" class="btn btn-dark">Cancel</a>
                                     </form>
 
 
@@ -71,5 +71,3 @@
     <partial name="FooterHome" />
 </body>
 </html>
-
-

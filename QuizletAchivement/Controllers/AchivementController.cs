@@ -20,9 +20,10 @@ namespace QuizletAchivement.Controllers
         #region Achivement
 
         [HttpGet]
-        public ActionResult<IEnumerable<THANHTUU>> GetTHANHTUU()
+        public async Task<ActionResult<IEnumerable<THANHTUU>>> GetTHANHTUU()
         {
-            return dBContext.thanhtuus;
+            //List<THANHTUU> thanhtuus = 
+            return await dBContext.thanhtuus.ToListAsync();
         }
         [HttpGet("{AchivementId}")]
         public async Task<ActionResult<THANHTUU>> GetTHANHTUUById(int AchivementId)
@@ -265,6 +266,8 @@ namespace QuizletAchivement.Controllers
             await dBContext.SaveChangesAsync();
             return Ok();
         }
+
+
         #endregion
 
     }

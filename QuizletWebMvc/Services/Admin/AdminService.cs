@@ -32,5 +32,41 @@ namespace QuizletWebMvc.Services.Admin
             }
 
         }
+
+        public async Task<List<Badge>> GetBadges()
+        {
+            return await client.GetFromJsonAsync<List<Badge>>(API.API.AchivementUrl);
+        }
+
+        public async Task<Badge> GetBadge(int achievementId)
+        {
+            return await client.GetFromJsonAsync<Badge>(API.API.AchivementUrl + $"/{achievementId}");
+        }
+        public async Task<bool> UpdateBadge(Badge badge)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<Badge>(API.API.AchivementUrl, badge);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        public async Task<bool> CreateBadge(Badge badge)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<Badge>(API.API.AchivementUrl, badge);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
     }
 }

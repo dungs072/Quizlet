@@ -12,5 +12,6 @@ namespace QuizletWebMvc.Services.Admin
         Task<Badge> GetBadge(int achievementId);
         Task<bool> UpdateBadge(Badge badge);
         Task<bool> CreateBadge(Badge badge);
+        Task<bool> DeleteBadge(int achievementId);
     }
 }

@@ -2,6 +2,7 @@
 using Firebase.Storage;
 using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Admin;
+using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.ViewModels.Admin;
 
 namespace QuizletWebMvc.Controllers
@@ -193,6 +194,22 @@ namespace QuizletWebMvc.Controllers
             {
                 TempData["Error"] = "Server error. Cannot add new badge";
             }
+            return RedirectToAction("Badge");
+        }
+
+        public async Task<IActionResult> DeleteBadge(int achievementId)
+        {
+            var canDelete = await adminService.DeleteBadge(achievementId);
+
+            if (!canDelete)
+            {
+                TempData["Error"] = "Delete this badge failed because it does not exist";
+            }
+            else
+            {
+                TempData["Success"] = "Delete a badge sucessfully";
+            }
+
             return RedirectToAction("Badge");
         }
     }

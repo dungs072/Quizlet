@@ -17,5 +17,6 @@ namespace QuizletWebMvc.ViewModels.Admin
         public int Condition { get; set; }
         public string? Image { get; set; }
         public string TypeBadge { get; set; }
+        public bool CanDelete { get; set; }
     }
 }

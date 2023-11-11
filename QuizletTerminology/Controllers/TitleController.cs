@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
 namespace QuizletTerminology.Controllers
@@ -16,8 +17,16 @@ namespace QuizletTerminology.Controllers
         [HttpGet("user/{UserId}")]
         public async Task<IEnumerable<CHUDE>> GetCHUDEByUserId(int UserId)
         {
-            var chude = dbContext.chudes.Where(e => e.UserId == UserId).ToList();
-            return chude;
+            var chudes = dbContext.chudes.Where(e => e.UserId == UserId).ToList();
+            foreach(var chude in chudes)
+            {
+                var HOCPHAN = await dbContext.hocphans.FirstOrDefaultAsync(a => a.TitleId == chude.TitleId);
+                if(HOCPHAN!=null)
+                {
+                    chude.IsEmpty = false;
+                }
+            }
+            return chudes;
         }
         [HttpGet("find/{TitleId}")]
         public async Task<CHUDE> GetCHUDEByTitleId(int TitleId)
@@ -78,9 +87,15 @@ namespace QuizletTerminology.Controllers
             return chude != null;
         }
         [HttpDelete("{TitleId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteCHUDE(int TitleId)
         {
             var CHUDE = await dbContext.chudes.FindAsync(TitleId);
+            var HOCPHAN = await dbContext.hocphans.FirstOrDefaultAsync(a=>a.TitleId== TitleId);
+            if(HOCPHAN!=null)
+            {
+                return NoContent();
+            }
             dbContext.chudes.Remove(CHUDE);
             await dbContext.SaveChangesAsync();
             return Ok();

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Firebase.Auth;
+using Firebase.Storage;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
@@ -10,6 +12,10 @@ namespace QuizletTerminology.Controllers
     [ApiController]
     public class TermController : ControllerBase
     {
+        private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
+        private readonly string bucket = "quizlet-c9cab.appspot.com";
+        private readonly string gmail = "sa123@gmail.com";
+        private readonly string password = "123456";
         private readonly TerminologyDBContext dbContext;
         public TermController(TerminologyDBContext dbContext)
         {
@@ -50,6 +56,21 @@ namespace QuizletTerminology.Controllers
         public async Task<ActionResult> DeleteTHUATNGU(int termId)
         {
             var THUATNGU = await dbContext.thethuatngus.FindAsync(termId);
+            if (THUATNGU.Image != null)
+            {
+                var cancellation = new CancellationTokenSource();
+                // Initialize Firebase Storage
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
+
+                var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
+                });
+                string fileNameDelete = ExtractFileNameFromUrl(THUATNGU.Image);
+                string deletePath = $"images/{fileNameDelete}";
+                await firebaseStorage.Child(deletePath).DeleteAsync();
+            }
             dbContext.thethuatngus.Remove(THUATNGU);
             await dbContext.SaveChangesAsync();
             return Ok();
@@ -218,6 +239,16 @@ namespace QuizletTerminology.Controllers
             dbContext.thethuatngus.Update(thuatngu);
             await dbContext.SaveChangesAsync();
             return Ok();
+        }
+        static string ExtractFileNameFromUrl(string url)
+        {
+            // Use Uri to parse the URL
+            Uri uri = new Uri(url);
+
+            // Get the filename from the URL using Path.GetFileName
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            return fileName;
         }
     }
 }

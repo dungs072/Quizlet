@@ -60,7 +60,29 @@ namespace QuizletWebMvc.Controllers
             if(pageNumber==3)
             {
                 List<Badge> badges = await achivement.GetBadges(userId);
-                userAchivement.badges = badges;
+                List<Badge> moduleBadges = new List<Badge>();
+                List<Badge> termBadges = new List<Badge>();
+                List<Badge> participantBadges = new List<Badge>();
+                foreach (var badge in badges)
+                {
+                    string[] temp = badge.NameBadge.Split(',');
+                    badge.NameBadge = temp[0];
+                    if (temp[1]=="modules")
+                    {
+                        moduleBadges.Add(badge);
+                    }
+                    if (temp[1]=="terms")
+                    {
+                        termBadges.Add(badge);
+                    }
+                    if (temp[1]=="participants")
+                    {
+                        participantBadges.Add(badge);
+                    }
+                }
+                userAchivement.moduleBadges = moduleBadges;
+                userAchivement.termBadges = termBadges;
+                userAchivement.participantBadges = participantBadges;
                 return PartialView("PartialView3", userAchivement);
             }
             return Json(false);

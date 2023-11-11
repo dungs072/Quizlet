@@ -16,6 +16,19 @@
         .card-small-body {
             background-color: #6fdcdc;
         }
+
+        .my-card:hover {
+            transform: scale(1.05); /* You can adjust the scaling factor as desired */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8); /* Add a box shadow for elevation */
+            border: 1px solid transparent; /* Initially, the border is transparent */
+            background-color: transparent; /* Initially, the background is transparent */
+        }
+
+        .card img {
+            width: 100px; /* Adjust the width of the image as needed */
+            height: auto; /* Maintain the aspect ratio */
+            margin-bottom: 10px;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

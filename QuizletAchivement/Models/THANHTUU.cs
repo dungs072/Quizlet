@@ -16,7 +16,8 @@ namespace QuizletAchivement.Models
         [Column("HINHANH")]
         public string? Image { get; set; }
 
-        public bool CanDelete { get; set; } = false;
+        [NotMapped]
+        public bool CanDelete { get; set; } = true;
 
     }
 }

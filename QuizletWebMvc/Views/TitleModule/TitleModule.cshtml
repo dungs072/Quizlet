@@ -11,19 +11,13 @@
 <head>
 
     <partial name="HeaderHome" />
-@*     <script>
-        $(document).ready(function () {
-            var dataToPass = ""; // Initialize an empty variable to store the data
-
-            // Handle the "Pass Data" button click
-            $('.deleteButton').on('click', function () {
-                // Get the data to pass from an input field, for example
-                dataToPass = $('.deleteButton').val(); // Replace '#dataInput' with the actual element you want to get data from
-                var yesDeleteButton = $(document).find('#confirmDelete')
-                yesDeleteButton.val(dataToPass)
-            });
-        });
-    </script> *@
+    <style>
+        .card img {
+            width: 100px; /* Adjust the width of the image as needed */
+            height: auto; /* Maintain the aspect ratio */
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -47,6 +41,7 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th></th>
                                                     <th> Name </th>
                                                     <th> Describe </th>
                                                     <th> Functions </th>
@@ -56,6 +51,17 @@
                                                 @foreach (var item in Model.Titles)
                                                 {
                                                     <tr>
+                                                        <td>
+                                                            @if(item.IsEmpty)
+                                                            {
+                                                                <img src="https://firebasestorage.googleapis.com/v0/b/quizlet-c9cab.appspot.com/o/main%2FemptyFolder.png?alt=media&token=520ec8a1-65d9-49af-bfdd-1ef8c59fa441" alt="Card Image 1">
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="https://firebasestorage.googleapis.com/v0/b/quizlet-c9cab.appspot.com/o/main%2FfullFolder.png?alt=media&token=02a06fa3-576d-4ac8-8613-611a399f59d4" alt="Card Image 1">
+                                                            }
+                                                            
+                                                        </td>
                                                         <td>
                                                             @item.TitleName
                                                         </td>

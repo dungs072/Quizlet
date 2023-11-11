@@ -43,7 +43,7 @@ namespace QuizletWebMvc.Services.Class
         public async Task<bool> DeleteClass(int classId)
         {
             HttpResponseMessage response = await client.DeleteAsync(API.API.ClassUrl + $"/{classId}");
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return false;
             }

@@ -68,5 +68,15 @@ namespace QuizletWebMvc.Services.Admin
             }
 
         }
+
+        public async Task<bool> DeleteBadge(int achievementId)
+        {
+            HttpResponseMessage response = await client.DeleteAsync(API.API.AchivementUrl + $"/{achievementId}");
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

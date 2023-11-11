@@ -5,6 +5,11 @@
     ViewData["Title"] = "Profile";
     Layout = null;
 }
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string typeUser = HttpContextAccessor.HttpContext.Session.GetString("TypeUser");
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,11 +20,26 @@
 <body>
     <div class="container-scroller">
         <!-- partial:partials/_sidebar.html -->
-        <partial name="_Navigation" />
+        @if (typeUser == "Admin")
+        {
+            <partial name="Admin_Navigation" />
+        }
+        else
+        {
+            <partial name="_Navigation" />
+        }
+
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <!-- partial:partials/_navbar.html -->
-            <partial name="TopNavbar" />
+            @if (typeUser == "Admin")
+            {
+                <partial name="AdminTopNavbar" />
+            }
+            else
+            {
+                <partial name="TopNavbar" />
+            }
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper" id="contentContainer">

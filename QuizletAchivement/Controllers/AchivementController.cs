@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Firebase.Auth;
+using Firebase.Storage;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizletAchivement.DBContexts;
@@ -12,6 +14,10 @@ namespace QuizletAchivement.Controllers
     [ApiController]
     public class AchivementController : ControllerBase
     {
+        private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
+        private readonly string bucket = "quizlet-c9cab.appspot.com";
+        private readonly string gmail = "sa123@gmail.com";
+        private readonly string password = "123456";
         private readonly AchivementDBContext dBContext;
         public AchivementController(AchivementDBContext dBContext)
         {
@@ -22,7 +28,20 @@ namespace QuizletAchivement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<THANHTUU>>> GetTHANHTUU()
         {
-            //List<THANHTUU> thanhtuus = 
+            List<THANHTUU> thanhtuus = await dBContext.thanhtuus.ToListAsync();
+            List<CHITIETTHANHTUU> chitietthanhtuus = await dBContext.chitietthanhtuus.ToListAsync();
+            foreach(var thanhtuu in thanhtuus)
+            {
+                foreach(var item in chitietthanhtuus)
+                {
+                    if(item.thanhtuu==thanhtuu)
+                    {
+                        thanhtuu.CanDelete = false;
+                        break;
+                    }
+                    
+                }
+            }
             return await dBContext.thanhtuus.ToListAsync();
         }
         [HttpGet("{AchivementId}")]
@@ -49,10 +68,36 @@ namespace QuizletAchivement.Controllers
         [HttpDelete("{AchivementId}")]
         public async Task<ActionResult> DeleteTHANHTUU(int AchivementId)
         {
-            var thanhtuu = await dBContext.nguoidungs.FindAsync(AchivementId);
-            dBContext.nguoidungs.Remove(thanhtuu);
+            var thanhtuu = await dBContext.thanhtuus.FindAsync(AchivementId);
+            if (thanhtuu.Image != null)
+            {
+                var cancellation = new CancellationTokenSource();
+                // Initialize Firebase Storage
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
+
+                var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
+                });
+                string fileNameDelete = ExtractFileNameFromUrl(thanhtuu.Image);
+                string deletePath = $"admin/{fileNameDelete}";
+                await firebaseStorage.Child(deletePath).DeleteAsync();
+            }
+            dBContext.thanhtuus.Remove(thanhtuu);
             await dBContext.SaveChangesAsync();
             return Ok();
+        }
+
+        static string ExtractFileNameFromUrl(string url)
+        {
+            // Use Uri to parse the URL
+            Uri uri = new Uri(url);
+
+            // Get the filename from the URL using Path.GetFileName
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            return fileName;
         }
 
         #endregion
@@ -179,7 +224,7 @@ namespace QuizletAchivement.Controllers
                 var badge = new Badge();
                 badge.NameBadge = b.AchivementName;
                 badge.IsAchieved = IsAchieve(b.AchivementId, userId,badge);
-                
+                badge.Image = b.Image;
                 badgeList.Add(badge);
             }
             return badgeList;

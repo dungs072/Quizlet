@@ -38,11 +38,22 @@ namespace QuizletWebMvc.ViewModels.User
         {
             get 
             {
-                return new List<SelectListItem>
+                if(TypeAccount=="Admin")
                 {
-                new SelectListItem { Text = "Teacher", Value = "Teacher" },
-                new SelectListItem { Text = "Student", Value = "Student" }
-                };
+                    return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Admin", Value = "Admin" },
+                    };
+                }
+                else
+                {
+                    return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Teacher", Value = "Teacher" },
+                    new SelectListItem { Text = "Student", Value = "Student" }
+                    };
+                }
+               
             } 
         }
 

@@ -47,6 +47,11 @@
                     var url = '/Class/RejectRegistration?userId=' + userId + '&classId='+classId;
                     window.location.href = url;
                 }
+                if (stringArray[0] == 'Badge') {
+                    var achievementId = parseInt(stringArray[1], 10);
+                    var url = '/Admin/DeleteBadge?achievementId=' + achievementId;
+                    window.location.href = url;
+                }
             });
         });
     </script>

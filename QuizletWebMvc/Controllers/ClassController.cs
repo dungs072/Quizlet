@@ -76,7 +76,7 @@ namespace QuizletWebMvc.Controllers
 
             if (!canDelete)
             {
-                TempData["Error"] = "Delete this class failed because it does not exist";
+                TempData["Error"] = "Delete this class failed because it contains links to other datas";
             }
             else
             {

@@ -10,5 +10,7 @@ namespace QuizletWebMvc.ViewModels.Terminology
         public string TitleName { get; set; } = "";
         public string? Describe { get; set; } = "";
         public int UserId { get; set; } = 0;
+
+        public bool IsEmpty { get; set; }
     }
 }

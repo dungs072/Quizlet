@@ -94,9 +94,20 @@ namespace QuizletClass.Controllers
             return cl != null;
         }
         [HttpDelete("{ClassId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteLOP(int ClassId)
         {
             var lop = await dBContext.lops.FindAsync(ClassId);
+            int NumberParticipants = lop.chitietdangkilop.Count();
+            if(NumberParticipants>0)
+            {
+                return NoContent();
+            }
+            int NumberLearningModules = lop.chitiethocphan.Count;
+            if(NumberLearningModules>0)
+            {
+                return NoContent();
+            }
             dBContext.lops.Remove(lop);
             await dBContext.SaveChangesAsync();
             return Ok();

@@ -16,6 +16,9 @@ namespace QuizletTerminology.Models
         [ForeignKey("NGUOIDUNG")]
         [Column("MA_USER")]
         public int UserId { get; set; }
+
+        [NotMapped]
+        public bool IsEmpty { get; set; } = true;
         //public NGUOIDUNG nguoiDUNG { get; set; }
     }
 }

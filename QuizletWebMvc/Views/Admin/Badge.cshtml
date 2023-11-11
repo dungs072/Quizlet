@@ -28,7 +28,7 @@
             /* Define the styles for the card when hovered */
             .my-card:hover {
                 transform: scale(1.05); /* You can adjust the scaling factor as desired */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a box shadow for elevation */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8); /* Add a box shadow for elevation */
                 border: 1px solid transparent; /* Initially, the border is transparent */
                 background-color: transparent; /* Initially, the background is transparent */
             }
@@ -87,6 +87,10 @@
                                         <h5 class="card-title card-item">Condition: @item.Condition</h5>
                                         <div class="btn-column">
                                             <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "modules"})" class="btn btn-secondary">Edit</a>
+                                            @if(item.CanDelete)
+                                            {
+                                                <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Badge:@item.AchivementId.ToString()">Delete</button>
+                                            }
                                         </div>
 
                                     </div>
@@ -121,6 +125,10 @@
                                         <h5 class="card-title card-item">Condition: @item.Condition</h5>
                                         <div class="btn-column">
                                             <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "terms"})" class="btn btn-secondary">Edit</a>
+                                            @if (item.CanDelete)
+                                            {
+                                                <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Badge:@item.AchivementId.ToString()">Delete</button>
+                                            }
                                         </div>
 
                                     </div>
@@ -153,6 +161,10 @@
                                         <h5 class="card-title card-item">Condition: @item.Condition</h5>
                                         <div class="btn-column">
                                             <a href="@Url.Action("EditBadge", "Admin",new{achivementId = item.AchivementId,typeBadge = "participants"})" class="btn btn-secondary">Edit</a>
+                                            @if (item.CanDelete)
+                                            {
+                                                <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Badge:@item.AchivementId.ToString()">Delete</button>
+                                            }
                                         </div>
 
                                     </div>

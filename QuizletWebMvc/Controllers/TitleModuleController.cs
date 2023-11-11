@@ -80,8 +80,16 @@ namespace QuizletWebMvc.Controllers
         
         public async Task<IActionResult> DeleteTitleModule(int titleId)
         {
-            await terminologyService.DeleteTitle(titleId);
-            TempData["Success"] = "Delete title sucessfully";
+            var state = await terminologyService.DeleteTitle(titleId);
+            if(state)
+            {
+                TempData["Success"] = "Delete title sucessfully";
+            }
+            else
+            {
+                TempData["Error"] = "Your title you want to delete that has learning modules";
+            }
+            
             return RedirectToAction("TitleModule");
         }
 

@@ -6,6 +6,7 @@
         public bool IsAchieved { get; set; }
 
         public string DateAchieved { get; set; } 
+        public string? Image { get; set; }
     }
     public class AchivementBadge
     {

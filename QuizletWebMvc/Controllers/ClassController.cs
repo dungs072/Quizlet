@@ -345,6 +345,12 @@ namespace QuizletWebMvc.Controllers
             List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
             ListClassLearningModuleViewModel listModels = new ListClassLearningModuleViewModel();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) 
+            {
+                List<TitleChoiceViewModel> titles = await classService.GetTitleDatas(userId);
+               
+                listModels.Titles = titles;
+            }
             listModels.LearningModules = models;
             listModels.Copy(cla);
             listModels.ClassId = classId;
@@ -375,6 +381,28 @@ namespace QuizletWebMvc.Controllers
                 }
             }
             return RedirectToAction("YourJoinClass");
+
+        }
+
+        public async Task<IActionResult> CopyModule(int titleId,int moduleId, int classId)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                CopyViewModel model = new CopyViewModel();
+                model.TitleId = titleId;
+                model.ModuleId = moduleId;
+                var check = await classService.CopyModule(model);
+                if (!check)
+                {
+                    TempData["Error"] = "Cannot copy the module to your title. Server error";
+
+                }
+                else
+                {
+                    TempData["Success"] = "Copy the module successfully";
+                }
+            }
+            return RedirectToAction("ShowDetailJoinClassLearningModule", new { classId = classId });
 
         }
 

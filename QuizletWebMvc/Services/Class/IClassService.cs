@@ -29,5 +29,6 @@ namespace QuizletWebMvc.Services.Class
         Task<List<RegisterClass>> GetRegisterClass(int userId, string search);
 
         Task<List<ClassViewModel>> GetJoinClass(int userId);
+        Task<bool> CopyModule(CopyViewModel copy);
     }
 }

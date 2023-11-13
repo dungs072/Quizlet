@@ -102,6 +102,18 @@
       "DownstreamPathTemplate": "/api/Class"
     },
     {
+      "UpstreamPathTemplate": "/api/Class/CopyModule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletclass",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Class/CopyModule"
+    },
+    {
       "UpstreamPathTemplate": "/api/Class/ModuleAdd",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "DownstreamScheme": "http",

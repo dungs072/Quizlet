@@ -151,8 +151,16 @@
                             <p class="card-description">@Model.LearningModuleViewModel.Describe</p>
                             <div class="template-demo">
                                 <a href="@Url.Action("ReturnToLearningModule", "LearningModule", new{titleId = Model.LearningModuleViewModel.TitleId})" class="btn btn-outline-primary">Back</a>
-                                <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Practice</a>
-                                <a href="@Url.Action("TestTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Test</a>
+                                @if(Model.Terms.Count()<4)
+                                {
+                                    
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId,isOwned = true})" class="btn btn-outline-primary">Practice</a>
+                                    <a href="@Url.Action("TestTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Test</a>
+                                }
+                                
                             </div>
                         </div>
                     </div>

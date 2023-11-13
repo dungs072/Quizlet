@@ -379,6 +379,62 @@ namespace QuizletClass.Controllers
             var result2 = dBContext.lops.Where(a=>result.Contains(a.ClassId));
             return await result2.ToListAsync();
         }
+
+        [HttpPost("CopyModule")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> CopyModule(CopyViewModel model)
+        {
+            using var transaction = await dBContext.Database.BeginTransactionAsync();
+            try
+            {
+                CHUDE chude = await dBContext.chudes.FindAsync(model.TitleId);
+                HOCPHAN hocphan = await dBContext.hocphans.FindAsync(model.ModuleId);
+                if (chude == null || hocphan == null)
+                {
+                    return NoContent();
+                }
+                HOCPHAN module = new HOCPHAN();
+                List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
+          
+                CopyLearningModule(hocphan, module);
+                module.thethuatngus = thethuatngus;
+                foreach (var thuatngu in hocphan.thethuatngus)
+                {
+                    THETHUATNGU temp = new THETHUATNGU();
+                    thethuatngus.Add(temp);
+                    CopyTerminology(thuatngu, temp);
+                }
+                chude.hocphans.Add(module);
+
+                await dBContext.thethuatngus.AddRangeAsync(thethuatngus);
+                await dBContext.SaveChangesAsync();
+
+                await dBContext.hocphans.AddAsync(module);
+                await dBContext.SaveChangesAsync();
+
+                dBContext.chudes.Update(chude);
+                await dBContext.SaveChangesAsync();
+                transaction.Commit();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+
+        private void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN)
+        {
+            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName+"_copy";
+            toHOCPHAN.Describe = fromHOCPHAN.Describe;
+        }
+        private void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU)
+        {
+            toTHETHUATNGU.TermName = fromTHETHUATNGU.TermName;
+            toTHETHUATNGU.Explaination = fromTHETHUATNGU.Explaination;
+           
+        }
         #endregion
     }
 }

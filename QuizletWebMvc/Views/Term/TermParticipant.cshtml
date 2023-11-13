@@ -30,8 +30,16 @@
                                     <p class="card-description">@Model.LearningModuleViewModel.Describe</p>
                                     <div class="template-demo">
                                         <a href="@Url.Action("BackToShowDetailJoinClassLearningModule", "Class")" class="btn btn-outline-primary">Back</a>
-                                        <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Practice</a>
-                                        <button type="button" class="btn btn-primary btn-fw">Primary</button>
+                                        @if(Model.Terms.Count()<4)
+                                        {
+                                            
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId, isOwned = false})" class="btn btn-outline-primary">Practice</a>
+                                        }
+                                        
+                                       @*  <button type="button" class="btn btn-primary btn-fw">Primary</button> *@
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -55,6 +63,7 @@
                                                         <td> @count </td>
                                                         <td>@item.TermName</td>
                                                         <td>@item.Explaination </td>
+                                                       
                                                     </tr>
                                                     count++;
                                                 }

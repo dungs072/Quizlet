@@ -42,6 +42,8 @@ namespace QuizletWebMvc.Controllers
             LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
             ModelState.Remove("LearningModule");
+            ModelState.Remove("imageFile");
+            ModelState.Remove("Image");
             if (!ModelState.IsValid)
             {
                 return View("CreateTerm", term);
@@ -160,12 +162,13 @@ namespace QuizletWebMvc.Controllers
             return fileName;
         }
 
-        public async Task<IActionResult> PracticeTerm(int learningModuleId)
+        public async Task<IActionResult> PracticeTerm(int learningModuleId, bool isOwned)
         {
             ListObjectivePack listObjective = new ListObjectivePack();
             List<ObjectivePack> objectives =await terminologyService.GetObjectivePacks(learningModuleId);
             listObjective.ObjectivePacks = objectives;
             listObjective.LearningModuleId = learningModuleId;
+            listObjective.IsOwned = isOwned;
             return View(listObjective);
         }
         public async Task<IActionResult> TestTerm(int learningModuleId)

@@ -219,7 +219,15 @@
                                     <div id="navigation">
                                         <button onclick="previousQuestion()">Previous</button>
                                         <button onclick="nextQuestion()">Next</button>
-                                        <a class="top-left-link btn btn-primary" href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a>
+                                        @if(Model.IsOwned)
+                                        {
+                                            <a class="top-left-link btn btn-primary" href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="top-left-link btn btn-primary" href="@Url.Action("TermParticipant", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a>
+                                        }
+
                                     </div>
                                     <p id="result"></p>
                                 </div>

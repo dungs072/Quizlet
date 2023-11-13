@@ -9,6 +9,27 @@
 <html lang="en">
 <head>
     <partial name="HeaderHome" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var dataToPass = "";
+            $('#confirmChooseTitle').on('click', function () {
+                dataToPass = $('#confirmChooseTitle').val();
+                var stringArray = dataToPass.split(':');
+                var moduleIdd = parseInt(stringArray[1], 10);
+                var url = '@Url.Action("CopyModule", "Class")' + '?titleId=' + @Model.SelectedTitleId + '&moduleId=' + moduleIdd + '&classId=' + @Model.ClassId;
+                alert(@Model.SelectedTitleId +':' + moduleIdd + ':' + @Model.ClassId);
+                window.location.href = url;
+
+            });
+            $('.copyButton').on('click', function () {
+                dataToPass = $(this).val()
+                var confirmButton = $(document).find('#confirmChooseTitle')
+                confirmButton.val(dataToPass)
+
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container-scroller">
@@ -58,6 +79,8 @@
                                                         <td>@item.AddedDate.ToString("dd/MM/yyyy")</td>
                                                         <td>@item.NumberTerms</td>
                                                         <td>
+                                                        <td>
+                                                            <button class="btn btn-primary copyButton" data-toggle="modal" data-target="#copyWarningModal" value="CopyModule:@item.LearningModuleId:@item.LearningModuleName">Copy</button>
                                                             <a href="@Url.Action("TermParticipant", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">Go to</a>
                                                         </td>
                                                     </tr>
@@ -81,6 +104,38 @@
     <!-- container-scroller -->
     <partial name="FooterHome" />
     <partial name="Warnings" />
+
+    <!-- Modal -->
+    <div class="modal fade" id="copyWarningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Choose the thing you want</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>Please choose the title to contain copy module?</h5>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SelectedTitleId, "Select a title:")
+                        @Html.DropDownListFor(model => model.SelectedTitleId, new SelectList(Model.Titles,"TitleId","TitleName"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.SelectedTitleId, "", new { @class = "text-danger" })
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="confirmChooseTitle">Choose</button>
+                </div>
+                <div class ="modal-body">
+                    <h5>Or create a new title</h5>
+                    <a class="btn btn-success" href="@Url.Action("CreateTitleModule", "TitleModule")">Create Title</a>
+                </div>
+               @*  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="confirmDelete">OK</button>
+                </div> *@
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

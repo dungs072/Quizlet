@@ -32,6 +32,7 @@
         public static string ClassParticipantAdd { get { return ClassUrl + "/UserParticipant"; } }
         public static string ClassPendingParticipant { get { return ClassUrl + "/DetailPendingParticipant"; } }
         public static string ClassRegister { get { return ClassUrl + "/GlobalSearch"; } }
+        public static string ClassCopyModule { get { return ClassUrl + "/CopyModule"; } }
 
         public static string ClassJoin { get { return ClassUrl + "/JoinClass"; } }
 

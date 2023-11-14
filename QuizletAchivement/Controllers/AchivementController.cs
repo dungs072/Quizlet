@@ -266,11 +266,44 @@ namespace QuizletAchivement.Controllers
                             
                         }
                     }
+                    if(typeBadge=="terms")
+                    {
+                        if (badge.Condition < achiveStatistics.NumberTerms)
+                        {
+
+                            if (!CheckIsExistBadge(userId, badge.AchivementId))
+                            {
+                                return new AchivementBadge { AchivementId = badge.AchivementId, AchivementName = badge.AchivementName };
+                            }
+
+                        }
+                    }
+                    //if(typeBadge=="participants")
+                    //{
+                    //    if (badge.Condition < achiveStatistics.)
+                    //    {
+
+                    //        if (!CheckIsExistBadge(userId, badge.AchivementId))
+                    //        {
+                    //            return new AchivementBadge { AchivementId = badge.AchivementId, AchivementName = badge.AchivementName };
+                    //        }
+
+                    //    }
+                    //}
                 }
               
             }
             return null;
         }
+        //private async int GetParticipantInAllClass(int userId)
+        //{
+        //    int count = 0;
+        //    List<LOP> lops = await dBContext.lops.Where(a => a.NGUOIDUNG.UserId == userId).ToListAsync();
+        //    foreach(var lop in lops)
+        //    {
+        //        lo
+        //    }
+        //}
         private bool CheckIsExistBadge(int userId, int badgeId)
         {
             var exists = dBContext.chitietthanhtuus

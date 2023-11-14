@@ -1,7 +1,9 @@
 ﻿using Firebase.Auth;
 using Firebase.Storage;
 using Microsoft.AspNetCore.Mvc;
+using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,13 +13,15 @@ namespace QuizletWebMvc.Controllers
     public class TermController : Controller
     {
         private readonly ITerminologyService terminologyService;
+        private readonly IAchivement achivement;
         private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
         private readonly string bucket = "quizlet-c9cab.appspot.com";
         private readonly string gmail = "sa123@gmail.com";
         private readonly string password = "123456";
-        public TermController(ITerminologyService terminologyService)
+        public TermController(ITerminologyService terminologyService,IAchivement achivement)
         {
             this.terminologyService = terminologyService;
+            this.achivement = achivement;
         }
         public IActionResult Term(int learningModuleId)
         {
@@ -77,8 +81,23 @@ namespace QuizletWebMvc.Controllers
                 TempData["Error"] = "Duplicate terminology name in current learning module. Please fix it!!";
                 return View("CreateTerm", term);
             }
-
             TempData["Success"] = "Create a terminology sucessfully";
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var state = await achivement.AchieveBadge(userId, "terms");
+                if (state != null)
+                {
+                    AchieveBadge ac = new AchieveBadge();
+                    ac.AchievementId = state.AchivementId;
+                    ac.UserId = userId;
+                    var s = await achivement.AddUpdateAchieve(ac);
+                    if (s)
+                    {
+                        TempData["Success"] = "Successfully, You just achieved new badge. " + state.AchivementName;
+                    }
+
+                }
+            }
             return RedirectToAction("Term", new { learningModuleId = term.LearningModuleId });
         }
         public async Task<IActionResult> DeleteTerm(int termId, int learningModuleId)

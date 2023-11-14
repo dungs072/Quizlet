@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Class;
 using QuizletWebMvc.ViewModels.Terminology;
 
@@ -10,10 +12,12 @@ namespace QuizletWebMvc.Controllers
     {
         private readonly IClassService classService;
         private readonly ITerminologyService terminologyService;
-        public ClassController(IClassService classService,ITerminologyService terminologyService)
+        private readonly IAchivement achivement;
+        public ClassController(IClassService classService,ITerminologyService terminologyService,IAchivement achivement)
         {
             this.terminologyService = terminologyService;
             this.classService = classService;
+            this.achivement = achivement;
         }
         public async Task<IActionResult> YourOwnClass()
         {
@@ -261,6 +265,19 @@ namespace QuizletWebMvc.Controllers
                 else
                 {
                     TempData["Success"] = "Accept participant sucessfully";
+                    var state = await achivement.AchieveBadge(userId, "participants");
+                    if (state != null)
+                    {
+                        AchieveBadge ac = new AchieveBadge();
+                        ac.AchievementId = state.AchivementId;
+                        ac.UserId = userId;
+                        var s = await achivement.AddUpdateAchieve(ac);
+                        if (s)
+                        {
+                            TempData["Success"] = "Successfully, You just achieved new badge. " + state.AchivementName;
+                        }
+
+                    }
                 }
             }
             return RedirectToAction("ShowDetailOwnClassPendingParticipant", new { classId = classId });

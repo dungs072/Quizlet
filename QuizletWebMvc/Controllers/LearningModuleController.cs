@@ -82,11 +82,19 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteLearningModule(int learningModuleId,int TitleId)
         {
-            var canDelete = await terminologyService.DeleteLearningModule(learningModuleId);
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
 
-            if(!canDelete) 
+            }
+            var canDelete = await terminologyService.DeleteLearningModule(learningModuleId,userId);
+
+            if(canDelete=="2") 
             {
                 TempData["Error"] = "Delete learning module failed because it has an terminology";
+            }
+            else if(canDelete!="1")
+            {
+                TempData["Error"] = "Delete learning module failed because there are some class containing it. Class: "+canDelete;
             }
             else
             {

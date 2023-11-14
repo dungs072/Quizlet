@@ -382,6 +382,7 @@ namespace QuizletClass.Controllers
 
         [HttpPost("CopyModule")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> CopyModule(CopyViewModel model)
         {
             using var transaction = await dBContext.Database.BeginTransactionAsync();
@@ -389,6 +390,10 @@ namespace QuizletClass.Controllers
             {
                 CHUDE chude = await dBContext.chudes.FindAsync(model.TitleId);
                 HOCPHAN hocphan = await dBContext.hocphans.FindAsync(model.ModuleId);
+                if (CheckDuplicateModuleName(chude, hocphan))
+                {
+                    return NoContent();
+                }
                 if (chude == null || hocphan == null)
                 {
                     return BadRequest();
@@ -419,10 +424,20 @@ namespace QuizletClass.Controllers
                 return BadRequest();
             }
         }
-
+        private bool CheckDuplicateModuleName(CHUDE chude, HOCPHAN hocphan)
+        {
+            foreach(var hp in chude.hocphans)
+            {
+                if(hp.LearningModuleName.Trim()==hocphan.LearningModuleName.Trim())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         private void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN)
         {
-            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName+"1";
+            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName;
             toHOCPHAN.Describe = fromHOCPHAN.Describe;
         }
         private void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU)
@@ -432,5 +447,15 @@ namespace QuizletClass.Controllers
            
         }
         #endregion
+
+        #region Delete
+        [HttpGet("CheckDelete/{learningModuleId}/{userId}")]
+        public string CanDeleteLearningModule(int learningModuleId, int userId)
+        {
+            var data =  dBContext.chitiethocphans.FirstOrDefault(a => a.lop.NGUOIDUNG.UserId == userId && a.hocphan.LearningModuleId == learningModuleId);
+            return data==null?"yes":data.lop.ClassName;
+        }
+        #endregion
+
     }
 }

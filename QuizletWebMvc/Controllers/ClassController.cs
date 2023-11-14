@@ -408,11 +408,15 @@ namespace QuizletWebMvc.Controllers
                 CopyViewModel model = new CopyViewModel();
                 model.TitleId = titleId;
                 model.ModuleId = moduleId;
-                var check = await classService.CopyModule(model);
-                if (!check)
+                var value = await classService.CopyModule(model);
+                if (value==2)
                 {
                     TempData["Error"] = "Cannot copy the module to your title. Server error";
 
+                }
+                else if(value==1)
+                {
+                    TempData["Error"] = "Duplicate module name in this title. Server error";
                 }
                 else
                 {

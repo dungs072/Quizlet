@@ -16,7 +16,7 @@ namespace QuizletWebMvc.Services.Terminology
 
         Task<List<LearningModuleViewModel2>> GetLearningModuleByTitleId(int TitleId);
         Task<bool> CreateLearningModule(LearningModuleViewModel2 learningModuleViewModel);
-        Task<bool> DeleteLearningModule(int LearningModuleId);
+        Task<string> DeleteLearningModule(int LearningModuleId, int userId);
         Task<LearningModuleViewModel2> GetLearningModuleViewModel(int learningModuleId);
         Task<bool> UpdateLearningModule(LearningModuleViewModel2 learningModuleViewModel);
 

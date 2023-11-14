@@ -93,7 +93,7 @@ namespace QuizletWebMvc.Controllers
                     var s = await achivement.AddUpdateAchieve(ac);
                     if (s)
                     {
-                        TempData["Success"] = "Successfully, You just achieved new badge. " + state.AchivementName;
+                        TempData["Success"] = "Successfully, You just achieved new badge. " + state.AchivementName.Split(',')[0];
                     }
 
                 }

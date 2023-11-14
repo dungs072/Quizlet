@@ -245,7 +245,7 @@ namespace QuizletAchivement.Controllers
             return check != null;
         }
         [HttpGet("UpdateBadge/{userId}/{typeBadge}")]
-        public async Task<AchivementBadge> GetUpdateBadge(int userId, string typeBadge)
+        public async Task<ActionResult<AchivementBadge>> GetUpdateBadge(int userId, string typeBadge)
         {
             AchieveStatistics achiveStatistics = new AchieveStatistics();
             await GetLibraryStatistics(achiveStatistics, userId);
@@ -293,7 +293,7 @@ namespace QuizletAchivement.Controllers
                 }
               
             }
-            return null;
+            return NotFound();
         }
         //private async int GetParticipantInAllClass(int userId)
         //{

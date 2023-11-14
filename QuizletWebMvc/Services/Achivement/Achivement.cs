@@ -44,7 +44,14 @@ namespace QuizletWebMvc.Services.Achivement
         }
         public async Task<AchivementBadge> AchieveBadge(int userId, string typeBadge)
         {
-            return await client.GetFromJsonAsync<AchivementBadge>(API.API.AchieveBadge + $"/{userId}/{typeBadge}");
+            try
+            {
+                return await client.GetFromJsonAsync<AchivementBadge>(API.API.AchieveBadge + $"/{userId}/{typeBadge}");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
         public async Task<bool> AddUpdateAchieve(AchieveBadge detail)
         {

@@ -381,7 +381,7 @@ namespace QuizletClass.Controllers
         }
 
         [HttpPost("CopyModule")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CopyModule(CopyViewModel model)
         {
             using var transaction = await dBContext.Database.BeginTransactionAsync();
@@ -391,11 +391,10 @@ namespace QuizletClass.Controllers
                 HOCPHAN hocphan = await dBContext.hocphans.FindAsync(model.ModuleId);
                 if (chude == null || hocphan == null)
                 {
-                    return NoContent();
+                    return BadRequest();
                 }
                 HOCPHAN module = new HOCPHAN();
                 List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
-          
                 CopyLearningModule(hocphan, module);
                 module.thethuatngus = thethuatngus;
                 foreach (var thuatngu in hocphan.thethuatngus)
@@ -404,15 +403,12 @@ namespace QuizletClass.Controllers
                     thethuatngus.Add(temp);
                     CopyTerminology(thuatngu, temp);
                 }
-                chude.hocphans.Add(module);
-
+                module.chude = chude;
                 await dBContext.thethuatngus.AddRangeAsync(thethuatngus);
-                await dBContext.SaveChangesAsync();
-
                 await dBContext.hocphans.AddAsync(module);
-                await dBContext.SaveChangesAsync();
-
                 dBContext.chudes.Update(chude);
+
+
                 await dBContext.SaveChangesAsync();
                 transaction.Commit();
                 return Ok();
@@ -420,13 +416,13 @@ namespace QuizletClass.Controllers
             catch (Exception ex)
             {
                 transaction.Rollback();
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+                return BadRequest();
             }
         }
 
         private void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN)
         {
-            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName+"_copy";
+            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName+"1";
             toHOCPHAN.Describe = fromHOCPHAN.Describe;
         }
         private void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU)

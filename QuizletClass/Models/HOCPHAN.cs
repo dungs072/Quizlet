@@ -8,7 +8,7 @@ namespace QuizletClass.Models
     {
         [Key]
         [Column("MA_HOCPHAN")]
-        public int LearningModuleId { get; set; } = -1;
+        public int LearningModuleId { get; set; }
         [Column("TEN_HOCPHAN")]
         public string LearningModuleName { get; set; } = "";
         [Column("MOTA")]

@@ -17,8 +17,8 @@
                 dataToPass = $('#confirmChooseTitle').val();
                 var stringArray = dataToPass.split(':');
                 var moduleIdd = parseInt(stringArray[1], 10);
-                var url = '@Url.Action("CopyModule", "Class")' + '?titleId=' + @Model.SelectedTitleId + '&moduleId=' + moduleIdd + '&classId=' + @Model.ClassId;
-                alert(@Model.SelectedTitleId +':' + moduleIdd + ':' + @Model.ClassId);
+                var selectedTitleId = $('#titleDropdown').val();
+                var url = '@Url.Action("CopyModule", "Class")' + '?titleId=' + selectedTitleId + '&moduleId=' + moduleIdd + '&classId=' + @Model.ClassId;
                 window.location.href = url;
 
             });
@@ -119,7 +119,7 @@
                     <h5>Please choose the title to contain copy module?</h5>
                     <div class="form-group">
                         @Html.LabelFor(model => model.SelectedTitleId, "Select a title:")
-                        @Html.DropDownListFor(model => model.SelectedTitleId, new SelectList(Model.Titles,"TitleId","TitleName"), new { @class = "form-control" })
+                        @Html.DropDownListFor(model => model.SelectedTitleId, new SelectList(Model.Titles,"TitleId","TitleName"), new { @class = "form-control",id = "titleDropdown" })
                         @Html.ValidationMessageFor(model => model.SelectedTitleId, "", new { @class = "text-danger" })
                     </div>
 

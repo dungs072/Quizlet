@@ -152,7 +152,7 @@ namespace QuizletWebMvc.Services.Class
         public async Task<bool> CopyModule(CopyViewModel copy)
         {
             HttpResponseMessage response = await client.PostAsJsonAsync<CopyViewModel>(API.API.ClassCopyModule, copy);
-            if (response.StatusCode == HttpStatusCode.NoContent)
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 return false;
             }

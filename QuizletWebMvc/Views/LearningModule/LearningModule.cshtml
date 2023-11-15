@@ -70,9 +70,10 @@
                          @foreach (var item in Model.Modules)
                                     {
                                         <div class="col-lg-3 grid-margin stretch-card">
-                                            <div class="card my-card bg-primary" style="width: 18rem;">
+                                            <div class="card my-card border-primary" style="width: 18rem;">
                                                 <div class="card-body text-center">
                                                     <h5 class="card-title">@item.LearningModuleName</h5>
+                                                    <h5>Terms number: @item.NumberTerms</h5>
                                                     <p class="card-text card-item">@item.Describe</p>
                                                     <img src="https://firebasestorage.googleapis.com/v0/b/quizlet-c9cab.appspot.com/o/main%2Fdictionary.png?alt=media&token=1e0bf336-73f7-4beb-89a6-3f9ca386e024" alt="Card Image 1">
                                                     

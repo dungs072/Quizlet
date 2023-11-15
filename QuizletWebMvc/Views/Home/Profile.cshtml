@@ -56,7 +56,7 @@
                                             <div class="text-center">
                                                 @if (!string.IsNullOrEmpty(Model.Image))
                                                 {
-                                                    <img src="@Url.Content(Model.Image)" alt="Profile Image" class="img-fluid mb-2" style="max-width: 150px;" />
+                                                    <img src="@Url.Content(Model.Image)" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="max-width: 175px;" />
                                                 }
                                                 else
                                                 {
@@ -97,6 +97,10 @@
                                         <div class="form-group" style="display: none;">
                                             @Html.LabelFor(model => model.Password)
                                             @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group hideDiv">
+                                            @Html.LabelFor(model => model.Image)
+                                            @Html.TextBoxFor(model => model.Image, new { @class = "form-control" })
                                         </div>
 
                                         <!-- Add other form fields as needed -->

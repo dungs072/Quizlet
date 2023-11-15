@@ -19,6 +19,8 @@ namespace QuizletClass.Models
         public string TypeAccount { get; set; } = "";
         [Column("MATKHAU")]
         public string Password { get; set; } = "";
+        [Column("HINHANH")]
+        public string? Image { get; set; }
 
         public virtual ICollection<LOP> lops { get; set; } 
         public virtual ICollection<CHUDE> chudes { get; set; }

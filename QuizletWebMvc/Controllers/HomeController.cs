@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Models;
 using QuizletWebMvc.Services.Achivement;
+using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.Services.Login;
 using QuizletWebMvc.ViewModels.Achivement;
+using QuizletWebMvc.ViewModels.Class;
 using QuizletWebMvc.ViewModels.User;
 using System.Diagnostics;
 using System.Reflection;
@@ -16,14 +18,16 @@ namespace QuizletWebMvc.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IAchivement achivement;
         private readonly ILoginService loginService;
+        private readonly IClassService classService;
         private readonly IFirebaseService firebaseService;
 
-        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService, IFirebaseService firebaseService)
+        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService, IFirebaseService firebaseService, IClassService classService)
         {
             _logger = logger;
             this.achivement = achivement;
             this.loginService = loginService;
             this.firebaseService = firebaseService;
+            this.classService = classService; 
         }
 
         public async Task<IActionResult> Index()
@@ -103,7 +107,7 @@ namespace QuizletWebMvc.Controllers
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]
-        public async Task<IActionResult> Profile(UserAccountViewModel model, IFormFile imageFile, bool deleteImage)
+        public async Task<IActionResult> Profile(UserAccountViewModel model, IFormFile imageFile, IFormCollection form)
         {
             ModelState.Remove("LevelTerms");
             ModelState.Remove("Image");
@@ -117,7 +121,8 @@ namespace QuizletWebMvc.Controllers
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 model.UserId = userId;
-                if(deleteImage)
+                bool canDelete =  form["deleteImage"]=="on";
+                if (canDelete)
                 {
                     if (model.Image != null)
                     {
@@ -180,6 +185,16 @@ namespace QuizletWebMvc.Controllers
             }
             return View(model);
 
+        }
+        public async Task<ActionResult> GetMessages()
+        {
+
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
+            List<MessageClassRegistration> models = await classService.GetMessageRegister(userId);
+
+            ViewBag.Messages = models;
+
+            return PartialView("_MessageListPartial");
         }
 
         public IActionResult Privacy()

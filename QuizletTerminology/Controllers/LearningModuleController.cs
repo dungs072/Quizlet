@@ -17,9 +17,13 @@ namespace QuizletTerminology.Controllers
         [HttpGet("{TitleId}")]
         public IEnumerable<HOCPHAN> GetHOCPHANByTitleId(int TitleId)
         {
-            var hocphan =  dbContext.hocphans.Where(e => e.TitleId == TitleId).ToList();
-            
-            return hocphan;
+            var hocphans =  dbContext.hocphans.Where(e => e.TitleId == TitleId).ToList();
+            foreach(var hocphan in hocphans)
+            {
+                var terms = dbContext.thethuatngus.Where(e=>e.LearningModuleId==hocphan.LearningModuleId).ToList();
+                hocphan.NumberTerms = terms.Count;
+            }
+            return hocphans;
         }
         [HttpGet("find/{learningModuleId}")]
         public async Task<ActionResult<HOCPHAN>> GetHOCPHANByLearningModuleId(int learningModuleId)

@@ -11,6 +11,8 @@ namespace QuizletWebMvc.ViewModels.Terminology
         public string? Describe { get; set; }
         public int TitleId { get; set; }
 
+        public int NumberTerms { get; set; }
+
         public TitleViewModel TitleView { get; set; }
     }
 }

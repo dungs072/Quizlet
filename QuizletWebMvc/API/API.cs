@@ -37,6 +37,8 @@
 
         public static string ClassJoin { get { return ClassUrl + "/JoinClass"; } }
 
+        public static string ClassMessageRegister { get { return ClassUrl + "/MessagePendingParticipant"; } }
+
         public static string AchivementUrl { get { return $"/api/Achivement"; } }
         public static string AchivementUser { get { return AchivementUrl + "/UserAchieve"; } }
         public static string AchieveStatistics { get { return AchivementUrl + "/AchieveStatistics"; } }

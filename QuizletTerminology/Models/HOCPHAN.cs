@@ -16,6 +16,8 @@ namespace QuizletTerminology.Models
         [ForeignKey("CHUDE")]
         [Column("MA_CHUDE")]
         public int TitleId { get; set; } = -1;
+        [NotMapped]
+        public int NumberTerms { get; set; }
         //public CHUDE chuDe { get; set; }
         //public ICollection<THETHUATNGU> thethuatngu { get; set; }
         //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }

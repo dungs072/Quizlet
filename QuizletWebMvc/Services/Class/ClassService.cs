@@ -166,6 +166,11 @@ namespace QuizletWebMvc.Services.Class
             }
 
         }
+        public async Task<List<MessageClassRegistration>> GetMessageRegister(int userId)
+        {
+            return await client.GetFromJsonAsync<List<MessageClassRegistration>>(API.API.ClassMessageRegister + $"/{userId}");
+
+        }
 
     }
 }

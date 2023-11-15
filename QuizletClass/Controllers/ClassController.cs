@@ -226,6 +226,23 @@ namespace QuizletClass.Controllers
             }
             return models;
         }
+        [HttpGet("MessagePendingParticipant/{userId}")]
+        public async Task<IEnumerable<MessageClassRegistration>> GetMessagePendingParticipant(int userId)
+        {
+            List<MessageClassRegistration> registers = new List<MessageClassRegistration>();
+            var chitietdangkilops = await dBContext.chitietdangkilops.Where(e=>e.lop.NGUOIDUNG.UserId == userId && !e.IsAccepted).OrderBy(e=>e.lop.ClassName).ToListAsync();
+            foreach(var item in chitietdangkilops)
+            {
+                MessageClassRegistration register = new MessageClassRegistration();
+                register.NameRegister = item.nguoidung.FirstName;
+                register.ImageUrl = item.nguoidung.Image;
+                register.ClassName = item.lop.ClassName;
+                register.ClassId = item.lop.ClassId;
+                register.DateRegister = item.RegisterDate.ToString("dd/MM/yyyy");
+                registers.Add(register);
+            }
+            return registers;
+        }
         private async Task<NGUOIDUNG> GetNGUOIDUNG(int userId)
         {
             return await dBContext.nguoidungs.FindAsync(userId);

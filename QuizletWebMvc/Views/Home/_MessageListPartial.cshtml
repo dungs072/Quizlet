@@ -1,0 +1,35 @@
+﻿@using QuizletWebMvc.ViewModels.Class;
+@{
+    var messages = ViewBag.Messages as List<MessageClassRegistration>;
+}
+
+@if (messages != null && messages.Any())
+{
+    foreach (var message in messages)
+    {
+        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class",new{classId=message.ClassId})" class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+                @if(message.ImageUrl==null)
+                {
+                    <img src="~/assets/images/faces/face15.jpg" alt="image" class="rounded-circle profile-pic">
+                }
+                else
+                {
+                    <img src=@message.ImageUrl alt="image" class="rounded-circle profile-pic">
+                }
+               
+            </div>
+            <div class="preview-item-content">
+                <p class="preview-subject ellipsis mb-1">@message.NameRegister wanna join : @message.ClassName</p>
+                <p class="text-muted mb-0">@message.DateRegister</p>
+            </div>
+        </a>
+        <div class="dropdown-divider"></div>
+    }
+
+    <p class="p-3 mb-0 text-center">@messages.Count new messages</p>
+}
+else
+{
+    <p class="p-3 mb-0 text-center">No messages available</p>
+}

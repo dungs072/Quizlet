@@ -423,5 +423,53 @@ namespace QuizletWebMvc.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SearchOwnClass(string searchKeyword)
+        {
+            ListClassViewModel listClassViewModel = new ListClassViewModel();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var classes = await classService.GetClassesByUser(userId);
+                if (!string.IsNullOrEmpty(searchKeyword))
+                {
+                    classes = classes.Where(c => c.ClassName.Contains(searchKeyword)).ToList();
+                }
+                listClassViewModel.Classes = classes;
+            }
+            return View("YourOwnClass", listClassViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SearchDetailOwnClassLearningModule(int classId, string searchKeyword)
+        {
+            List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                models = models.Where(m => m.LearningModuleName.Contains(searchKeyword)).ToList();
+            }
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListClassLearningModuleViewModel listModels = new ListClassLearningModuleViewModel();
+            listModels.LearningModules = models;
+            listModels.Copy(cla);
+            listModels.ClassId = classId;
+            return View("DetailOwnClass", listModels);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SearchDetailOwnClassParticipant(int classId, string searchKeyword)
+        {
+            List<Participant> models = await classService.GetDetailParticipantClass(classId);
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                models = models.Where(p =>
+                    p.FirstName.Contains(searchKeyword) ||
+                    p.LastName.Contains(searchKeyword) ||
+                    p.Gmail.Contains(searchKeyword)
+                ).ToList();
+            }
+            ClassViewModel cla = await classService.GetClass(classId);
+            ListParticipant listModels = new ListParticipant();
+            listModels.Participants = models;
+            listModels.Copy(cla);
+            return View("ParticipantInYourOwnClass", listModels);
+        }
     }
 }

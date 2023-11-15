@@ -40,6 +40,20 @@
                                     <p class="card-description">
 
                                     </p>
+
+                                    <!--Thanh tìm kiếm-->
+                                    <div class="search-container mb-3">
+                                        <form asp-controller="Class" asp-action="SearchDetailOwnClassParticipant" method="post">
+                                            <input type="hidden" name="classId" value="@Model.ClassId" />
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Search by Full Name or Gmail" name="searchKeyword">
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                     <div class="table-responsive">
                                         <table class="table table-dark">
                                             <thead>

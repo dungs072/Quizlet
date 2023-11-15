@@ -65,6 +65,20 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
+
+                    <!--Thanh tìm kiếm-->
+                    <div class="search-container mb-3">
+                        <form asp-controller="LearningModule" asp-action="SearchLearningModule" method="post">
+                            <input type="hidden" name="titleId" value="@Model.TitleViewModel.TitleId" />
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search by Module Name" name="searchKeyword">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="row">
                          @foreach (var item in Model.Modules)
                                     {

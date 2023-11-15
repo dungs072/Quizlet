@@ -70,6 +70,26 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
+
+                    <!--Thanh tìm kiếm-->
+                    <form asp-controller="Class" asp-action="SearchOwnClass" method="post">
+                        <ul class="navbar-nav w-100">
+                            <li class="nav-item w-100">
+                                <div class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                                    <input type="text" class="form-control" placeholder="Search Your Own Class" id="globalSearch" name="searchKeyword">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+
+                    <script>
+                        function searchUserClasses() {
+                            var searchKeyword = document.getElementById('userSearchInput').value;
+                            window.location.href = '/Class/SearchAddUserParticipant?search=' + searchKeyword;
+                        }
+                    </script>
+
                     <div class="row">
                         @foreach(var item in Model.Classes)
                         {

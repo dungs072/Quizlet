@@ -93,6 +93,25 @@ namespace QuizletWebMvc.Controllers
             return RedirectToAction("TitleModule");
         }
 
+        [HttpPost]
+        public IActionResult SearchTitleModule(string searchKeyword)
+        {
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var titles = terminologyService.GetTitlesBaseOnUserId(userId);
+                ListTitleViewModel titleViewModel = new ListTitleViewModel();
+                if (!string.IsNullOrEmpty(searchKeyword))
+                {
+                    titleViewModel.Titles = titles.Result.Where(t => t.TitleName.Contains(searchKeyword)).ToList();
+                }
+                else
+                {
+                    titleViewModel.Titles = titles.Result;
+                }
+                return View("TitleModule", titleViewModel);
+            }
+            return View();
+        }
 
     }
 }

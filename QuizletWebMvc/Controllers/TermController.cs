@@ -215,5 +215,23 @@ namespace QuizletWebMvc.Controllers
             listTermViewModel.Terms = listTerm.Result;
             return View(listTermViewModel);
         }
+
+        [HttpPost]
+        public IActionResult SearchTerm(int learningModuleId, string searchKeyword)
+        {
+            Task<List<TermViewModel>> listTerm = terminologyService.GetTermByLearningModuleId(learningModuleId);
+            Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
+            ListTermViewModel listTermViewModel = new ListTermViewModel();
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                listTermViewModel.Terms = listTerm.Result.Where(t => t.TermName.Contains(searchKeyword)).ToList();
+            }
+            else
+            {
+                listTermViewModel.Terms = listTerm.Result;
+            }
+            listTermViewModel.LearningModuleViewModel = learningModuleViewModel.Result;
+            return View("Term", listTermViewModel);
+        }
     }
 }

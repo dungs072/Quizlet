@@ -116,7 +116,23 @@ namespace QuizletWebMvc.Controllers
             return RedirectToAction("ReturnToLearningModule",new {titleId = learningModuleView.TitleId});
         }
 
-
+        [HttpPost]
+        public IActionResult SearchLearningModule(int titleId, string searchKeyword)
+        {
+            Task<List<LearningModuleViewModel2>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
+            ListLearningModuleViewModel modulesList = new ListLearningModuleViewModel();
+            TitleViewModel titleViewModel = new TitleViewModel() { TitleId = titleId };
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                modulesList.Modules = modules.Result.Where(m => m.LearningModuleName.Contains(searchKeyword)).ToList();
+            }
+            else
+            {
+                modulesList.Modules = modules.Result;
+            }
+            modulesList.TitleViewModel = titleViewModel;
+            return View("LearningModule", modulesList);
+        }
 
     }
 }

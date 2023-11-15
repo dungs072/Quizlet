@@ -145,6 +145,20 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
+
+                    <!--Thanh tìm kiếm-->
+                    <div class="search-container mb-3">
+                        <form asp-controller="Term" asp-action="SearchTerm" method="post">
+                            <input type="hidden" name="learningModuleId" value="@Model.LearningModuleViewModel.LearningModuleId" />
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search by Term Name" name="searchKeyword">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="row">
                         <div class="card-body">
                             <h4 class="card-title">@Model.LearningModuleViewModel.LearningModuleName</h4>

@@ -265,12 +265,14 @@ namespace QuizletWebMvc.Controllers
                 else
                 {
                     TempData["Success"] = "Accept participant sucessfully";
-                    var state = await achivement.AchieveBadge(userId, "participants");
+                    if (int.TryParse(HttpContext.Session.GetString("UserId"), out int mainUserId))
+                    { }
+                    var state = await achivement.AchieveBadge(mainUserId, "participants");
                     if (state != null)
                     {
                         AchieveBadge ac = new AchieveBadge();
                         ac.AchievementId = state.AchivementId;
-                        ac.UserId = userId;
+                        ac.UserId = mainUserId;
                         var s = await achivement.AddUpdateAchieve(ac);
                         if (s)
                         {

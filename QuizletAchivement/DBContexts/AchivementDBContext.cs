@@ -23,5 +23,6 @@ namespace QuizletAchivement.DBContexts
         public DbSet<CHUDE> chudes { get; set; }
         public DbSet<HOCPHAN> hocphans { get; set; }
         public DbSet<LOP> lops { get; set; }
+        public DbSet<CHITIETDANGKILOP> chitietdangkilops { get; set; }
     }
 }

@@ -249,14 +249,19 @@ namespace QuizletAchivement.Controllers
         {
             AchieveStatistics achiveStatistics = new AchieveStatistics();
             await GetLibraryStatistics(achiveStatistics, userId);
-            var badges = await dBContext.thanhtuus.ToListAsync();
+            var badges = await dBContext.thanhtuus.OrderBy(a=>a.Condition).ToListAsync();
+            int number = -1;
+            if(typeBadge== "participants")
+            {
+                number = await GetParticipantInAllClass(userId);
+            }
             foreach (var badge in badges)
             {
                 if(badge.AchivementName.Contains(typeBadge))
                 {
                     if (typeBadge == "modules")
                     {
-                        if (badge.Condition < achiveStatistics.NumberModule)
+                        if (badge.Condition <= achiveStatistics.NumberModule)
                         {
                           
                             if(!CheckIsExistBadge(userId, badge.AchivementId))
@@ -268,7 +273,7 @@ namespace QuizletAchivement.Controllers
                     }
                     if(typeBadge=="terms")
                     {
-                        if (badge.Condition < achiveStatistics.NumberTerms)
+                        if (badge.Condition <= achiveStatistics.NumberTerms)
                         {
 
                             if (!CheckIsExistBadge(userId, badge.AchivementId))
@@ -278,32 +283,27 @@ namespace QuizletAchivement.Controllers
 
                         }
                     }
-                    //if(typeBadge=="participants")
-                    //{
-                    //    if (badge.Condition < achiveStatistics.)
-                    //    {
+                    if (typeBadge == "participants"&&number!=-1)
+                    {
+                        if (badge.Condition <= number)
+                        {
+                            if (!CheckIsExistBadge(userId, badge.AchivementId))
+                            {
+                                return new AchivementBadge { AchivementId = badge.AchivementId, AchivementName = badge.AchivementName };
+                            }
 
-                    //        if (!CheckIsExistBadge(userId, badge.AchivementId))
-                    //        {
-                    //            return new AchivementBadge { AchivementId = badge.AchivementId, AchivementName = badge.AchivementName };
-                    //        }
-
-                    //    }
-                    //}
+                        }
+                    }
                 }
               
             }
             return NotFound();
         }
-        //private async int GetParticipantInAllClass(int userId)
-        //{
-        //    int count = 0;
-        //    List<LOP> lops = await dBContext.lops.Where(a => a.NGUOIDUNG.UserId == userId).ToListAsync();
-        //    foreach(var lop in lops)
-        //    {
-        //        lo
-        //    }
-        //}
+        private async Task<int> GetParticipantInAllClass(int userId)
+        {
+            int count = await dBContext.chitietdangkilops.CountAsync(a => a.lop.NGUOIDUNG.UserId == userId);
+            return count;
+        }
         private bool CheckIsExistBadge(int userId, int badgeId)
         {
             var exists = dBContext.chitietthanhtuus

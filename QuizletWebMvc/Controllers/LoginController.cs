@@ -37,7 +37,7 @@ namespace WebMVCQuizlet.Controllers
                 HttpContext.Session.SetString("UserId", user.ToString());
                 HttpContext.Session.SetString("UserName", user.LastName + " " + user.FirstName);
                 HttpContext.Session.SetString("TypeUser", user.TypeAccount);
-
+                HttpContext.Session.SetString("Image", user.Image==null?"none":user.Image);
                 if(user.TypeAccount=="Admin")
                 {
                     return RedirectToAction("LevelTerm", "Admin");

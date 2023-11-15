@@ -2,6 +2,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     string userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+    string avatarUser = HttpContextAccessor.HttpContext.Session.GetString("Image");
 }
 
 <header>
@@ -174,7 +175,15 @@
             <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                     <div class="navbar-profile">
-                        <img class="img-xs rounded-circle" src="~/assets/images/faces/face15.jpg" alt="">
+                        @if(avatarUser=="none")
+                        {
+                            <img class="img-xs rounded-circle" src="~/assets/images/faces/face15.jpg" alt="">
+                        }
+                        else
+                        {
+                            <img class="img-xs rounded-circle" src=@avatarUser alt="">
+                        }
+
                         <p class="mb-0 d-none d-sm-block navbar-profile-name">@userName</p>
                         <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                     </div>

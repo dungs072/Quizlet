@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Firebase.Auth;
+using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Models;
 using QuizletWebMvc.Services.Achivement;
+using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.Services.Login;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.User;
@@ -14,12 +16,14 @@ namespace QuizletWebMvc.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IAchivement achivement;
         private readonly ILoginService loginService;
+        private readonly IFirebaseService firebaseService;
 
-        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService)
+        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService, IFirebaseService firebaseService)
         {
             _logger = logger;
             this.achivement = achivement;
             this.loginService = loginService;
+            this.firebaseService = firebaseService;
         }
 
         public async Task<IActionResult> Index()
@@ -99,9 +103,12 @@ namespace QuizletWebMvc.Controllers
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]
-        public async Task<IActionResult> Profile(UserAccountViewModel model)
+        public async Task<IActionResult> Profile(UserAccountViewModel model, IFormFile imageFile, bool deleteImage)
         {
             ModelState.Remove("LevelTerms");
+            ModelState.Remove("Image");
+            ModelState.Remove("imageFile");
+            ModelState.Remove("deleteImage");
             if(!ModelState.IsValid)
             {
                 TempData["Error"] = "Error while updating your profile";
@@ -110,12 +117,34 @@ namespace QuizletWebMvc.Controllers
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 model.UserId = userId;
+                if(deleteImage)
+                {
+                    if (model.Image != null)
+                    {
+                        await firebaseService.DeleteImage(model.Image, "users");
+                        model.Image = null;
+                    }
+                }
+                else
+                {
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        if (model.Image != null)
+                        {
+                            await firebaseService.DeleteImage(model.Image, "users");
+                        }
+                        model.Image = await firebaseService.StoreImage(imageFile, "users");
+                    }
+                }
+             
+              
                 var state = await loginService.UpdateProfile(model);
                 if(state)
                 {
                     TempData["Success"] = "Update profile successfully";
                     HttpContext.Session.SetString("UserName", model.LastName + " " + model.FirstName);
                     HttpContext.Session.SetString("TypeUser", model.TypeAccount);
+                    HttpContext.Session.SetString("Image", model.Image == null ? "none" : model.Image);
                     return View(model);
                 }
 

@@ -3,21 +3,20 @@ using Firebase.Storage;
 using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Admin;
 using QuizletWebMvc.Services.Class;
+using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.ViewModels.Admin;
 
 namespace QuizletWebMvc.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
-        private readonly string bucket = "quizlet-c9cab.appspot.com";
-        private readonly string gmail = "sa123@gmail.com";
-        private readonly string password = "123456";
 
         private readonly IAdminService adminService;
-        public AdminController(IAdminService adminService)
+        private readonly IFirebaseService firebaseService;
+        public AdminController(IAdminService adminService, IFirebaseService firebaseService)
         {
             this.adminService = adminService;
+            this.firebaseService = firebaseService;
         }
         public async Task<IActionResult> LevelTerm()
         {
@@ -97,32 +96,12 @@ namespace QuizletWebMvc.Controllers
             if (!ModelState.IsValid) { return View(badge); }
             if (imageFile != null && imageFile.Length > 0)
             {
-                using (var stream = new MemoryStream())
+                if(badge.Image!=null)
                 {
-                    await imageFile.CopyToAsync(stream);
-                    var cancellation = new CancellationTokenSource();
-                    // Initialize Firebase Storage
-                    var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-                    var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
-
-                    var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
-                    {
-                        AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
-                    });
-
-                    // Specify the path in Firebase Storage
-                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
-                    string path = $"admin/{fileName}";
-                    stream.Seek(0, SeekOrigin.Begin);
-                    await firebaseStorage.Child(path).PutAsync(stream, cancellation.Token);
-                    if (badge.Image != null)
-                    {
-                        string fileNameDelete = ExtractFileNameFromUrl(badge.Image);
-                        string deletePath = $"admin/{fileNameDelete}";
-                        await firebaseStorage.Child(deletePath).DeleteAsync();
-                    }
-                    badge.Image = await firebaseStorage.Child(path).GetDownloadUrlAsync();
+                    await firebaseService.DeleteImage(badge.Image, "admin");
                 }
+                badge.Image = await firebaseService.StoreImage(imageFile, "admin");
+                
             }
             badge.AchivementName = badge.AchivementName + "," + badge.TypeBadge;
             var state = await adminService.UpdateBadge(badge);
@@ -137,16 +116,6 @@ namespace QuizletWebMvc.Controllers
             return RedirectToAction("Badge");
         }
 
-        static string ExtractFileNameFromUrl(string url)
-        {
-            // Use Uri to parse the URL
-            Uri uri = new Uri(url);
-
-            // Get the filename from the URL using Path.GetFileName
-            string fileName = Path.GetFileName(uri.LocalPath);
-
-            return fileName;
-        }
 
         [HttpGet]
         public IActionResult AddBadge(string typeBadge)
@@ -165,23 +134,7 @@ namespace QuizletWebMvc.Controllers
             {
                 using (var stream = new MemoryStream())
                 {
-                    await imageFile.CopyToAsync(stream);
-                    var cancellation = new CancellationTokenSource();
-                    // Initialize Firebase Storage
-                    var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-                    var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
-
-                    var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
-                    {
-                        AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
-                    });
-
-                    // Specify the path in Firebase Storage
-                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
-                    string path = $"admin/{fileName}";
-                    stream.Seek(0, SeekOrigin.Begin);
-                    await firebaseStorage.Child(path).PutAsync(stream, cancellation.Token);
-                    badge.Image = await firebaseStorage.Child(path).GetDownloadUrlAsync();
+                    badge.Image = await firebaseService.StoreImage(imageFile, "admin");
                 }
             }
             badge.AchivementName = badge.AchivementName + "," + badge.TypeBadge;

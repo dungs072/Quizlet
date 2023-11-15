@@ -17,6 +17,8 @@ namespace QuizletTerminology.Models
         public string Gmail { get; set; }
         [Column("KIEU")]
         public string TypeAccount { get; set; }
+        [Column("HINHANH")]
+        public string? Image { get; set; }
         [Column("MATKHAU")]
         public string Password { get; set; }
 

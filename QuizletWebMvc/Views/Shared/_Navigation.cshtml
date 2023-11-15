@@ -2,11 +2,12 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     string typeUser = HttpContextAccessor.HttpContext.Session.GetString("TypeUser");
+    string avatarUser = HttpContextAccessor.HttpContext.Session.GetString("Image");
 }
 <!-- partial:partials/_sidebar.html -->
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-        <a class="sidebar-brand brand-logo" href="@Url.Action("Index", "Home")"><img src="~/assets/images/logo.svg" alt="logo" /></a>
+        <a class="sidebar-brand brand-logo" href="@Url.Action("Index", "Home")"><img src="~/assets/images/Quizlet-Logo2.png" alt="logo" /></a>
         <a class="sidebar-brand brand-logo-mini" href="@Url.Action("Index", "Home")"><img src="~/assets/images/logo-mini.svg" alt="logo" /></a>
     </div>
     <ul class="nav">
@@ -14,7 +15,14 @@
             <div class="profile-desc">
                 <div class="profile-pic">
                     <div class="count-indicator">
-                        <img class="img-xs rounded-circle " src="~/assets/images/faces/face15.jpg" alt="">
+                        @if(avatarUser=="none")
+                        {
+                            <img class="img-xs rounded-circle " src="~/assets/images/faces/face15.jpg" alt="">
+                        }
+                        else
+                        {
+                            <img class="img-xs rounded-circle " src=@avatarUser alt="">
+                        }
                         <span class="count bg-success"></span>
                     </div>
                     <div class="profile-name">

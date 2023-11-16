@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuizletTerminology.Controllers
 {
@@ -24,6 +25,29 @@ namespace QuizletTerminology.Controllers
         {
             return dbContext.nguoidungs;
         }
+        [HttpGet("UserManager")]
+        public async Task<ActionResult<IEnumerable<UserManagerViewModel>>> GetUserManagers()
+        {
+            var users = await dbContext.nguoidungs.OrderBy(a=>a.FirstName).ToListAsync();
+            List<UserManagerViewModel> usersManagers = new List<UserManagerViewModel>();
+            foreach(var user in users)
+            {
+                if (user.TypeAccount == "Admin") { continue; }
+                UserManagerViewModel temp = new UserManagerViewModel();
+                temp.Copy(user);
+                usersManagers.Add(temp);
+            }
+            return usersManagers;
+        }
+        [HttpPut("UserState")]
+        public async Task<ActionResult> UpdateUserState(UserState user)
+        {
+            var userState = await dbContext.nguoidungs.FindAsync(user.UserId);
+            userState.State = user.State;
+            dbContext.nguoidungs.Update(userState);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
         [HttpGet("{UserId}")]
         public async Task<ActionResult<NGUOIDUNG>> GetByMA_USER(int UserId)
         {
@@ -33,7 +57,7 @@ namespace QuizletTerminology.Controllers
         [HttpGet("{Gmail}/{Password}")]
         public async Task<ActionResult<NGUOIDUNG>> GetUserByLogin(string Gmail, string Password)
         {
-            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail));
+            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail && u.State==true));
 
             if (NGUOIDUNG != null && VerifyPassword(NGUOIDUNG.Password, Password))
             {
@@ -41,7 +65,7 @@ namespace QuizletTerminology.Controllers
             }
             else
             {
-                return Ok(new NGUOIDUNG());
+                return Ok(new NGUOIDUNG() { UserId = 123});
             }
             
         }
@@ -55,6 +79,7 @@ namespace QuizletTerminology.Controllers
         public async Task<ActionResult> Create(NGUOIDUNG nguoidung)
         {
             nguoidung.Password = HashPassword(nguoidung.Password);
+            nguoidung.State = true;
             await dbContext.nguoidungs.AddAsync(nguoidung);
 
             await dbContext.SaveChangesAsync();

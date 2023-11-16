@@ -10,12 +10,15 @@ namespace QuizletWebMvc.ViewModels.User
     public class UserAccountViewModel
     {
         public int UserId { get; set; } = 0;
+        [MaxLength(50)]
         [Display(Name = "Last name")]
         [Required(ErrorMessage = "Last name is required")]
         public string LastName { get; set; }
+        [MaxLength(30)]
         [Display(Name = "First name")]
         [Required(ErrorMessage = "First name is required")]
         public string FirstName { get; set; }
+        [MaxLength(40)]
         [Display(Name = "Email address")]
         [Required(ErrorMessage = "Email address is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]

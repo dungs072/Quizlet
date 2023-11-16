@@ -101,6 +101,7 @@
             display: none;
         }
 
+
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -132,7 +133,9 @@
             }  
 
         }
+     
     </script>
+
 </head>
 <body>
     <div class="container-scroller">
@@ -234,6 +237,7 @@
                                             <th> # </th>
                                             <th> Flash card name </th>
                                             <th> Explanation </th>
+                                            <th> Image </th>
                                             <th> Functions </th>
                                         </tr>
                                     </thead>
@@ -245,6 +249,17 @@
                                                 <td>@item.TermName</td>
                                                 <td>@item.Explaination </td>
                                                 <td>
+                                                    @if (item.Image == null)
+                                                    {
+                                                        <img class="img-xs" src="~/assets/images/Icons/iconImage.jpg" alt="">
+                                                     
+                                                    }
+                                                    else
+                                                    {
+                                                        <img class="img-xs" src="@item.Image" alt="Card Image 1">
+                                                    }
+                                                </td>
+                                                <td>
                                                     <a href="@Url.Action("EditTerm", "Term", new { termId = item.TermId })" class="btn btn-secondary">Edit</a>
                                                     <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Term:@item.TermId.ToString():@item.LearningModuleId">Delete</button>
                                                 </td>
@@ -252,7 +267,7 @@
                                             count++;
                                         }
                                         <tr>
-                                            <td colspan="4">
+                                            <td colspan="5">
                                                 <a href="@Url.Action("CreateTerm", "Term",new {learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-success" style="display: block; width: 100%;">Add a card</a>
                                             </td>
                                         </tr>

@@ -165,6 +165,30 @@ namespace QuizletWebMvc.Controllers
 
             return RedirectToAction("Badge");
         }
+
+        public async Task<IActionResult> UserManager()
+        {
+            List<UserManagerViewModel> users = await adminService.GetUserManagers();
+            return View(users);
+        }
+
+        public async Task<IActionResult> UpdateStateUserManager(int userId,bool state)
+        {
+            UserState userState = new UserState();
+            userState.UserId = userId;
+            userState.State = state;
+            var canUpdate = await adminService.UpdateUserState(userState);
+            if (!canUpdate)
+            {
+                TempData["Error"] = $"Update this active account is {state} failed. Server error!!!";
+            }
+            else
+            {
+                TempData["Success"] = "Update active account is "+ state+" successfully";
+            }
+            return RedirectToAction("UserManager");
+        }
+
     }
-   
+
 }

@@ -1,9 +1,9 @@
-﻿@using QuizletWebMvc.ViewModels.Class;
+﻿@using QuizletWebMvc.ViewModels.Admin;
 @{
     Layout = null;
     int count = 1;
 }
-@model ListParticipant;
+@model List<UserManagerViewModel>;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,11 +13,11 @@
 <body>
     <div class="container-scroller">
         <!-- partial:../../partials/_sidebar.html -->
-        <partial name="_Navigation" />
+        <partial name="Admin_Navigation" />
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <!-- partial:../../partials/_navbar.html -->
-            <partial name="TopNavbar" />
+            <partial name="AdminTopNavbar" />
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
@@ -25,18 +25,7 @@
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">@Model.ClassName</h4>
-                                    <p class="card-description">@Model.Describe</p>
-                                    <p class="card-description">Created at @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
-                                    <div class="template-demo">
-                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary">Back</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Learning Modules</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Participants</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Pending</a>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="card-title">Class room detail</h4>
+                                    <h4 class="card-title">Users</h4>
                                     <p class="card-description">
 
                                     </p>
@@ -47,11 +36,13 @@
                                                     <th> # </th>
                                                     <th> Full name </th>
                                                     <th> Gmail </th>
-                                                    <th> Register date</th>
+                                                    <th> Type </th>
+                                                    <th> State account</th>
+                                                    <th> Functions </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var item in Model.Participants)
+                                                @foreach (var item in Model)
                                                 {
                                                     <tr>
                                                         <td> @count </td>
@@ -64,21 +55,33 @@
                                                             {
                                                                 <img class="img-xs rounded-circle" src=@item.Image alt="Card Image 1">
                                                             }
-                                                            @item.LastName @item.FirstName
+                                                            @item.LastName  @item.FirstName
                                                         </td>
-                                                        <td>@item.Gmail</td>
-                                                        <td>@item.RegisterDate.ToString("dd/MM/yyyy")</td>
+                                                        <td>@item.Gmail </td>
+                                                        <td>@item.TypeAccount</td>
                                                         <td>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="ParticipantOwnClass:@item.UserId">Kick out</button>
+                                                            @if (item.State)
+                                                            {
+                                                                <h5 style="color: green;">Active</h5>
+                                                            }
+                                                            else
+                                                            {
+                                                                <h5 style="color: red;">Locked</h5>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (item.State)
+                                                            {
+                                                                <a href="@Url.Action("UpdateStateUserManager", "Admin",new {userId = item.UserId, state = false})" class="btn btn-danger">Lock</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("UpdateStateUserManager", "Admin",new {userId = item.UserId, state = true})" class="btn btn-success">UnLock</a>
+                                                            }
                                                         </td>
                                                     </tr>
                                                     count++;
                                                 }
-                                                <tr>
-                                                    <td colspan="6">
-                                                        <a href="@Url.Action("SearchAddUserParticipant", "Class", new{search = "~"})" class="btn btn-success" style="display: block; width: 100%;">Add participant</a>
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -99,5 +102,4 @@
     <partial name="Warnings" />
 </body>
 </html>
-
 

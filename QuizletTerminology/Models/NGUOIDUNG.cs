@@ -21,6 +21,8 @@ namespace QuizletTerminology.Models
         public string? Image { get; set; }
         [Column("MATKHAU")]
         public string Password { get; set; }
+        [Column("TRANGTHAI")]
+        public bool State { get; set; }
 
     }
 }

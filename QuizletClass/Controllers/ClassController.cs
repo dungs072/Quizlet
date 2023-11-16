@@ -204,6 +204,7 @@ namespace QuizletClass.Controllers
                 model.Gmail = nguoidung.Gmail;
                 model.FirstName = nguoidung.FirstName;
                 model.LastName = nguoidung.LastName;
+                model.Image = nguoidung.Image;
                 models.Add(model);
             }
             return models;
@@ -222,6 +223,7 @@ namespace QuizletClass.Controllers
                 model.Gmail = nguoidung.Gmail;
                 model.FirstName = nguoidung.FirstName;
                 model.LastName = nguoidung.LastName;
+                model.Image = nguoidung.Image;
                 models.Add(model);
             }
             return models;
@@ -338,7 +340,8 @@ namespace QuizletClass.Controllers
                         LearningModuleId = hocphan.LearningModuleId,
                         LearningModuleName = hocphan.LearningModuleName,
                         OwnerFullName = nguoidung.LastName + " " + nguoidung.FirstName,
-                        NumberTerms = numberTerms
+                        NumberTerms = numberTerms,
+                        TypeUser = nguoidung.TypeAccount
 
                     };
                     models.Add(registerClass);

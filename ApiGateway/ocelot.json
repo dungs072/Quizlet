@@ -188,6 +188,18 @@
       "DownstreamPathTemplate": "/api/User"
     },
     {
+      "UpstreamPathTemplate": "/api/User/UserState",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/User/UserState"
+    },
+    {
       "UpstreamPathTemplate": "/api/User/{UserId}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
       "DownstreamScheme": "http",

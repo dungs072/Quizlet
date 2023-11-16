@@ -30,7 +30,7 @@
                                     <form asp-action="HandleCreateClass" method="post" class="forms-sample">
                                         <div class="form-group">
                                             <label for="exampleInputName1">Name</label>
-                                            <input asp-for="ClassName" type="text" class="form-control" id="exampleInputName1" placeholder="####">
+                                            <input asp-for="ClassName" type="text" class="form-control" id="exampleInputName1" placeholder="####" maxlength="75">
                                             <span asp-validation-for="ClassName" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">

@@ -73,6 +73,7 @@
                                         <h5 class="card-title">Module: @item.LearningModuleName</h5>
                                         <p class="card-text card-item">Class: @item.ClassName</p>
                                         <p class="card-text card-item">Owner: @item.OwnerFullName</p>
+                                        <p class="card-text card-item">@item.TypeUser</p>
                                         <p class="card-text card-item">@item.NumberTerms terms</p>
                                         <div class="btn-column">
                                             <a href="@Url.Action("ReadFirstTerms", "Class",new{learningModuleId = item.LearningModuleId, learningModuleName = item.LearningModuleName, classId = item.ClassId})" class="btn btn-primary">Read first</a>

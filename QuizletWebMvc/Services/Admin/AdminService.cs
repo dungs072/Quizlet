@@ -78,5 +78,24 @@ namespace QuizletWebMvc.Services.Admin
             }
             return true;
         }
+
+        public async Task<List<UserManagerViewModel>> GetUserManagers()
+        {
+            return await client.GetFromJsonAsync<List<UserManagerViewModel>>(API.API.UserManager);
+        }
+        public async Task<bool> UpdateUserState(UserState userState)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<UserState>(API.API.UserState, userState);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
     }
 }

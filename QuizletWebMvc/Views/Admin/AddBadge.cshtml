@@ -30,7 +30,7 @@
                                     <form asp-action="AddBadge" method="post" class="forms-sample" enctype="multipart/form-data">
                                         <div class="form-group ">
                                             <label for="exampleInputEmail3">Badge name</label>
-                                            <input asp-for="AchivementName" type="text" class="form-control" placeholder="####" value="@Model.AchivementName">
+                                            <input asp-for="AchivementName" type="text" class="form-control" placeholder="####" value="@Model.AchivementName" maxlength="50">
                                             <span asp-validation-for="AchivementName" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">

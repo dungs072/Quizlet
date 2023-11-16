@@ -7,6 +7,8 @@
         public static string UserChangePassword { get { return UserUrl + "/ChangePassword"; } }
         public static string UserEmailExist { get { return UserUrl + "/EmailExist"; } }
         public static string UserForgetPassword { get { return UserUrl + "/ForgetPassword"; } }
+        public static string UserManager { get { return UserUrl + "/UserManager"; } }
+        public static string UserState { get { return UserUrl + "/UserState"; } }
 
         public static string TitleUrl { get { return $"/api/Title"; } }
         public static string TitleUrlCheck { get { return TitleUrl + "/check/"; } }

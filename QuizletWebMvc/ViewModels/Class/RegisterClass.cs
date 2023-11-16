@@ -10,6 +10,7 @@
         public string LearningModuleDescirbe { get; set; }
         public string OwnerFullName { get; set; }
         public int NumberTerms { get; set; }
+        public string TypeUser { get; set; }
     }
     public class ListRegisterClass
     {

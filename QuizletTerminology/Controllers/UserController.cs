@@ -57,15 +57,18 @@ namespace QuizletTerminology.Controllers
         [HttpGet("{Gmail}/{Password}")]
         public async Task<ActionResult<NGUOIDUNG>> GetUserByLogin(string Gmail, string Password)
         {
-            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail && u.State==true));
-
+            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail));
+            if(!NGUOIDUNG.State)
+            {
+                return Ok(new NGUOIDUNG() { UserId = 123 });
+            }
             if (NGUOIDUNG != null && VerifyPassword(NGUOIDUNG.Password, Password))
             {
                 return NGUOIDUNG;
             }
             else
             {
-                return Ok(new NGUOIDUNG() { UserId = 123});
+                return Ok(new NGUOIDUNG() { UserId = 0});
             }
             
         }
@@ -88,6 +91,7 @@ namespace QuizletTerminology.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(NGUOIDUNG nguoidung)
         {
+            nguoidung.State = true;
             dbContext.nguoidungs.Update(nguoidung);
             await dbContext.SaveChangesAsync();
             return Ok();

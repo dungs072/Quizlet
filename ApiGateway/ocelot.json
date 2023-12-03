@@ -187,6 +187,7 @@
       ],
       "DownstreamPathTemplate": "/api/User"
     },
+
     {
       "UpstreamPathTemplate": "/api/User/UserState",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
@@ -282,6 +283,18 @@
         }
       ],
       "DownstreamPathTemplate": "/api/LearningModule"
+    },
+    {
+      "UpstreamPathTemplate": "/api/LearningModule/CopyModule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LearningModule/CopyModule"
     },
     {
       "UpstreamPathTemplate": "/api/LearningModule/ClassLearningModule",

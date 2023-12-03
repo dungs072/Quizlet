@@ -17,6 +17,7 @@
 
         public static string LearningModuleUrl { get { return $"/api/LearningModule"; } }
         public static string LearningModuleUrlFind { get { return LearningModuleUrl + "/find/"; } }
+        public static string LearningModuleCopyUrl { get { return LearningModuleUrl +"/CopyModule"; } }
 
         public static string TermUrl { get { return $"/api/Term"; } }
         public static string TermUrlFind { get { return TermUrl + "/find/"; } }

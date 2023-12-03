@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
 using QuizletTerminology.ViewModels;
@@ -34,14 +35,15 @@ namespace QuizletTerminology.Controllers
                 }
                 model.LearningModuleId = hocphan.LearningModuleId;
                 model.LearningModuleName = hocphan.LearningModuleName;
-                model.NumberTerms = CountTerms(hocphan.LearningModuleId);
+                model.NumberTerms = CountTerms(hocphan.LearningModuleId).Result;
             }
             return models;
 
         }
-        private int CountTerms(int learningModuleId)
+        [HttpGet("CountTerms/{learningModuleId}")]
+        public async Task<int> CountTerms(int learningModuleId)
         {
-            return dbContext.thethuatngus.Count(a=>a.hocphan.LearningModuleId==learningModuleId);
+            return await dbContext.thethuatngus.CountAsync(a=>a.hocphan.LearningModuleId==learningModuleId);
         }
         [HttpGet("{TitleId}")]
         public IEnumerable<HOCPHAN> GetHOCPHANByTitleId(int TitleId)
@@ -116,6 +118,84 @@ namespace QuizletTerminology.Controllers
         {
             var hocphan = dbContext.hocphans.FirstOrDefault(u => (u.TitleId == titleId && u.LearningModuleName == learningModuleName && u.LearningModuleId != learningModuleId));
             return hocphan != null;
+        }
+        [HttpGet("GetLearningModuleOfUser/{userId}")]
+        public async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
+        {
+            var result = from a in (from c in dbContext.chudes where c.UserId != userId select c)
+                         join b in dbContext.hocphans on a.TitleId equals b.TitleId
+                         select b;
+            return result.ToList();
+        }
+
+        [HttpPost("CopyModule")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> CopyModule(CopyViewModel model)
+        {
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                HOCPHAN hocphan = await dbContext.hocphans.FindAsync(model.ModuleId);
+                if (hocphan == null)
+                {
+                    return BadRequest();
+                }
+                if (CheckDuplicateModuleName(model.TitleId, hocphan))
+                {
+                    return NoContent();
+                }
+                HOCPHAN module = new HOCPHAN();
+                List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
+                CopyLearningModule(hocphan, module);
+                var terms = await dbContext.thethuatngus.Where(a => a.hocphan.LearningModuleId == model.ModuleId).ToListAsync();
+                foreach (var thuatngu in terms)
+                {
+                    THETHUATNGU temp = new THETHUATNGU();
+                    thethuatngus.Add(temp);
+                    temp.hocphan = module;
+                    CopyTerminology(thuatngu, temp);
+                }
+                module.TitleId = model.TitleId;
+
+                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN ON");
+                await dbContext.hocphans.AddAsync(module);
+                await dbContext.thethuatngus.AddRangeAsync(thethuatngus);
+               
+                //dbContext.chudes.Update(chude);
+
+                await dbContext.SaveChangesAsync();
+                transaction.Commit();
+                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN OFF");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return BadRequest();
+            }
+        }
+        private bool CheckDuplicateModuleName(int titleId, HOCPHAN hocphan)
+        {
+            foreach (var hp in dbContext.hocphans.Where(a=>a.TitleId==titleId))
+            {
+                if (hp.LearningModuleName.Trim() == hocphan.LearningModuleName.Trim())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN)
+        {
+            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName;
+            toHOCPHAN.Describe = fromHOCPHAN.Describe;
+        }
+        private void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU)
+        {
+            toTHETHUATNGU.TermName = fromTHETHUATNGU.TermName;
+            toTHETHUATNGU.Explaination = fromTHETHUATNGU.Explaination;
+
         }
     }
 }

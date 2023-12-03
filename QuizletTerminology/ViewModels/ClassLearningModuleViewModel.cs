@@ -18,5 +18,10 @@
         public int Ids { get; set; }
         public DateTime CreatedDates { get; set; }
     }
+    public class CopyViewModel
+    {
+        public int TitleId { get; set; }
+        public int ModuleId { get; set; }
+    }
 
 }

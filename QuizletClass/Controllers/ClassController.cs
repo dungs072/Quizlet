@@ -219,7 +219,7 @@ namespace QuizletClass.Controllers
             foreach (var item in chitietdangkilops)
             {
                 if (!item.IsAccepted) { continue; }
-                var nguoidung = await GetNGUOIDUNG(item.nguoidung.UserId);
+                var nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{item.nguoidung.UserId}"); //GetNGUOIDUNG(item.nguoidung.UserId);
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -238,7 +238,7 @@ namespace QuizletClass.Controllers
             foreach (var item in chitietdangkilops)
             {
                 if (item.IsAccepted) { continue; }
-                var nguoidung = await GetNGUOIDUNG(item.nguoidung.UserId);
+                var nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{item.nguoidung.UserId}");
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -266,17 +266,17 @@ namespace QuizletClass.Controllers
             }
             return registers;
         }
-        private async Task<NGUOIDUNG> GetNGUOIDUNG(int userId)
-        {
-            return await dBContext.nguoidungs.FindAsync(userId);
-        }
+        //private async Task<NGUOIDUNG> GetNGUOIDUNG(int userId)
+        //{
+        //    return await dBContext.nguoidungs.FindAsync(userId);
+        //}
         [HttpGet("SearchUser/{classId}/{search}/{currentUserId}")]
         public async Task<IEnumerable<UserParticipant>> GetParticipants(int classId,string search,int currentUserId)
         {
             var models = new List<UserParticipant>();
 
-            List<NGUOIDUNG> nguoidungs =  dBContext.nguoidungs.ToList<NGUOIDUNG>();
-            foreach(var nguoidung in nguoidungs)
+            List<NGUOIDUNG> nguoidungs = await client.GetFromJsonAsync<List<NGUOIDUNG>>(Api.Api.UserUrl);
+            foreach (var nguoidung in nguoidungs)
             {
                 if (!nguoidung.Gmail.Contains(search,StringComparison.OrdinalIgnoreCase)) { continue; }
                 if(nguoidung.UserId==currentUserId) { continue; }
@@ -300,7 +300,7 @@ namespace QuizletClass.Controllers
         {
             CHITIETDANGKILOP chitietdangkilop = new CHITIETDANGKILOP();
             chitietdangkilop.lop = await dBContext.lops.FindAsync(registerClassDetail.ClassId);
-            chitietdangkilop.nguoidung = await dBContext.nguoidungs.FindAsync(registerClassDetail.UserId);
+            chitietdangkilop.nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{registerClassDetail.UserId}");
             chitietdangkilop.IsAccepted = registerClassDetail.IsAccepted;
             chitietdangkilop.RegisterDate = DateTime.Now;
             await dBContext.chitietdangkilops.AddAsync(chitietdangkilop);
@@ -342,15 +342,15 @@ namespace QuizletClass.Controllers
         {
             // need to improve here
             var models = new List<RegisterClass>();
-            List<HOCPHAN> hocphans = await GetHOCPHANOfUser(userId);
-            
+            List<HOCPHAN> hocphans = await client.GetFromJsonAsync<List<HOCPHAN>>(Api.Api.LearningModuleOfUser + $"{userId}");//await GetHOCPHANOfUser(userId);
+
             foreach (var hocphan in hocphans)
             {
                 if (!hocphan.LearningModuleName.Contains(search,StringComparison.OrdinalIgnoreCase)) { continue; }
                 List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId,userId);
                 foreach(LOP lop in lops)
                 {
-                    NGUOIDUNG nguoidung = await GetNGUOIDUNG(lop.UserId);
+                    NGUOIDUNG nguoidung =  await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{lop.UserId}");
                     int numberTerms = await GetNumberTermsInModules(hocphan.LearningModuleId);
                     if (numberTerms == 0) { continue; }
                     RegisterClass registerClass = new RegisterClass()
@@ -371,14 +371,14 @@ namespace QuizletClass.Controllers
             }
             return models;
         }
-        private async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
-        {
-            var result = from a in dBContext.hocphans where a.chude.nguoidung.UserId != userId select a;
-            //var result = from a in (from c in dBContext.chudes where c.nguoidung.UserId !=userId select c)
-            //             join b in dBContext.hocphans on a.TitleId equals b.chude.TitleId
-            //             select b;
-            return result.ToList();
-        }
+        //private async Task<List<HOCPHAN>> GetHOCPHANOfUser(int userId)
+        //{
+        //    var result = from a in dBContext.hocphans where a.chude.nguoidung.UserId != userId select a;
+        //    //var result = from a in (from c in dBContext.chudes where c.nguoidung.UserId !=userId select c)
+        //    //             join b in dBContext.hocphans on a.TitleId equals b.chude.TitleId
+        //    //             select b;
+        //    return result.ToList();
+        //}
         private async Task<List<LOP>> GetLOPOfModule(int learningModuleId,int userId)
         {
             //need to improve here
@@ -392,7 +392,7 @@ namespace QuizletClass.Controllers
         }
         private async Task<int> GetNumberTermsInModules(int learningModuleId)
         {
-            return (await dBContext.thethuatngus.Where(a=>a.hocphan.LearningModuleId==learningModuleId).ToListAsync()).Count;
+            return await client.GetFromJsonAsync<int>(Api.Api.LearningModuleCountTerm + $"{learningModuleId}");
         }
         #endregion
 

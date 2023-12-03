@@ -18,7 +18,7 @@ namespace QuizletTerminology.Models
         public int TitleId { get; set; } = -1;
         [NotMapped]
         public int NumberTerms { get; set; }
-        //public CHUDE chuDe { get; set; }
+        //public virtual CHUDE chuDe { get; set; }
         //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
     }
 }

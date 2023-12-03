@@ -10,7 +10,7 @@ namespace QuizletClass.ViewModels
         public string TitleName { get; set; }
         public string? Describe { get; set; }
 
-        public void Copy(CHUDE chude)
+        public void Copy(TitleViewModel chude)
         {
             TitleId= chude.TitleId;
             TitleName= chude.TitleName;

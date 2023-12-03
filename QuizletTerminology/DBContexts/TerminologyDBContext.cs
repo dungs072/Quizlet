@@ -9,6 +9,10 @@ namespace QuizletTerminology.DBContexts
         {
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+        }
         public DbSet<CHUDE> chudes { get; set; }
         public DbSet<HOCPHAN> hocphans { get; set; }
         public DbSet<THETHUATNGU> thethuatngus { get;set; }

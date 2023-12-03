@@ -16,8 +16,9 @@ namespace QuizletClass.Models
         [Column("NGAYTAO")]
         public DateTime CreatedDate { get; set; }
 
-        [ForeignKey("MA_USER")]
-        public virtual NGUOIDUNG NGUOIDUNG { get; set; }
+        [ForeignKey("NGUOIDUNG")]
+        [Column("MA_USER")]
+        public int  UserId { get; set; }
 
 
         public virtual ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }

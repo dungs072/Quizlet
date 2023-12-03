@@ -22,8 +22,6 @@ namespace QuizletClass.Models
         [Column("HINHANH")]
         public string? Image { get; set; }
 
-        public virtual ICollection<LOP> lops { get; set; } 
-        public virtual ICollection<CHUDE> chudes { get; set; }
 
     }
 }

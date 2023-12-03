@@ -66,7 +66,7 @@ services:
     networks:
         - backend
     environment:
-        - DB_HOST=host.docker.internal
+        - DB_HOST=host.docker.internal 
         - DB_NAME=Quizlet
         - DB_SA_PASSWORD=123
 

@@ -284,6 +284,19 @@
       "DownstreamPathTemplate": "/api/LearningModule"
     },
     {
+      "UpstreamPathTemplate": "/api/LearningModule/ClassLearningModule",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LearningModule/ClassLearningModule"
+    },
+
+    {
       "UpstreamPathTemplate": "/api/LearningModule/{TitleId}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
       "DownstreamScheme": "http",

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
+using QuizletTerminology.ViewModels;
 
 namespace QuizletTerminology.Controllers
 {
@@ -14,13 +15,41 @@ namespace QuizletTerminology.Controllers
         {
             this.dbContext = dbContext;
         }
+        [HttpPost("ClassLearningModule")]
+        public IEnumerable<ClassLearningModuleViewModel> GetHOCPHANByListId([FromBody]LearningModuleIdList idList)
+        {
+            List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
+            var hocphans = dbContext.hocphans.Where(a=>idList.Ids.Contains(a.LearningModuleId)).ToList();  
+            
+            foreach(var hocphan in hocphans)
+            {
+                ClassLearningModuleViewModel model = new ClassLearningModuleViewModel();
+                models.Add(model);
+                foreach(var date in idList.CreatedDates)
+                {
+                    if(date.Ids==hocphan.LearningModuleId)
+                    {
+                        model.AddedDate = date.CreatedDates;
+                    }
+                }
+                model.LearningModuleId = hocphan.LearningModuleId;
+                model.LearningModuleName = hocphan.LearningModuleName;
+                model.NumberTerms = CountTerms(hocphan.LearningModuleId);
+            }
+            return models;
+
+        }
+        private int CountTerms(int learningModuleId)
+        {
+            return dbContext.thethuatngus.Count(a=>a.hocphan.LearningModuleId==learningModuleId);
+        }
         [HttpGet("{TitleId}")]
         public IEnumerable<HOCPHAN> GetHOCPHANByTitleId(int TitleId)
         {
             var hocphans =  dbContext.hocphans.Where(e => e.TitleId == TitleId).ToList();
             foreach(var hocphan in hocphans)
             {
-                var terms = dbContext.thethuatngus.Where(e=>e.LearningModuleId==hocphan.LearningModuleId).ToList();
+                var terms = dbContext.thethuatngus.Where(e=>e.hocphan.LearningModuleId == hocphan.LearningModuleId).ToList();
                 hocphan.NumberTerms = terms.Count;
             }
             return hocphans;
@@ -67,7 +96,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasTerminologies(int learningModuleId)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId));
             return thuatngu != null;
 
         }

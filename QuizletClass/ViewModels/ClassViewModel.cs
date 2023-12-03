@@ -20,7 +20,7 @@ namespace QuizletClass.ViewModels
             ClassName = lop.ClassName;
             Describe = lop.Describe;
             CreatedDate = lop.CreatedDate;
-            UserId = lop.NGUOIDUNG.UserId;
+            UserId = lop.UserId;
         }
     }
 }

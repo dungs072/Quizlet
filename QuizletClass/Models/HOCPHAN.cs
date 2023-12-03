@@ -16,7 +16,7 @@ namespace QuizletClass.Models
         [ForeignKey("MA_CHUDE")]
         public virtual CHUDE chude { get; set; } = null!;
    
-        public virtual ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
+        //public virtual ICollection<CHITIETHOCPHAN> chitiethocphans { get; set; }
         public virtual ICollection<THETHUATNGU> thethuatngus { get; set; }
 
 

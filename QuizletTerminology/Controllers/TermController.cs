@@ -24,7 +24,7 @@ namespace QuizletTerminology.Controllers
         [HttpGet("{learningModuleId}")]
         public IEnumerable<THETHUATNGU> GetTHETHUATNGUByTitleId(int learningModuleId)
         {
-            var thuatngu = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
+            var thuatngu = dbContext.thethuatngus.Where(e => e.hocphan.LearningModuleId == learningModuleId).ToList();
             return thuatngu;
         }
         [HttpGet("find/{termId}")]
@@ -39,7 +39,7 @@ namespace QuizletTerminology.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateTHUATNGU(THETHUATNGU thuatngu)
         {
-            if (HasDuplicatedTermNamePerLearningModule(thuatngu.LearningModuleId, thuatngu.TermName))
+            if (HasDuplicatedTermNamePerLearningModule(thuatngu.hocphan.LearningModuleId, thuatngu.TermName))
             {
                 return BadRequest();
             }
@@ -49,7 +49,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasDuplicatedTermNamePerLearningModule(int learningModuleId, string termName)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId && u.TermName == termName));
             return thuatngu != null;
         }
         [HttpDelete("{termId}")]
@@ -80,7 +80,7 @@ namespace QuizletTerminology.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateTHUATNGU(THETHUATNGU thuatngu)
         {
-            if (HasDuplicateTermNamePerLearningModuleForUpdate(thuatngu.TermId, thuatngu.LearningModuleId, thuatngu.TermName))
+            if (HasDuplicateTermNamePerLearningModuleForUpdate(thuatngu.TermId, thuatngu.hocphan.LearningModuleId, thuatngu.TermName))
             {
                 return BadRequest();
             }
@@ -91,7 +91,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasDuplicateTermNamePerLearningModuleForUpdate(int termId, int learningModuleId, string termName)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
             return thuatngu != null;
         }
         private void Shuffle<T>(List<T> list)
@@ -113,7 +113,7 @@ namespace QuizletTerminology.Controllers
         [HttpGet("objective/{learningModuleId}")]
         public IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId)
         {
-            var thuatngus = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
+            var thuatngus = dbContext.thethuatngus.Where(e => e.hocphan.LearningModuleId == learningModuleId).ToList();
             
             List<ObjectivePack> objectivePacks = new List<ObjectivePack>();
             Random random = new Random();

@@ -14,7 +14,8 @@ namespace QuizletClass.Models
         public virtual LOP lop { get; set; } = null!;
 
         [ForeignKey("MA_HOCPHAN")]
-        public virtual HOCPHAN hocphan { get; set; } = null!;
+        [Column("MA_HOCPHAN")]
+        public int LearningModuleId { get; set; }
         [Column("NGAYTAO")]
         public DateTime CreatedDate { get; set; }
 

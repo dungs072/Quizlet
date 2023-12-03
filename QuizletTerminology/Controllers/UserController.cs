@@ -72,6 +72,7 @@ namespace QuizletTerminology.Controllers
             }
             
         }
+
         [HttpGet("check/{Gmail}")]
         public async Task<ActionResult<bool>> HasDuplicateEmail(string Gmail)
         {

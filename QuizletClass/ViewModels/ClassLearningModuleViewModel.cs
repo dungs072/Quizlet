@@ -12,11 +12,21 @@ namespace QuizletClass.ViewModels
 
         public void Copy(CHITIETHOCPHAN cthp,HOCPHAN hOCPHAN,int numberTerms)
         {
-            LearningModuleId = cthp.hocphan.LearningModuleId;
+           // LearningModuleId = cthp.hocphan.LearningModuleId;
             LearningModuleName = hOCPHAN.LearningModuleName;
             Describe = hOCPHAN.Describe;
             AddedDate = cthp.CreatedDate;
             NumberTerms = numberTerms; /*cthp.LearningModule.CountNumeberModulesPerClass(classId);*/
         }
+    }
+    public class LearningModuleIdList
+    {
+        public List<int> Ids { get; } = new List<int>();
+        public List<LearningModuleClass> CreatedDates { get; } = new List<LearningModuleClass>();
+    }
+    public class LearningModuleClass
+    {
+        public int Ids { get; set; }
+        public DateTime CreatedDates { get; set; }
     }
 }

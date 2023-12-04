@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{13DD52A5-14ED-4756-B649-0C6D757FB18B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletWebAPI", "QuizletWebAPI\QuizletWebAPI.csproj", "{1EE614FE-2917-46E2-B14B-876F63391738}"
-EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{99247140-EBC7-4582-BB72-1F1AD806FD6F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIGateway", "APIGateway", "{057EEE90-CE2E-4505-AC62-9DF305834744}"
@@ -23,16 +21,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletClass", "QuizletClas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletTerminology", "QuizletTerminology\QuizletTerminology.csproj", "{8C01258A-9392-46AF-AD21-B387CA30D83C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletWebAPI", "QuizletWebAPI\QuizletWebAPI.csproj", "{F24A48FC-4365-44E0-8D41-08C90B107285}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1EE614FE-2917-46E2-B14B-876F63391738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EE614FE-2917-46E2-B14B-876F63391738}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EE614FE-2917-46E2-B14B-876F63391738}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EE614FE-2917-46E2-B14B-876F63391738}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99247140-EBC7-4582-BB72-1F1AD806FD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99247140-EBC7-4582-BB72-1F1AD806FD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99247140-EBC7-4582-BB72-1F1AD806FD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,17 +53,21 @@ Global
 		{8C01258A-9392-46AF-AD21-B387CA30D83C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C01258A-9392-46AF-AD21-B387CA30D83C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C01258A-9392-46AF-AD21-B387CA30D83C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F24A48FC-4365-44E0-8D41-08C90B107285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F24A48FC-4365-44E0-8D41-08C90B107285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F24A48FC-4365-44E0-8D41-08C90B107285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F24A48FC-4365-44E0-8D41-08C90B107285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1EE614FE-2917-46E2-B14B-876F63391738} = {13DD52A5-14ED-4756-B649-0C6D757FB18B}
 		{0AB48A3E-8925-4582-86CA-655450575868} = {057EEE90-CE2E-4505-AC62-9DF305834744}
 		{B5E43599-5B2E-40A8-B50E-CBCDB83A9B1F} = {197F5366-3A16-4665-A99E-A7E3372DDCFE}
 		{FDD34F20-6C88-4F62-8358-8AC166C51567} = {13DD52A5-14ED-4756-B649-0C6D757FB18B}
 		{C538D43C-8676-4A0C-8192-68EB7BC4F2FB} = {13DD52A5-14ED-4756-B649-0C6D757FB18B}
 		{8C01258A-9392-46AF-AD21-B387CA30D83C} = {13DD52A5-14ED-4756-B649-0C6D757FB18B}
+		{F24A48FC-4365-44E0-8D41-08C90B107285} = {13DD52A5-14ED-4756-B649-0C6D757FB18B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36F88D5F-C6D5-42FF-A6B1-02B36AB283F2}

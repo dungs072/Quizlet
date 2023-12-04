@@ -5,19 +5,6 @@ networks:
    frontend:
 
 services:
-  # quizletDB:
-  #   container_name: quizlet_db
-  #   image: mcr.microsoft.com/mssql/server:2019-latest
-  #   environment:
-  #       - ACCEPT_EULA=Y
-  #       - SA_PASSWORD=123
-  #   networks:
-  #       - backend
-  #   ports:
-  #       - 8001:1433
-  #   extra_hosts:
-  #   - "host.docker.internal:host-gateway"
-
   quizletwebapi:
     container_name: quizlet-api
     image: ${DOCKER_REGISTRY-}quizletwebapi
@@ -42,7 +29,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal
-        - DB_NAME=Quizlet
+        - DB_NAME=Quizlet_Achievement
         - DB_SA_PASSWORD=123
   
   quizletclass:
@@ -55,7 +42,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal
-        - DB_NAME=Quizlet
+        - DB_NAME=Quizlet_Class
         - DB_SA_PASSWORD=123
 
   quizletterminology:
@@ -67,7 +54,7 @@ services:
         - backend
     environment:
         - DB_HOST=host.docker.internal 
-        - DB_NAME=Quizlet
+        - DB_NAME=Quizlet_Terms
         - DB_SA_PASSWORD=123
 
   apigateway:

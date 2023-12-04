@@ -18,6 +18,7 @@ namespace QuizletClass.Controllers
             this.dBContext = dBContext;
             this.client = client;
         }
+        #region ForService
         [HttpGet("AchieveClass/{userId}")]
         public async Task<AchieveClass> GetAchieveClass(int userId)
         {
@@ -31,7 +32,8 @@ namespace QuizletClass.Controllers
             int count = await dBContext.chitietdangkilops.CountAsync(a => a.lop.UserId == userId);
             return count;
         }
-
+        #endregion
+        
         #region Class
         [HttpGet("{userId}")]
         public async Task<IEnumerable<ClassViewModel>> GetLOP(int userId)

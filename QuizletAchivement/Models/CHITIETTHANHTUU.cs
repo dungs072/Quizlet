@@ -10,7 +10,8 @@ namespace QuizletAchivement.Models
         [Column("ID_CTTT")]
         public int AchivementDetailId { get; set; }
         [ForeignKey("MA_USER")]
-        public virtual NGUOIDUNG nguoidung { get; set; }
+        [Column("MA_USER")]
+        public int UserId { get; set; }
         [ForeignKey("MA_THANHTUU")]
         public virtual THANHTUU thanhtuu { get; set; }
         

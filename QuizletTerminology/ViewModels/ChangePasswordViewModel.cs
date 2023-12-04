@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuizletTerminology.Models
+namespace QuizletTerminology.ViewModels
 {
     public class ChangePasswordViewModel
     {

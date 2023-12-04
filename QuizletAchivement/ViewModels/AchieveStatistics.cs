@@ -16,4 +16,14 @@
         public int UserId { get; set; }
         public int AchievementId { get; set; }
     }
+    public class AchieveLibrary
+    {
+        public int NumberTitle { get; set; }
+        public int NumberModule { get; set; }
+        public int NumberTerms { get; set; }
+    }
+    public class AchieveClass
+    {
+        public int TotalClass { get; set; }
+    }
 }

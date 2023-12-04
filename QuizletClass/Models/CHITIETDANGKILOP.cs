@@ -15,7 +15,8 @@ namespace QuizletClass.Models
         [Column("CHAPTHUAN")]
         public bool IsAccepted { get; set; }
         [ForeignKey("MA_USER")]
-        public virtual NGUOIDUNG nguoidung { get; set; } = null!;
+        [Column("MA_USER")]
+        public int UserId { get; set; }
         [ForeignKey("MA_LOP")]
         public virtual LOP lop { get; set; } = null!;
 

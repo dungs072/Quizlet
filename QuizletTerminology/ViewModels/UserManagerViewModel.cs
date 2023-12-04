@@ -1,4 +1,6 @@
-﻿namespace QuizletTerminology.Models
+﻿using QuizletTerminology.Models;
+
+namespace QuizletTerminology.ViewModels
 {
     public class UserManagerViewModel
     {
@@ -11,13 +13,13 @@
         public bool State { get; set; }
         public void Copy(NGUOIDUNG nguoidung)
         {
-            this.UserId = nguoidung.UserId; 
-            this.LastName = nguoidung.LastName;
-            this.FirstName  = nguoidung.FirstName; 
-            this.Gmail = nguoidung.Gmail;
-            this.TypeAccount = nguoidung.TypeAccount;
-            this.Image = nguoidung.Image;
-            this.State = nguoidung.State;
+            UserId = nguoidung.UserId;
+            LastName = nguoidung.LastName;
+            FirstName = nguoidung.FirstName;
+            Gmail = nguoidung.Gmail;
+            TypeAccount = nguoidung.TypeAccount;
+            Image = nguoidung.Image;
+            State = nguoidung.State;
         }
     }
     public class UserState

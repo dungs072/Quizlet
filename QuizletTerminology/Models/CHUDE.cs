@@ -19,6 +19,6 @@ namespace QuizletTerminology.Models
 
         [NotMapped]
         public bool IsEmpty { get; set; } = true;
-        //public NGUOIDUNG nguoiDUNG { get; set; }
+        //public virtual NGUOIDUNG nguoiDUNG { get; set; }
     }
 }

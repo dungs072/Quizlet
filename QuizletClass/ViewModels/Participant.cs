@@ -21,7 +21,7 @@ namespace QuizletClass.ViewModels
             ClassId = ctdkl.lop.ClassId;
             RegisterDate = ctdkl.RegisterDate;
             IsAccepted = ctdkl.IsAccepted;
-            UserId = ctdkl.nguoidung.UserId;
+            UserId = ctdkl.UserId;
         }
     }
     public class UserParticipant
@@ -30,7 +30,7 @@ namespace QuizletClass.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gmail { get; set; }
-        public void Copy(NGUOIDUNG nguoidung) 
+        public void Copy(UserViewModel nguoidung) 
         {
             UserId = nguoidung.UserId;
             FirstName = nguoidung.FirstName;

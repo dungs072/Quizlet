@@ -43,7 +43,7 @@
         public static string ClassMessageRegister { get { return ClassUrl + "/MessagePendingParticipant"; } }
 
         public static string AchivementUrl { get { return $"/api/Achivement"; } }
-        public static string AchivementUser { get { return AchivementUrl + "/UserAchieve"; } }
+        public static string AchivementUser { get { return TermUrl + "/UserAchieve"; } }
         public static string AchieveStatistics { get { return AchivementUrl + "/AchieveStatistics"; } }
         public static string SequenceCalender { get { return AchivementUrl + "/GetSequenceCalender"; } }
         public static string MarkAttendance { get { return AchivementUrl + "/MarkAttendance"; } }
@@ -51,7 +51,7 @@
         public static string AchieveBadge { get { return AchivementUrl + "/UpdateBadge"; } }
 
 
-        public static string AdminUrl { get { return AchivementUrl + "/Admin"; } }
+        public static string AdminUrl { get { return TermUrl + "/Admin"; } }
         public static string AdminLevelTermUrl { get { return AdminUrl + "/LevelTerm"; } }
     }
 }

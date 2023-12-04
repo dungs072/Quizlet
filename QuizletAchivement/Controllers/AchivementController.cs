@@ -19,9 +19,11 @@ namespace QuizletAchivement.Controllers
         private readonly string gmail = "sa123@gmail.com";
         private readonly string password = "123456";
         private readonly AchivementDBContext dBContext;
-        public AchivementController(AchivementDBContext dBContext)
+        private readonly HttpClient client;
+        public AchivementController(AchivementDBContext dBContext,HttpClient client)
         {
             this.dBContext = dBContext;
+            this.client = client;
         }
         #region Achivement
 
@@ -103,28 +105,28 @@ namespace QuizletAchivement.Controllers
         #endregion
 
         #region UserAchieve
-        [HttpGet("UserAchieve/{UserId}")]
-        public async Task<List<LevelTerms>> GetLevelTerms(int userId)
-        {
-            List<LevelTerms> levelTerms = new List<LevelTerms>();
-            var levelghinhos = await dBContext.levelghinhos.ToListAsync();
-            foreach (var levelghinho in levelghinhos)
-            {
-                LevelTerms levelterm = new LevelTerms();
-                levelterm.LevelName = levelghinho.LevelName;
-                levelterm.NumberTermsInLevel = await CountNumberTermsForLevel(levelghinho.LevelId, userId);
-                levelTerms.Add(levelterm);
-            }
-            return levelTerms;
-        }
-        private async Task<int> CountNumberTermsForLevel(int levelId, int userId)
-        {
-            var thuatngus = await dBContext.thethuatngus
-            .Where(a => a.hocphan.chude.nguoidung.UserId == userId && a.levelghinho.LevelId == levelId)
-            .ToListAsync();
+        //[HttpGet("UserAchieve/{UserId}")]
+        //public async Task<List<LevelTerms>> GetLevelTerms(int userId)
+        //{
+        //    List<LevelTerms> levelTerms = new List<LevelTerms>();
+        //    var levelghinhos = await dBContext.levelghinhos.ToListAsync();
+        //    foreach (var levelghinho in levelghinhos)
+        //    {
+        //        LevelTerms levelterm = new LevelTerms();
+        //        levelterm.LevelName = levelghinho.LevelName;
+        //        levelterm.NumberTermsInLevel = await CountNumberTermsForLevel(levelghinho.LevelId, userId);
+        //        levelTerms.Add(levelterm);
+        //    }
+        //    return levelTerms;
+        //}
+        //private async Task<int> CountNumberTermsForLevel(int levelId, int userId)
+        //{
+        //    var thuatngus = await dBContext.thethuatngus
+        //    .Where(a => a.hocphan.chude.nguoidung.UserId == userId && a.levelghinho.LevelId == levelId)
+        //    .ToListAsync();
 
-            return thuatngus.Count;
-        }
+        //    return thuatngus.Count;
+        //}
         [HttpGet("AchieveStatistics/{userId}")]
         public async Task<AchieveStatistics> GetAchieveStatistics(int userId)
         {
@@ -136,30 +138,36 @@ namespace QuizletAchivement.Controllers
         }
         public async Task GetLibraryStatistics(AchieveStatistics statistics, int userId)
         {
-            var titles = (await dBContext.chudes.Where(a => a.nguoidung.UserId == userId).ToListAsync());
-            int numberModules = 0;
-            int numberTerms = 0;
-            foreach (var title in titles)
+            try
             {
-                numberModules += title.hocphans.Count;
-                foreach (var module in title.hocphans)
-                {
-                    numberTerms += module.thethuatngus.Count;
-                }
+                AchieveLibrary achieve = await client.GetFromJsonAsync<AchieveLibrary>(Api.Api.TermAchieveLibrary + $"{userId}");
+                statistics.NumberTitle = achieve.NumberTitle;
+                statistics.NumberModule = achieve.NumberModule;
+                statistics.NumberTerms = achieve.NumberTerms;
+            }catch(Exception ex)
+            {
+                statistics.NumberTitle = -1;
+                statistics.NumberModule = -1;
+                statistics.NumberTerms = -1;
             }
-            statistics.NumberTitle = titles.Count;
-            statistics.NumberModule = numberModules;
-            statistics.NumberTerms = numberTerms;
-
+           
         }
         public async Task GetClassStatistics(AchieveStatistics statistics, int userId)
         {
-            int count = await dBContext.lops.Where(a => a.NGUOIDUNG.UserId == userId).CountAsync();
-            statistics.TotalClass = count;
+            try
+            {
+                AchieveClass achieve = await client.GetFromJsonAsync<AchieveClass>(Api.Api.ClassAchieveClass + $"{userId}");
+                statistics.TotalClass = achieve.TotalClass;
+            }
+            catch(Exception ex)
+            {
+                statistics.TotalClass = -1;
+            }
+           
         }
         public async Task GetSequenceStatistics(AchieveStatistics statistics, int userId)
         {
-            var chuois = await dBContext.chitietchuois.Where(a => a.nguoidung.UserId == userId).ToListAsync();
+            var chuois = await dBContext.chitietchuois.Where(a => a.UserId == userId).ToListAsync();
             int count = 0;
             int maxCount = 0;
             for (int i = 0; i < chuois.Count - 1; i++)
@@ -186,7 +194,7 @@ namespace QuizletAchivement.Controllers
         public async Task<List<string>> GetSequenceCalender(int userId)
         {
             var sequenceDates = from a in dBContext.chitietchuois
-                         where a.nguoidung.UserId == userId
+                         where a.UserId == userId
                          select a.LearningDay.ToString("yyyy-MM-dd");
             return await sequenceDates.ToListAsync();
         }
@@ -200,7 +208,7 @@ namespace QuizletAchivement.Controllers
             }
             DateTime currentDate = DateTime.Now;
             CHITIETCHUOI chitietchuoi = new CHITIETCHUOI();
-            chitietchuoi.nguoidung = await dBContext.nguoidungs.FindAsync(mark.UserId);
+            chitietchuoi.UserId = mark.UserId;
             chitietchuoi.LearningDay = currentDate;
             chitietchuoi.SequenceId = 0;
             await dBContext.chitietchuois.AddAsync(chitietchuoi);
@@ -210,7 +218,7 @@ namespace QuizletAchivement.Controllers
         private bool IsMarked(int userId)
         {
             DateTime currentDate = DateTime.Now;
-            var value = dBContext.chitietchuois.FirstOrDefault(a=>a.nguoidung.UserId==userId && a.LearningDay.Date == currentDate.Date);
+            var value = dBContext.chitietchuois.FirstOrDefault(a=>a.UserId==userId && a.LearningDay.Date == currentDate.Date);
             return value != null;
         }
 
@@ -237,7 +245,7 @@ namespace QuizletAchivement.Controllers
         }
         private bool IsAchieve(int achievementId,int userId,Badge badge)
         {
-            var check = dBContext.chitietthanhtuus.FirstOrDefault(a => a.nguoidung.UserId == userId && a.thanhtuu.AchivementId == achievementId);
+            var check = dBContext.chitietthanhtuus.FirstOrDefault(a => a.UserId == userId && a.thanhtuu.AchivementId == achievementId);
             if(check!=null)
             {
                 badge.DateAchieved = check.AchieveDate.ToString("dd/MM/yyyy");
@@ -301,13 +309,13 @@ namespace QuizletAchivement.Controllers
         }
         private async Task<int> GetParticipantInAllClass(int userId)
         {
-            int count = await dBContext.chitietdangkilops.CountAsync(a => a.lop.NGUOIDUNG.UserId == userId);
+            int count = await client.GetFromJsonAsync<int>(Api.Api.ClassTotalJoin + $"{userId}");
             return count;
         }
         private bool CheckIsExistBadge(int userId, int badgeId)
         {
             var exists = dBContext.chitietthanhtuus
-                .Any(ctt => ctt.nguoidung.UserId == userId && ctt.thanhtuu.AchivementId == badgeId);
+                .Any(ctt => ctt.UserId == userId && ctt.thanhtuu.AchivementId == badgeId);
 
             return exists;
         }
@@ -316,7 +324,7 @@ namespace QuizletAchivement.Controllers
         {
             DateTime currentDate = DateTime.Now;
             CHITIETTHANHTUU chitietthanhtuu = new CHITIETTHANHTUU();
-            chitietthanhtuu.nguoidung = await dBContext.nguoidungs.FindAsync(achieveBadge.UserId);
+            chitietthanhtuu.UserId = achieveBadge.UserId; /*await dBContext.nguoidungs.FindAsync(achieveBadge.UserId);*/
             chitietthanhtuu.AchieveDate = currentDate;
             chitietthanhtuu.thanhtuu = await dBContext.thanhtuus.FindAsync(achieveBadge.AchievementId);
             await dBContext.chitietthanhtuus.AddAsync(chitietthanhtuu);
@@ -326,27 +334,7 @@ namespace QuizletAchivement.Controllers
 
         #endregion
 
-        #region Admin
-        [HttpGet("Admin/LevelTerm")]
-        public async Task<ActionResult<IEnumerable<LEVELGHINHO>>> GetListLEVELGHINHO()
-        {
-            return await dBContext.levelghinhos.ToListAsync();
-        }
-        [HttpGet("Admin/LevelTerm/{levelId}")]
-        public async Task<ActionResult<LEVELGHINHO>> GetLEVELGHINHO(int levelId)
-        {
-            return await dBContext.levelghinhos.FindAsync(levelId);
-        }
-        [HttpPut("Admin/LevelTerm")]
-        public async Task<ActionResult> UpdateLEVELGHINHO(LEVELGHINHO level)
-        {
-            dBContext.levelghinhos.Update(level);
-            await dBContext.SaveChangesAsync();
-            return Ok();
-        }
 
-
-        #endregion
 
     }
 }

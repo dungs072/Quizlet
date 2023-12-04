@@ -18,10 +18,6 @@ namespace QuizletClass.DBContexts
         }
         public DbSet<CHITIETDANGKILOP> chitietdangkilops { get; set; }
         public DbSet<CHITIETHOCPHAN> chitiethocphans { get; set; }
-        public DbSet<NGUOIDUNG> nguoidungs { get; set; }
         public DbSet<LOP> lops { get; set; }
-        public DbSet<HOCPHAN> hocphans { get; set; }
-        public DbSet<THETHUATNGU> thethuatngus { get; set; }
-        public DbSet<CHUDE> chudes { get; set; }
     }
 }

@@ -43,7 +43,7 @@ namespace QuizletTerminology.Controllers
         [HttpGet("CountTerms/{learningModuleId}")]
         public async Task<int> CountTerms(int learningModuleId)
         {
-            return await dbContext.thethuatngus.CountAsync(a=>a.hocphan.LearningModuleId==learningModuleId);
+            return await dbContext.thethuatngus.CountAsync(a=>a.LearningModuleId==learningModuleId);
         }
         [HttpGet("{TitleId}")]
         public IEnumerable<HOCPHAN> GetHOCPHANByTitleId(int TitleId)
@@ -51,7 +51,7 @@ namespace QuizletTerminology.Controllers
             var hocphans =  dbContext.hocphans.Where(e => e.TitleId == TitleId).ToList();
             foreach(var hocphan in hocphans)
             {
-                var terms = dbContext.thethuatngus.Where(e=>e.hocphan.LearningModuleId == hocphan.LearningModuleId).ToList();
+                var terms = dbContext.thethuatngus.Where(e=>e.LearningModuleId == hocphan.LearningModuleId).ToList();
                 hocphan.NumberTerms = terms.Count;
             }
             return hocphans;
@@ -98,7 +98,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasTerminologies(int learningModuleId)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId));
             return thuatngu != null;
 
         }
@@ -148,17 +148,16 @@ namespace QuizletTerminology.Controllers
                 HOCPHAN module = new HOCPHAN();
                 List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
                 CopyLearningModule(hocphan, module);
-                var terms = await dbContext.thethuatngus.Where(a => a.hocphan.LearningModuleId == model.ModuleId).ToListAsync();
+                var terms = await dbContext.thethuatngus.Where(a => a.LearningModuleId == model.ModuleId).ToListAsync();
                 foreach (var thuatngu in terms)
                 {
                     THETHUATNGU temp = new THETHUATNGU();
                     thethuatngus.Add(temp);
-                    temp.hocphan = module;
+                    temp.LearningModuleId = module.LearningModuleId;
                     CopyTerminology(thuatngu, temp);
                 }
                 module.TitleId = model.TitleId;
 
-                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN ON");
                 await dbContext.hocphans.AddAsync(module);
                 await dbContext.thethuatngus.AddRangeAsync(thethuatngus);
                
@@ -166,7 +165,6 @@ namespace QuizletTerminology.Controllers
 
                 await dbContext.SaveChangesAsync();
                 transaction.Commit();
-                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN OFF");
                 return Ok();
             }
             catch (Exception ex)

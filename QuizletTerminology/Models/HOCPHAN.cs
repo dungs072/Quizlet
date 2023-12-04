@@ -8,7 +8,7 @@ namespace QuizletTerminology.Models
     {
         [Key]
         [Column("MA_HOCPHAN")]
-        public int LearningModuleId { get; set; } = -1;
+        public int LearningModuleId { get; set; }
         [Column("TEN_HOCPHAN")]
         public string LearningModuleName { get; set; } = "";
         [Column("MOTA")]
@@ -18,6 +18,8 @@ namespace QuizletTerminology.Models
         public int TitleId { get; set; } = -1;
         [NotMapped]
         public int NumberTerms { get; set; }
+
+        //[ForeignKey("MA_CHUDE")]
         //public virtual CHUDE chuDe { get; set; }
         //public ICollection<CHITIETHOCPHAN> chitiethocphan { get; set; }
     }

@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuizletClass.ViewModels
 {
     public class LearningModuleViewModel
     {
-        public int TermId { get; set; }
-        public string TermName { get; set; }
-        public string Explaination { get; set; }
-        public string? Image { get; set; }
         public int LearningModuleId { get; set; }
-        public int LevelId { get; set; } = 1;
+        public string LearningModuleName { get; set; }
+        public string? Describe { get; set; }
+        public int TitleId { get; set; }
+
+        public int NumberTerms { get; set; }
+
     }
 }

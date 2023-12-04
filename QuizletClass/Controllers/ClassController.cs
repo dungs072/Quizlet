@@ -18,6 +18,20 @@ namespace QuizletClass.Controllers
             this.dBContext = dBContext;
             this.client = client;
         }
+        [HttpGet("AchieveClass/{userId}")]
+        public async Task<AchieveClass> GetAchieveClass(int userId)
+        {
+            AchieveClass achieveClass = new AchieveClass();
+            achieveClass.TotalClass = await dBContext.lops.Where(a => a.UserId == userId).CountAsync();
+            return achieveClass;
+        }
+        [HttpGet("TotalAttendee/{userId}")]
+        public async Task<int> CountAllParticipants(int userId)
+        {
+            int count = await dBContext.chitietdangkilops.CountAsync(a => a.lop.UserId == userId);
+            return count;
+        }
+
         #region Class
         [HttpGet("{userId}")]
         public async Task<IEnumerable<ClassViewModel>> GetLOP(int userId)
@@ -60,7 +74,7 @@ namespace QuizletClass.Controllers
                 return BadRequest();
             }
             LOP lop = new LOP();
-            NGUOIDUNG nguoidung = await dBContext.nguoidungs.FindAsync(classView.UserId);
+            UserViewModel nguoidung = await client.GetFromJsonAsync<UserViewModel>(Api.Api.UserUrl + $"/{classView.UserId}");
             lop.UserId = nguoidung.UserId;
             lop.CreatedDate = DateTime.Now;
             lop.ClassName = classView.ClassName;
@@ -165,7 +179,7 @@ namespace QuizletClass.Controllers
             //var hocphans = dBContext.hocphans.Where(e => e.chude.TitleId == titleId).ToList();
             try
             {
-                var hocphans = await client.GetFromJsonAsync<List<LearningModuleViewModel2>>(Api.Api.LearningModuleUrl + $"/{titleId}");
+                var hocphans = await client.GetFromJsonAsync<List<LearningModuleViewModel>>(Api.Api.LearningModuleUrl + $"/{titleId}");
                 foreach (var item in hocphans)
                 {
                     ModuleDetailWithList module = new ModuleDetailWithList();
@@ -219,7 +233,7 @@ namespace QuizletClass.Controllers
             foreach (var item in chitietdangkilops)
             {
                 if (!item.IsAccepted) { continue; }
-                var nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{item.nguoidung.UserId}"); //GetNGUOIDUNG(item.nguoidung.UserId);
+                var nguoidung = await client.GetFromJsonAsync<UserViewModel>(Api.Api.UserUrl + $"/{item.UserId}"); //GetNGUOIDUNG(item.nguoidung.UserId);
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -238,7 +252,7 @@ namespace QuizletClass.Controllers
             foreach (var item in chitietdangkilops)
             {
                 if (item.IsAccepted) { continue; }
-                var nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{item.nguoidung.UserId}");
+                var nguoidung = await client.GetFromJsonAsync<UserViewModel>(Api.Api.UserUrl + $"/{item.UserId}");
                 Participant model = new Participant();
                 model.Copy(item);
                 model.Gmail = nguoidung.Gmail;
@@ -257,8 +271,9 @@ namespace QuizletClass.Controllers
             foreach(var item in chitietdangkilops)
             {
                 MessageClassRegistration register = new MessageClassRegistration();
-                register.NameRegister = item.nguoidung.FirstName;
-                register.ImageUrl = item.nguoidung.Image;
+                var user = await client.GetFromJsonAsync<UserViewModel>(Api.Api.UserUrl + $"/{item.UserId}");
+                register.NameRegister = user.FirstName;
+                register.ImageUrl = user.Image;
                 register.ClassName = item.lop.ClassName;
                 register.ClassId = item.lop.ClassId;
                 register.DateRegister = item.RegisterDate.ToString("dd/MM/yyyy");
@@ -275,7 +290,7 @@ namespace QuizletClass.Controllers
         {
             var models = new List<UserParticipant>();
 
-            List<NGUOIDUNG> nguoidungs = await client.GetFromJsonAsync<List<NGUOIDUNG>>(Api.Api.UserUrl);
+            List<UserViewModel> nguoidungs = await client.GetFromJsonAsync<List<UserViewModel>>(Api.Api.UserUrl);
             foreach (var nguoidung in nguoidungs)
             {
                 if (!nguoidung.Gmail.Contains(search,StringComparison.OrdinalIgnoreCase)) { continue; }
@@ -292,7 +307,7 @@ namespace QuizletClass.Controllers
         }
         private bool CheckUserHasRegisterToClass(int classId, int userId)
         {
-            return dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId) != null;
+            return dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.UserId == userId) != null;
         }
         [HttpPost("UserParticipant")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -300,7 +315,7 @@ namespace QuizletClass.Controllers
         {
             CHITIETDANGKILOP chitietdangkilop = new CHITIETDANGKILOP();
             chitietdangkilop.lop = await dBContext.lops.FindAsync(registerClassDetail.ClassId);
-            chitietdangkilop.nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{registerClassDetail.UserId}");
+            chitietdangkilop.UserId = registerClassDetail.UserId;/*nguoidung = await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{registerClassDetail.UserId}");*/
             chitietdangkilop.IsAccepted = registerClassDetail.IsAccepted;
             chitietdangkilop.RegisterDate = DateTime.Now;
             await dBContext.chitietdangkilops.AddAsync(chitietdangkilop);
@@ -310,7 +325,7 @@ namespace QuizletClass.Controllers
         [HttpDelete("UserParticipant/{classId}/{userId}")]
         public async Task<ActionResult> DeleteUserParticipant(int classId, int userId)
         {
-            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId);
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.UserId == userId);
             dBContext.chitietdangkilops.Remove(chitietdangki);
             await dBContext.SaveChangesAsync();
             return Ok();
@@ -329,7 +344,7 @@ namespace QuizletClass.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<RegisterClassDetail> GetCHITIETDANGKILOP(int classId, int userId)
         {
-            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.nguoidung.UserId == userId);
+            var chitietdangki = dBContext.chitietdangkilops.FirstOrDefault(a => a.lop.ClassId == classId && a.UserId == userId);
             RegisterClassDetail register = new RegisterClassDetail();
             register.Copy(chitietdangki);
             return register;
@@ -342,7 +357,7 @@ namespace QuizletClass.Controllers
         {
             // need to improve here
             var models = new List<RegisterClass>();
-            List<HOCPHAN> hocphans = await client.GetFromJsonAsync<List<HOCPHAN>>(Api.Api.LearningModuleOfUser + $"{userId}");//await GetHOCPHANOfUser(userId);
+            List<LearningModuleViewModel> hocphans = await client.GetFromJsonAsync<List<LearningModuleViewModel>>(Api.Api.LearningModuleOfUser + $"{userId}");//await GetHOCPHANOfUser(userId);
 
             foreach (var hocphan in hocphans)
             {
@@ -350,7 +365,7 @@ namespace QuizletClass.Controllers
                 List<LOP> lops = await GetLOPOfModule(hocphan.LearningModuleId,userId);
                 foreach(LOP lop in lops)
                 {
-                    NGUOIDUNG nguoidung =  await client.GetFromJsonAsync<NGUOIDUNG>(Api.Api.UserUrl + $"/{lop.UserId}");
+                    UserViewModel nguoidung =  await client.GetFromJsonAsync<UserViewModel>(Api.Api.UserUrl + $"/{lop.UserId}");
                     int numberTerms = await GetNumberTermsInModules(hocphan.LearningModuleId);
                     if (numberTerms == 0) { continue; }
                     RegisterClass registerClass = new RegisterClass()
@@ -385,7 +400,7 @@ namespace QuizletClass.Controllers
             var result = from a in (from c in dBContext.chitiethocphans where c.LearningModuleId == learningModuleId select c)
                          join b in dBContext.lops on a.lop.ClassId equals b.ClassId
                          select b;
-            var result2 = from c in dBContext.chitietdangkilops where c.nguoidung.UserId == userId select c;
+            var result2 = from c in dBContext.chitietdangkilops where c.UserId == userId select c;
             var excludedIds = result2.Select(c => c.lop.ClassId);
             var finalResult = result.Where(a => !excludedIds.Contains(a.ClassId));
             return finalResult.ToList();
@@ -416,76 +431,9 @@ namespace QuizletClass.Controllers
         }
         public async Task<List<LOP>> GetJoinLOP(int userId)
         {
-            var result = from a in dBContext.chitietdangkilops where a.nguoidung.UserId == userId select a.lop.ClassId;
+            var result = from a in dBContext.chitietdangkilops where a.UserId == userId select a.lop.ClassId;
             var result2 = dBContext.lops.Where(a=>result.Contains(a.ClassId));
             return await result2.ToListAsync();
-        }
-
-        [HttpPost("CopyModule")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> CopyModule(CopyViewModel model)
-        {
-            using var transaction = await dBContext.Database.BeginTransactionAsync();
-            try
-            {
-                CHUDE chude = await dBContext.chudes.FindAsync(model.TitleId);
-                HOCPHAN hocphan = await dBContext.hocphans.FindAsync(model.ModuleId);
-                if (CheckDuplicateModuleName(chude, hocphan))
-                {
-                    return NoContent();
-                }
-                if (chude == null || hocphan == null)
-                {
-                    return BadRequest();
-                }
-                HOCPHAN module = new HOCPHAN();
-                List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
-                CopyLearningModule(hocphan, module);
-                module.thethuatngus = thethuatngus;
-                foreach (var thuatngu in hocphan.thethuatngus)
-                {
-                    THETHUATNGU temp = new THETHUATNGU();
-                    thethuatngus.Add(temp);
-                    CopyTerminology(thuatngu, temp);
-                }
-                module.chude = chude;
-                await dBContext.thethuatngus.AddRangeAsync(thethuatngus);
-                await dBContext.hocphans.AddAsync(module);
-                dBContext.chudes.Update(chude);
-
-
-                await dBContext.SaveChangesAsync();
-                transaction.Commit();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                return BadRequest();
-            }
-        }
-        private bool CheckDuplicateModuleName(CHUDE chude, HOCPHAN hocphan)
-        {
-            foreach(var hp in chude.hocphans)
-            {
-                if(hp.LearningModuleName.Trim()==hocphan.LearningModuleName.Trim())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        private void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN)
-        {
-            toHOCPHAN.LearningModuleName = fromHOCPHAN.LearningModuleName;
-            toHOCPHAN.Describe = fromHOCPHAN.Describe;
-        }
-        private void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU)
-        {
-            toTHETHUATNGU.TermName = fromTHETHUATNGU.TermName;
-            toTHETHUATNGU.Explaination = fromTHETHUATNGU.Explaination;
-           
         }
         #endregion
 

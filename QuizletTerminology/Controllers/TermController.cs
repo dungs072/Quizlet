@@ -2,9 +2,10 @@
 using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
-using System;
+using QuizletTerminology.ViewModels;
 
 namespace QuizletTerminology.Controllers
 {
@@ -21,10 +22,39 @@ namespace QuizletTerminology.Controllers
         {
             this.dbContext = dbContext;
         }
+        #region Except
+
+        [HttpGet("UserAchieve/{UserId}")]
+        public async Task<List<LevelTerms>> GetLevelTerms(int userId)
+        {
+            List<LevelTerms> levelTerms = new List<LevelTerms>();
+            var levelghinhos = await dbContext.levelghinhos.ToListAsync();
+            foreach (var levelghinho in levelghinhos)
+            {
+                LevelTerms levelterm = new LevelTerms();
+                levelterm.LevelName = levelghinho.LevelName;
+                levelterm.NumberTermsInLevel = await CountNumberTermsForLevel(levelghinho.LevelId, userId);
+                levelTerms.Add(levelterm);
+            }
+            return levelTerms;
+        }
+        private async Task<int> CountNumberTermsForLevel(int levelId, int userId)
+        {
+            var titles = dbContext.chudes.Where(a => a.UserId == userId).Select(t=>t.TitleId).ToList();
+            var modules = dbContext.hocphans
+                        .Where(h => titles.Contains(h.TitleId)).Select(t=>t.LearningModuleId)
+                        .ToList();
+            var count = await dbContext.thethuatngus
+            .CountAsync(h => modules.Contains(h.LearningModuleId) && h.LevelId == levelId);
+
+            return count;
+        }
+        #endregion
+
         [HttpGet("{learningModuleId}")]
         public IEnumerable<THETHUATNGU> GetTHETHUATNGUByTitleId(int learningModuleId)
         {
-            var thuatngu = dbContext.thethuatngus.Where(e => e.hocphan.LearningModuleId == learningModuleId).ToList();
+            var thuatngu = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
             return thuatngu;
         }
         [HttpGet("find/{termId}")]
@@ -39,7 +69,7 @@ namespace QuizletTerminology.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateTHUATNGU(THETHUATNGU thuatngu)
         {
-            if (HasDuplicatedTermNamePerLearningModule(thuatngu.hocphan.LearningModuleId, thuatngu.TermName))
+            if (HasDuplicatedTermNamePerLearningModule(thuatngu.LearningModuleId, thuatngu.TermName))
             {
                 return BadRequest();
             }
@@ -49,7 +79,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasDuplicatedTermNamePerLearningModule(int learningModuleId, string termName)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId && u.TermName == termName));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName));
             return thuatngu != null;
         }
         [HttpDelete("{termId}")]
@@ -80,7 +110,7 @@ namespace QuizletTerminology.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateTHUATNGU(THETHUATNGU thuatngu)
         {
-            if (HasDuplicateTermNamePerLearningModuleForUpdate(thuatngu.TermId, thuatngu.hocphan.LearningModuleId, thuatngu.TermName))
+            if (HasDuplicateTermNamePerLearningModuleForUpdate(thuatngu.TermId, thuatngu.LearningModuleId, thuatngu.TermName))
             {
                 return BadRequest();
             }
@@ -91,7 +121,7 @@ namespace QuizletTerminology.Controllers
         }
         private bool HasDuplicateTermNamePerLearningModuleForUpdate(int termId, int learningModuleId, string termName)
         {
-            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.hocphan.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
             return thuatngu != null;
         }
         private void Shuffle<T>(List<T> list)
@@ -113,7 +143,7 @@ namespace QuizletTerminology.Controllers
         [HttpGet("objective/{learningModuleId}")]
         public IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId)
         {
-            var thuatngus = dbContext.thethuatngus.Where(e => e.hocphan.LearningModuleId == learningModuleId).ToList();
+            var thuatngus = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
             
             List<ObjectivePack> objectivePacks = new List<ObjectivePack>();
             Random random = new Random();
@@ -250,5 +280,40 @@ namespace QuizletTerminology.Controllers
 
             return fileName;
         }
+        [HttpGet("AchieveLibrary/{userId}")]
+        public async Task<AchieveLibrary> GetAchieveLibrary(int userId)
+        {
+            AchieveLibrary achieveLibrary = new AchieveLibrary();
+            var titles = await dbContext.chudes.Where(a => a.UserId == userId).Select(t => t.TitleId).ToListAsync();
+            var modules = await dbContext.hocphans
+                        .Where(h => titles.Contains(h.TitleId)).Select(t => t.LearningModuleId)
+                        .ToListAsync();
+            var countTerms = await dbContext.thethuatngus
+            .CountAsync(h => modules.Contains(h.LearningModuleId));
+            achieveLibrary.NumberTitle = titles.Count;
+            achieveLibrary.NumberModule = modules.Count;
+            achieveLibrary.NumberTerms = countTerms;
+            return achieveLibrary;
+        }
+
+        #region Admin
+        [HttpGet("Admin/LevelTerm")]
+        public async Task<ActionResult<IEnumerable<LEVELGHINHO>>> GetListLEVELGHINHO()
+        {
+            return await dbContext.levelghinhos.ToListAsync();
+        }
+        [HttpGet("Admin/LevelTerm/{levelId}")]
+        public async Task<ActionResult<LEVELGHINHO>> GetLEVELGHINHO(int levelId)
+        {
+            return await dbContext.levelghinhos.FindAsync(levelId);
+        }
+        [HttpPut("Admin/LevelTerm")]
+        public async Task<ActionResult> UpdateLEVELGHINHO(LEVELGHINHO level)
+        {
+            dbContext.levelghinhos.Update(level);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+        #endregion
     }
 }

@@ -10,7 +10,7 @@ namespace QuizletClass.ViewModels
         public string? Describe { get; set; }
         public int TitleId { get; set; }
         public bool IsChoose { get; set; } = false;
-        public void Copy(LearningModuleViewModel2 hOCPHAN,int titleId)
+        public void Copy(LearningModuleViewModel hOCPHAN,int titleId)
         {
             LearningModuleId = hOCPHAN.LearningModuleId;
             LearningModuleName = hOCPHAN.LearningModuleName;

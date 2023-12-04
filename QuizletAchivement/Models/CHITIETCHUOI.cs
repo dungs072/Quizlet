@@ -13,6 +13,7 @@ namespace QuizletAchivement.Models
         [Column("NGAYHOC")]
         public DateTime LearningDay { get; set; }
         [ForeignKey("MA_USER")]
-        public virtual NGUOIDUNG nguoidung { get; set; }
+        [Column("MA_USER")]
+        public int UserId { get; set; }
     }
 }

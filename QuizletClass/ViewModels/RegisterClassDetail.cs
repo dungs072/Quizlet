@@ -13,7 +13,7 @@ namespace QuizletClass.ViewModels
         public void Copy(CHITIETDANGKILOP ctdkl)
         {
             RegisterDetailClassId = ctdkl.RegisterDetailClassId;
-            UserId = ctdkl.nguoidung.UserId;
+            UserId = ctdkl.UserId;
             ClassId = ctdkl.lop.ClassId;
             RegisterDate = ctdkl.RegisterDate;
             IsAccepted = ctdkl.IsAccepted;

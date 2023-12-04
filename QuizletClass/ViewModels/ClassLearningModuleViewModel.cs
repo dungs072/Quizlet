@@ -9,15 +9,6 @@ namespace QuizletClass.ViewModels
         public string Describe { get; set; }
         public DateTime AddedDate { get; set; }
         public int NumberTerms { get; set; }
-
-        public void Copy(CHITIETHOCPHAN cthp,HOCPHAN hOCPHAN,int numberTerms)
-        {
-           // LearningModuleId = cthp.hocphan.LearningModuleId;
-            LearningModuleName = hOCPHAN.LearningModuleName;
-            Describe = hOCPHAN.Describe;
-            AddedDate = cthp.CreatedDate;
-            NumberTerms = numberTerms; /*cthp.LearningModule.CountNumeberModulesPerClass(classId);*/
-        }
     }
     public class LearningModuleIdList
     {

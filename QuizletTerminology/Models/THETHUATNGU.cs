@@ -17,15 +17,15 @@ namespace QuizletTerminology.Models
         public int Accumulate { get; set; }
         [Column("HINHANH")]
         public string? Image { get; set; }
-        //[ForeignKey("HOCPHAN")]
-        //[Column("MA_HOCPHAN")]
-        //public int LearningModuleId { get; set; }
+        [ForeignKey("HOCPHAN")]
+        [Column("MA_HOCPHAN")]
+        public int LearningModuleId { get; set; }
 
         [ForeignKey("LEVEL")]
         [Column("MA_LEVEL")]
         public int LevelId { get; set; } = 1;
 
-        [ForeignKey("MA_HOCPHAN")]
-        public virtual HOCPHAN hocphan { get; set; } = null!;
+        //[ForeignKey("MA_HOCPHAN")]
+        //public virtual HOCPHAN hocphan { get; set; } = null!;
     }
 }

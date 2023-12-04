@@ -39,18 +39,7 @@
       ],
       "DownstreamPathTemplate": "/api/Achivement"
     },
-    {
-      "UpstreamPathTemplate": "/api/Achivement/Admin/LevelTerm",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "quizletachivement",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Achivement/Admin/LevelTerm"
-    },
+
     {
       "UpstreamPathTemplate": "/api/Achivement/MarkAttendance",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
@@ -333,6 +322,20 @@
       ],
       "DownstreamPathTemplate": "/api/Term"
     },
+
+    {
+      "UpstreamPathTemplate": "/api/Term/Admin/LevelTerm",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Term/Admin/LevelTerm"
+    },
+
     {
       "UpstreamPathTemplate": "/api/Term/test",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],

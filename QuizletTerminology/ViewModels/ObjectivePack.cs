@@ -1,4 +1,4 @@
-﻿namespace QuizletTerminology.Models
+﻿namespace QuizletTerminology.ViewModels
 {
     public class ObjectivePack
     {

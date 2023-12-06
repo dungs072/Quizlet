@@ -134,9 +134,8 @@ namespace QuizletTerminology.Respository
             }
         }
 
-        public async Task<IEnumerable<UserManagerViewModel>> GetUserManagers()
-        {
-            
+        public async Task<List<UserManagerViewModel>> GetUserManagers()
+        { 
             try
             {
                 var users = await dbContext.nguoidungs.OrderBy(a => a.FirstName).ToListAsync();
@@ -327,7 +326,7 @@ namespace QuizletTerminology.Respository
             
         }
 
-        public async Task<IEnumerable<CHUDE>> GetCHUDEByUserId(int UserId)
+        public async Task<List<CHUDE>> GetCHUDEByUserId(int UserId)
         {
             try
             {
@@ -343,7 +342,7 @@ namespace QuizletTerminology.Respository
                 return chudes;
             }catch(Exception ex)
             {
-                return Enumerable.Empty<CHUDE>();
+                return new List<CHUDE>();
             }
            
         }
@@ -401,10 +400,11 @@ namespace QuizletTerminology.Respository
         #region Module
         public IEnumerable<ClassLearningModuleViewModel> GetHOCPHANByListId(LearningModuleIdList idList)
         {
-            List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
+            
             try
             {
-               
+                List<ClassLearningModuleViewModel> models = new List<ClassLearningModuleViewModel>();
+
                 var hocphans = dbContext.hocphans.Where(a => idList.Ids.Contains(a.LearningModuleId)).ToList();
 
                 foreach (var hocphan in hocphans)
@@ -426,7 +426,7 @@ namespace QuizletTerminology.Respository
             }
             catch (Exception ex)
             {
-                return models;
+                return new List<ClassLearningModuleViewModel>();
             }
         }
 
@@ -789,11 +789,12 @@ namespace QuizletTerminology.Respository
             }
         }
 
-        public IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId)
+        public List<ObjectivePack> GetObjectiveList(int learningModuleId)
         {
-            List<ObjectivePack> objectivePacks = new List<ObjectivePack>();
+            
             try
             {
+                List<ObjectivePack> objectivePacks = new List<ObjectivePack>();
                 var thuatngus = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
 
 
@@ -896,7 +897,7 @@ namespace QuizletTerminology.Respository
                 return objectivePacks;
             }catch(Exception ex)
             {
-                return objectivePacks;
+                return new List<ObjectivePack>();
             }
             
         }
@@ -966,7 +967,7 @@ namespace QuizletTerminology.Respository
         
         }
 
-        public async Task<IEnumerable<LEVELGHINHO>> GetListLEVELGHINHO()
+        public async Task<List<LEVELGHINHO>> GetListLEVELGHINHO()
         {
             return await dbContext.levelghinhos.ToListAsync();
         }

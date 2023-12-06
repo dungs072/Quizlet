@@ -8,7 +8,7 @@ namespace QuizletTerminology.Respository
     {
         #region User
         IEnumerable<NGUOIDUNG> GetNGUOIDUNG();
-        Task<IEnumerable<UserManagerViewModel>> GetUserManagers();
+        Task<List<UserManagerViewModel>> GetUserManagers();
         Task<bool> UpdateUserState(UserState user);
         Task<NGUOIDUNG> GetByMA_USER(int UserId);
         Task<NGUOIDUNG> GetUserByLogin(string Gmail, string Password);
@@ -28,7 +28,7 @@ namespace QuizletTerminology.Respository
         #endregion
 
         #region Title
-        Task<IEnumerable<CHUDE>> GetCHUDEByUserId(int UserId);
+        Task<List<CHUDE>> GetCHUDEByUserId(int UserId);
         Task<CHUDE> GetCHUDEByTitleId(int TitleId);
         Task<bool> UpdateCHUDE(CHUDE chude);
         bool HasDuplicateTitleNamePerUserForUpdatee(int titleId, int userId, string titleName);
@@ -71,11 +71,11 @@ namespace QuizletTerminology.Respository
         Task<bool> UpdateTHUATNGU(THETHUATNGU thuatngu);
         bool HasDuplicateTermNamePerLearningModuleForUpdate(int termId, int learningModuleId, string termName);
         void Shuffle<T>(List<T> list);
-        IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId);
+        List<ObjectivePack> GetObjectiveList(int learningModuleId);
         Task<bool> UpdateTHUATNGUTest(ResultQuestion resultQuestion);
         string ExtractFileNameFromUrl(string url);
         Task<AchieveLibrary> GetAchieveLibrary(int userId);
-        Task<IEnumerable<LEVELGHINHO>> GetListLEVELGHINHO();
+        Task<List<LEVELGHINHO>> GetListLEVELGHINHO();
         Task<LEVELGHINHO> GetLEVELGHINHO(int levelId);
         Task<bool> UpdateLEVELGHINHO(LEVELGHINHO level);
         #endregion

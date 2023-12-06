@@ -76,7 +76,7 @@ namespace QuizletAchivement.Respository
             return fileName;
         }
 
-        public async Task<IEnumerable<THANHTUU>> GetTHANHTUU()
+        public async Task<List<THANHTUU>> GetTHANHTUU()
         {
             try
             {

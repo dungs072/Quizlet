@@ -1,14 +1,8 @@
-﻿using Firebase.Auth;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuizletTerminology.DBContexts;
 using QuizletTerminology.Models;
-using System.Net.Mail;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
 using QuizletTerminology.ViewModels;
+using QuizletTerminology.Respository;
 
 namespace QuizletTerminology.Controllers
 {
@@ -16,152 +10,112 @@ namespace QuizletTerminology.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly TerminologyDBContext dbContext;
-        public UserController(TerminologyDBContext dbContext)
+        private readonly ITermRespository termRespository;
+        public UserController(ITermRespository termRespository)
         {
-            this.dbContext = dbContext;
+            this.termRespository = termRespository;
         }
         [HttpGet]
         public ActionResult<IEnumerable<NGUOIDUNG>> GetNGUOIDUNG()
         {
-            return dbContext.nguoidungs;
+            return termRespository.GetNGUOIDUNG().ToList();
         }
         [HttpGet("UserManager")]
         public async Task<ActionResult<IEnumerable<UserManagerViewModel>>> GetUserManagers()
         {
-            var users = await dbContext.nguoidungs.OrderBy(a=>a.FirstName).ToListAsync();
-            List<UserManagerViewModel> usersManagers = new List<UserManagerViewModel>();
-            foreach(var user in users)
-            {
-                if (user.TypeAccount == "Admin") { continue; }
-                UserManagerViewModel temp = new UserManagerViewModel();
-                temp.Copy(user);
-                usersManagers.Add(temp);
-            }
-            return usersManagers;
+            var userManagers = await termRespository.GetUserManagers();
+            return userManagers;
         }
         [HttpPut("UserState")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateUserState(UserState user)
         {
-            var userState = await dbContext.nguoidungs.FindAsync(user.UserId);
-            userState.State = user.State;
-            dbContext.nguoidungs.Update(userState);
-            await dbContext.SaveChangesAsync();
-            return Ok();
+            var result = await termRespository.UpdateUserState(user);
+            if(result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NoContent();
+            }
         }
         [HttpGet("{UserId}")]
         public async Task<ActionResult<NGUOIDUNG>> GetByMA_USER(int UserId)
         {
-            var NGUOIDUNG = await dbContext.nguoidungs.FindAsync(UserId);
-            return NGUOIDUNG;
+            var nguoidung = await termRespository.GetByMA_USER(UserId);
+            return nguoidung;
         }
         [HttpGet("{Gmail}/{Password}")]
         public async Task<ActionResult<NGUOIDUNG>> GetUserByLogin(string Gmail, string Password)
         {
-            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail));
-            if(!NGUOIDUNG.State)
-            {
-                return Ok(new NGUOIDUNG() { UserId = 123 });
-            }
-            if (NGUOIDUNG != null && VerifyPassword(NGUOIDUNG.Password, Password))
-            {
-                return NGUOIDUNG;
-            }
-            else
-            {
-                return Ok(new NGUOIDUNG() { UserId = 0});
-            }
-            
+            var NGUOIDUNG = await termRespository.GetUserByLogin(Gmail, Password);
+            return Ok(NGUOIDUNG);
         }
 
         [HttpGet("check/{Gmail}")]
         public async Task<ActionResult<bool>> HasDuplicateEmail(string Gmail)
         {
-            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail));
-            return NGUOIDUNG != null;
+            var result = await termRespository.HasDuplicateEmail(Gmail);
+            return result;
         }
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> Create(NGUOIDUNG nguoidung)
         {
-            nguoidung.Password = HashPassword(nguoidung.Password);
-            nguoidung.State = true;
-            await dbContext.nguoidungs.AddAsync(nguoidung);
-
-            await dbContext.SaveChangesAsync();
-            return Ok();
+            var result = await termRespository.Create(nguoidung);
+            if(result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NoContent();
+            }
         }
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> Update(NGUOIDUNG nguoidung)
         {
-            nguoidung.State = true;
-            dbContext.nguoidungs.Update(nguoidung);
-            await dbContext.SaveChangesAsync();
-            return Ok();
+            var result = await termRespository.Update(nguoidung);
+            if(result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NoContent();
+            }
         }
         [HttpPut("ChangePassword")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            var user = await dbContext.nguoidungs.FindAsync(model.UserId);
-            if(!VerifyPassword(user.Password,model.OldPassword))
+            var result = await termRespository.ChangePassword(model);
+            if(result)
             {
-                return NoContent();
+                return Ok();
             }
             else
             {
-                user.Password = HashPassword(model.NewPassword);
-                dbContext.nguoidungs.Update(user);
-                await dbContext.SaveChangesAsync();
-                return Ok();
+                return NoContent();
             }
             
         }
-        static string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-        static bool VerifyPassword(string hashedPassword, string userInput)
-        {
-            // Hash the user input and compare it with the stored hashed password
-            return HashPassword(userInput) == hashedPassword;
-        }
 
         [HttpDelete("{MA_USER}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> Delete(int MA_USER)
         {
-            var NGUOIDUNG = await dbContext.nguoidungs.FindAsync(MA_USER);
-            dbContext.nguoidungs.Remove(NGUOIDUNG);
-            await dbContext.SaveChangesAsync();
-            return Ok();
-        }
-
-        private NGUOIDUNG IsEmailExist(string email)
-        {
-            var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == email));
-            return NGUOIDUNG;
-        }
-        static string GenerateRandomPassword(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random random = new Random();
-
-            char[] password = new char[length];
-            for (int i = 0; i < length; i++)
+            var result = await termRespository.Delete(MA_USER);
+            if(result)
             {
-                password[i] = chars[random.Next(chars.Length)];
+                return Ok();
             }
-
-            return new string(password);
+            else
+            {
+                return NoContent();
+            }
         }
 
         #region Handle Email
@@ -169,42 +123,22 @@ namespace QuizletTerminology.Controllers
         [HttpGet("EmailExist/{email}")]
         public ActionResult<string> CreateGmailCode(string email)
         {
-            Random random = new Random();
-            string randomDigits = random.Next(100000, 999999).ToString();
-            HandleSendingDataToEmail(email, "Your Quizlet email code", "Please enter email code: " + randomDigits + " to register new account");
-            return randomDigits;
+            string result = termRespository.CreateGmailCode(email);
+            return result;
         }
         [HttpPut("ForgetPassword")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> HandleForgetPassword(ForgetPasswordViewModel model)
         {
-            var user =  IsEmailExist(model.Email);
-            if(user!=null)
+            var result = await termRespository.HandleForgetPassword(model);
+            if(result)
             {
-                string randomPassword = GenerateRandomPassword(6);
-                HandleSendingDataToEmail(model.Email, "Quizlet - Forget Password", "Your new password is: " + randomPassword);
-                user.Password = HashPassword(randomPassword);
-                dbContext.nguoidungs.Update(user);
-                await dbContext.SaveChangesAsync();
                 return Ok();
             }
-            return NoContent();
-        }
-        private void HandleSendingDataToEmail(string toEmail, string subject, string body)
-        {
-            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
-            smtpClient.Port = 587;
-            smtpClient.Credentials = new NetworkCredential("dungoc1235@gmail.com", "ohcvbrqttevxjjpp");
-            smtpClient.EnableSsl = true;
-
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress("dungoc1235@gmail.com");
-            mailMessage.To.Add(toEmail);
-            mailMessage.Subject = subject;
-            mailMessage.Body = body;
-
-            smtpClient.Send(mailMessage);
-
+            else
+            {
+                return NoContent();
+            }
         }
         #endregion
     }

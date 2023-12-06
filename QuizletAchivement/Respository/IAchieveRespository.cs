@@ -7,7 +7,7 @@ namespace QuizletAchivement.Respository
     public interface IAchieveRespository
     {
         #region Achivement
-        Task<IEnumerable<THANHTUU>> GetTHANHTUU();
+        Task<List<THANHTUU>> GetTHANHTUU();
         Task<THANHTUU> GetTHANHTUUById(int AchivementId);
         Task<bool> CreateTHANHTUU(THANHTUU thanhtuu);
         Task<bool> UpdateTHANHTUU(THANHTUU thanhtuu);

@@ -59,5 +59,25 @@ namespace QuizletTerminology.Respository
         void CopyLearningModule(HOCPHAN fromHOCPHAN, HOCPHAN toHOCPHAN);
         void CopyTerminology(THETHUATNGU fromTHETHUATNGU, THETHUATNGU toTHETHUATNGU);
         #endregion
+
+        #region Term
+        Task<List<LevelTerms>> GetLevelTerms(int userId);
+        Task<int> CountNumberTermsForLevel(int levelId, int userId);
+        IEnumerable<THETHUATNGU> GetTHETHUATNGUByTitleId(int learningModuleId);
+        Task<THETHUATNGU> GetTHUATNGUByLearningModuleId(int termId);
+        Task<bool> CreateTHUATNGU(THETHUATNGU thuatngu);
+        bool HasDuplicatedTermNamePerLearningModule(int learningModuleId, string termName);
+        Task<bool> DeleteTHUATNGU(int termId);
+        Task<bool> UpdateTHUATNGU(THETHUATNGU thuatngu);
+        bool HasDuplicateTermNamePerLearningModuleForUpdate(int termId, int learningModuleId, string termName);
+        void Shuffle<T>(List<T> list);
+        IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId);
+        Task<bool> UpdateTHUATNGUTest(ResultQuestion resultQuestion);
+        string ExtractFileNameFromUrl(string url);
+        Task<AchieveLibrary> GetAchieveLibrary(int userId);
+        Task<IEnumerable<LEVELGHINHO>> GetListLEVELGHINHO();
+        Task<LEVELGHINHO> GetLEVELGHINHO(int levelId);
+        Task<bool> UpdateLEVELGHINHO(LEVELGHINHO level);
+        #endregion
     }
 }

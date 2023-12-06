@@ -283,10 +283,6 @@ namespace QuizletClass.Controllers
             }
             return registers;
         }
-        //private async Task<NGUOIDUNG> GetNGUOIDUNG(int userId)
-        //{
-        //    return await dBContext.nguoidungs.FindAsync(userId);
-        //}
         [HttpGet("SearchUser/{classId}/{search}/{currentUserId}")]
         public async Task<IEnumerable<UserParticipant>> GetParticipants(int classId,string search,int currentUserId)
         {

@@ -7,11 +7,19 @@ using System.Net;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
+using Firebase.Auth;
+using Firebase.Storage;
+using System.Reflection;
 
 namespace QuizletTerminology.Respository
 {
     public class TermRespository:ITermRespository
     {
+        private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
+        private readonly string bucket = "quizlet-c9cab.appspot.com";
+        private readonly string gmail = "sa123@gmail.com";
+        private readonly string password = "123456";
+
         private readonly TerminologyDBContext dbContext;
         public TermRespository(TerminologyDBContext dbContext)
         {
@@ -620,6 +628,366 @@ namespace QuizletTerminology.Respository
         {
             toTHETHUATNGU.TermName = fromTHETHUATNGU.TermName;
             toTHETHUATNGU.Explaination = fromTHETHUATNGU.Explaination;
+        }
+
+        #endregion
+
+        #region Term
+        public async Task<List<LevelTerms>> GetLevelTerms(int userId)
+        {
+            List<LevelTerms> levelTerms = new List<LevelTerms>();
+            try
+            {
+                
+                var levelghinhos = await dbContext.levelghinhos.ToListAsync();
+                foreach (var levelghinho in levelghinhos)
+                {
+                    LevelTerms levelterm = new LevelTerms();
+                    levelterm.LevelName = levelghinho.LevelName;
+                    levelterm.NumberTermsInLevel = await CountNumberTermsForLevel(levelghinho.LevelId, userId);
+                    levelTerms.Add(levelterm);
+                }
+                return levelTerms;
+            }
+            catch (Exception ex)
+            {
+                return levelTerms;
+            }
+        }
+
+        public async Task<int> CountNumberTermsForLevel(int levelId, int userId)
+        {
+            try
+            {
+                var titles = dbContext.chudes.Where(a => a.UserId == userId).Select(t => t.TitleId).ToList();
+                var modules = dbContext.hocphans
+                            .Where(h => titles.Contains(h.TitleId)).Select(t => t.LearningModuleId)
+                            .ToList();
+                var count = await dbContext.thethuatngus
+                .CountAsync(h => modules.Contains(h.LearningModuleId) && h.LevelId == levelId);
+
+                return count;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public IEnumerable<THETHUATNGU> GetTHETHUATNGUByTitleId(int learningModuleId)
+        {
+            try
+            {
+                var thuatngu = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
+                return thuatngu;
+            }catch (Exception ex)
+            {
+                return Enumerable.Empty<THETHUATNGU>();
+            }
+        }
+
+        public async Task<THETHUATNGU> GetTHUATNGUByLearningModuleId(int termId)
+        {
+            var thuatngu = await dbContext.thethuatngus.FindAsync(termId);
+
+            return thuatngu;
+        }
+
+        public async Task<bool> CreateTHUATNGU(THETHUATNGU thuatngu)
+        {
+            try
+            {
+                if (HasDuplicatedTermNamePerLearningModule(thuatngu.LearningModuleId, thuatngu.TermName))
+                {
+                    return false;
+                }
+                await dbContext.thethuatngus.AddAsync(thuatngu);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool HasDuplicatedTermNamePerLearningModule(int learningModuleId, string termName)
+        {
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName));
+            return thuatngu != null;
+        }
+
+        public async Task<bool> DeleteTHUATNGU(int termId)
+        {
+            try
+            {
+                var THUATNGU = await dbContext.thethuatngus.FindAsync(termId);
+                if(THUATNGU == null) { return false; }
+                if (THUATNGU.Image != null)
+                {
+                    var cancellation = new CancellationTokenSource();
+                    // Initialize Firebase Storage
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                    var authLink = await auth.SignInWithEmailAndPasswordAsync(gmail, password);
+
+                    var firebaseStorage = new FirebaseStorage(bucket, new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken)
+                    });
+                    string fileNameDelete = ExtractFileNameFromUrl(THUATNGU.Image);
+                    string deletePath = $"images/{fileNameDelete}";
+                    await firebaseStorage.Child(deletePath).DeleteAsync();
+                }
+                dbContext.thethuatngus.Remove(THUATNGU);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTHUATNGU(THETHUATNGU thuatngu)
+        {
+            try
+            {
+                if (HasDuplicateTermNamePerLearningModuleForUpdate(thuatngu.TermId, thuatngu.LearningModuleId, thuatngu.TermName))
+                {
+                    return false;
+                }
+
+                dbContext.thethuatngus.Update(thuatngu);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex) 
+            {
+                return false;
+            }
+        }
+
+        public bool HasDuplicateTermNamePerLearningModuleForUpdate(int termId, int learningModuleId, string termName)
+        {
+            var thuatngu = dbContext.thethuatngus.FirstOrDefault(u => (u.LearningModuleId == learningModuleId && u.TermName == termName && u.TermId != termId));
+            return thuatngu != null;
+        }
+
+        public void Shuffle<T>(List<T> list)
+        {
+            Random random = new Random();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                // Generate a random index between 0 and i (inclusive).
+                int randomIndex = random.Next(0, i + 1);
+
+                // Swap elements at randomIndex and i.
+                T temp = list[i];
+                list[i] = list[randomIndex];
+                list[randomIndex] = temp;
+            }
+        }
+
+        public IEnumerable<ObjectivePack> GetObjectiveList(int learningModuleId)
+        {
+            List<ObjectivePack> objectivePacks = new List<ObjectivePack>();
+            try
+            {
+                var thuatngus = dbContext.thethuatngus.Where(e => e.LearningModuleId == learningModuleId).ToList();
+
+
+                Random random = new Random();
+                for (int i = 0; i < thuatngus.Count; i++)
+                {
+                    ObjectivePack objectivePack = new ObjectivePack();
+                    objectivePacks.Add(objectivePack);
+                    objectivePack.Question = thuatngus[i].TermName;
+                    objectivePack.TermId = thuatngus[i].TermId;
+                    int randomNumber = -1;
+                    List<int> exclusions = new List<int>();
+                    if (thuatngus.Count > 4)
+                    {
+
+                        exclusions.Add(i);
+                        for (int j = 0; j < 3; j++)
+                        {
+                            do
+                            {
+                                randomNumber = random.Next(0, thuatngus.Count);
+                            } while (exclusions.Contains(randomNumber));
+                            exclusions.Add(randomNumber);
+                        }
+                        for (int k = 0; k < 4; k++)
+                        {
+                            int index = exclusions[random.Next(0, exclusions.Count)];
+                            exclusions.Remove(index);
+                            if (k == 0)
+                            {
+                                if (index == i)
+                                {
+                                    objectivePack.Answer = "A";
+                                }
+                                objectivePack.ChoiceA = thuatngus[index].Explaination;
+                            }
+                            if (k == 1)
+                            {
+                                if (index == i)
+                                {
+                                    objectivePack.Answer = "B";
+                                }
+                                objectivePack.ChoiceB = thuatngus[index].Explaination;
+                            }
+                            if (k == 2)
+                            {
+                                if (index == i)
+                                {
+                                    objectivePack.Answer = "C";
+                                }
+                                objectivePack.ChoiceC = thuatngus[index].Explaination;
+                            }
+                            if (k == 3)
+                            {
+                                if (index == i)
+                                {
+                                    objectivePack.Answer = "D";
+                                }
+                                objectivePack.ChoiceD = thuatngus[index].Explaination;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        objectivePack.Answer = "D";
+                        objectivePack.ChoiceD = thuatngus[i].Explaination;
+                        exclusions.Add(i);
+                        for (int j = 0; j < thuatngus.Count; j++)
+                        {
+                            if (j == 0)
+                            {
+                                if (!exclusions.Contains(j))
+                                {
+                                    exclusions.Add(j);
+                                    objectivePack.ChoiceA = thuatngus[j].Explaination;
+                                }
+                            }
+                            if (j == 1)
+                            {
+                                if (!exclusions.Contains(j))
+                                {
+                                    exclusions.Add(j);
+                                    objectivePack.ChoiceB = thuatngus[j].Explaination;
+                                }
+                            }
+                            if (j == 2)
+                            {
+                                if (!exclusions.Contains(j))
+                                {
+                                    exclusions.Add(j);
+                                    objectivePack.ChoiceC = thuatngus[j].Explaination;
+                                }
+                            }
+                        }
+
+                    }
+                }
+                Shuffle<ObjectivePack>(objectivePacks);
+                return objectivePacks;
+            }catch(Exception ex)
+            {
+                return objectivePacks;
+            }
+            
+        }
+
+        public async Task<bool> UpdateTHUATNGUTest(ResultQuestion resultQuestion)
+        {
+            try
+            {
+                var thuatngu = await dbContext.thethuatngus.FindAsync(resultQuestion.TermId);
+                if (thuatngu == null) { return false; }
+                if (resultQuestion.IsRightAnswer)
+                {
+                    thuatngu.Accumulate++;
+                }
+                else
+                {
+                    thuatngu.Accumulate = Math.Max(thuatngu.Accumulate - 1, 0);
+                }
+                foreach (var level in dbContext.levelghinhos)
+                {
+                    if (thuatngu.Accumulate >= level.Condition)
+                    {
+                        thuatngu.LevelId = level.LevelId;
+                    }
+                }
+                dbContext.thethuatngus.Update(thuatngu);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public string ExtractFileNameFromUrl(string url)
+        {
+            Uri uri = new Uri(url);
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            return fileName;
+        }
+
+        public async Task<AchieveLibrary> GetAchieveLibrary(int userId)
+        {
+            AchieveLibrary achieveLibrary = new AchieveLibrary();
+            try
+            {
+                var titles = await dbContext.chudes.Where(a => a.UserId == userId).Select(t => t.TitleId).ToListAsync();
+                var modules = await dbContext.hocphans
+                            .Where(h => titles.Contains(h.TitleId)).Select(t => t.LearningModuleId)
+                            .ToListAsync();
+                var countTerms = await dbContext.thethuatngus
+                .CountAsync(h => modules.Contains(h.LearningModuleId));
+                achieveLibrary.NumberTitle = titles.Count;
+                achieveLibrary.NumberModule = modules.Count;
+                achieveLibrary.NumberTerms = countTerms;
+                return achieveLibrary;
+            }catch(Exception ex)
+            {
+                achieveLibrary.NumberTitle = -1;
+                achieveLibrary.NumberModule = -1;
+                achieveLibrary.NumberTerms = -1;
+                return achieveLibrary;
+            }
+            
+        
+        }
+
+        public async Task<IEnumerable<LEVELGHINHO>> GetListLEVELGHINHO()
+        {
+            return await dbContext.levelghinhos.ToListAsync();
+        }
+
+        public async Task<LEVELGHINHO> GetLEVELGHINHO(int levelId)
+        {
+            return await dbContext.levelghinhos.FindAsync(levelId);
+        }
+
+        public async Task<bool> UpdateLEVELGHINHO(LEVELGHINHO level)
+        {
+            try
+            {
+                dbContext.levelghinhos.Update(level);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
         #endregion
 

@@ -136,11 +136,11 @@ namespace QuizletTerminology.Respository
 
         public async Task<IEnumerable<UserManagerViewModel>> GetUserManagers()
         {
-            List<UserManagerViewModel> usersManagers = new List<UserManagerViewModel>();
+            
             try
             {
                 var users = await dbContext.nguoidungs.OrderBy(a => a.FirstName).ToListAsync();
-
+                List<UserManagerViewModel> usersManagers = new List<UserManagerViewModel>();
                 foreach (var user in users)
                 {
                     if (user.TypeAccount == "Admin") { continue; }
@@ -152,7 +152,7 @@ namespace QuizletTerminology.Respository
             }
             catch(Exception ex)
             {
-                return usersManagers;
+                return new List<UserManagerViewModel>();
             }
             
         }

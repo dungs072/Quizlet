@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Firebase.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using QuizletWebMvc.Services.Login;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.User;
 
 namespace WebMVCQuizlet.Controllers
@@ -8,13 +12,17 @@ namespace WebMVCQuizlet.Controllers
     public class LoginController : Controller
     {
         private readonly ILoginService loginService;
-        public LoginController(ILoginService loginService)
+        private readonly ITokenService tokenService;
+        public LoginController(ILoginService loginService, ITokenService tokenService)
         {
             this.loginService = loginService;
+            this.tokenService = tokenService;
         }
 
         public IActionResult LogOut()
         {
+            Response.Cookies.Delete("AuthToken");
+
             return RedirectToAction("Welcome", "Home");
         }
         [HttpGet]
@@ -42,7 +50,16 @@ namespace WebMVCQuizlet.Controllers
                 HttpContext.Session.SetString("UserName", user.LastName + " " + user.FirstName);
                 HttpContext.Session.SetString("TypeUser", user.TypeAccount);
                 HttpContext.Session.SetString("Image", user.Image==null?"none":user.Image);
-                if(user.TypeAccount=="Admin")
+
+                string token = tokenService.GenerateToken(user.UserId.ToString());
+                Response.Cookies.Append("AuthToken", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddMinutes(60)
+                });
+
+                if (user.TypeAccount=="Admin")
                 {
                     return RedirectToAction("LevelTerm", "Admin");
                 }

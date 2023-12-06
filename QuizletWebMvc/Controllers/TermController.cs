@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -16,14 +18,29 @@ namespace QuizletWebMvc.Controllers
         private readonly ITerminologyService terminologyService;
         private readonly IAchivement achivement;
         private readonly IFirebaseService firebaseService;
-        public TermController(ITerminologyService terminologyService,IAchivement achivement,IFirebaseService firebaseService)
+        private readonly ITokenService tokenService;
+        public TermController(ITerminologyService terminologyService,IAchivement achivement,
+                            IFirebaseService firebaseService,ITokenService tokenService)
         {
             this.terminologyService = terminologyService;
             this.achivement = achivement;
             this.firebaseService = firebaseService;
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
         public IActionResult Term(int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Task<List<TermViewModel>> listTerm =  terminologyService.GetTermByLearningModuleId(learningModuleId);
             Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
             ListTermViewModel listTermViewModel = new ListTermViewModel();
@@ -34,6 +51,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateTerm(int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(learningModuleId);
             TermViewModel term = new TermViewModel();
             term.LearningModule = learningModule; 
@@ -42,6 +64,11 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleCreateTerm(TermViewModel term,IFormFile imageFile)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
             ModelState.Remove("LearningModule");
@@ -82,6 +109,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteTerm(int termId, int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             var canDelete = await terminologyService.DeleteTerm(termId);
 
             if (!canDelete)
@@ -97,6 +129,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> EditTerm(int termId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             TermViewModel term = await terminologyService.GetTermViewModel(termId);
             LearningModuleViewModel2 learningModule = await terminologyService.GetLearningModuleViewModel(term.LearningModuleId);
             term.LearningModule = learningModule;
@@ -104,6 +141,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> HandleEditTerm(TermViewModel term, IFormFile imageFile)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("LearningModule");
             ModelState.Remove("Image");
             ModelState.Remove("imageFile");
@@ -132,6 +174,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> PracticeTerm(int learningModuleId, bool isOwned)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListObjectivePack listObjective = new ListObjectivePack();
             List<ObjectivePack> objectives =await terminologyService.GetObjectivePacks(learningModuleId);
             listObjective.ObjectivePacks = objectives;
@@ -141,6 +188,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> TestTerm(int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListObjectivePack listObjective = new ListObjectivePack();
             List<ObjectivePack> objectives = await terminologyService.GetObjectivePacks(learningModuleId);
             listObjective.ObjectivePacks = objectives;
@@ -149,6 +201,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> PassDataTest(int termId, bool isRightAnswer)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ResultQuestion question = new ResultQuestion();
             question.TermId = termId;
             question.IsRightAnswer = isRightAnswer;
@@ -157,6 +214,11 @@ namespace QuizletWebMvc.Controllers
         }
         public IActionResult TermParticipant(int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Task<List<TermViewModel>> listTerm = terminologyService.GetTermByLearningModuleId(learningModuleId);
             Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(learningModuleId);
             ListTermViewModel listTermViewModel = new ListTermViewModel();

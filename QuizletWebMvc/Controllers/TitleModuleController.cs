@@ -4,24 +4,35 @@ using QuizletWebMvc.Services.Terminology;
 using QuizletWebMvc.ViewModels.Terminology;
 using System.Text.Json;
 using System.Text;
-using QuizletWebMvc.ViewModels.User;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using System.Numerics;
-using System.Net.Http;
+using QuizletWebMvc.Services.Token;
+using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
 {
     public class TitleModuleController : Controller
     {
         private readonly ITerminologyService terminologyService;
-        public TitleModuleController(ITerminologyService terminologyService)
+        private readonly ITokenService tokenService;
+        public TitleModuleController(ITerminologyService terminologyService, ITokenService tokenService)
         {
             this.terminologyService = terminologyService;
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
         public IActionResult TitleModule()
         {
-            if(int.TryParse(HttpContext.Session.GetString("UserId"),out int userId))
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
+            if (int.TryParse(HttpContext.Session.GetString("UserId"),out int userId))
             {
                 Task<List<TitleViewModel>> titles = terminologyService.GetTitlesBaseOnUserId(userId);
                 ListTitleViewModel titleViewModel = new ListTitleViewModel();
@@ -31,14 +42,25 @@ namespace QuizletWebMvc.Controllers
             return View();
            
         }
+      
         public IActionResult CreateTitleModule()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTitleModule(TitleViewModel titleViewModel)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (!ModelState.IsValid) return View(titleViewModel);
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -56,16 +78,31 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> EditTitleModule(int titleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
 
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
             return View(titleViewModel);
         }
         public IActionResult EditTitleModule2(TitleViewModel titleViewModel)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             return View("EditTitleModule",titleViewModel);
         }
         public async Task<IActionResult> UpdateTitleModule(TitleViewModel titleViewModel)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (!ModelState.IsValid) return View(titleViewModel);
             var canUpdate = await terminologyService.UpdateTitle(titleViewModel);
             if (!canUpdate)
@@ -80,6 +117,11 @@ namespace QuizletWebMvc.Controllers
         
         public async Task<IActionResult> DeleteTitleModule(int titleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             var state = await terminologyService.DeleteTitle(titleId);
             if(state)
             {

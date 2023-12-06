@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
+using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -10,13 +12,27 @@ namespace QuizletWebMvc.Controllers
     {
         private readonly ITerminologyService terminologyService;
         private readonly IAchivement achivement;
-        public LearningModuleController(ITerminologyService terminologyService,IAchivement achivement)
+        private readonly ITokenService tokenService;
+        public LearningModuleController(ITerminologyService terminologyService,IAchivement achivement, ITokenService tokenService)
         {
             this.terminologyService = terminologyService;
             this.achivement = achivement;
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
         public IActionResult LearningModule(int titleId, string titleName, string describe)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Task<List<LearningModuleViewModel2>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
             ListLearningModuleViewModel modulesList = new ListLearningModuleViewModel();
             TitleViewModel titleViewModel = new TitleViewModel() { TitleId = titleId, TitleName = titleName, Describe = describe };
@@ -27,6 +43,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> ReturnToLearningModule(int titleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Task<List<LearningModuleViewModel2>> modules = terminologyService.GetLearningModuleByTitleId(titleId);
             ListLearningModuleViewModel modulesList = new ListLearningModuleViewModel();
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
@@ -37,6 +58,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateLearningModule(int titleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             LearningModuleViewModel2 learningModuleViewModel = new LearningModuleViewModel2();
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(titleId);
             learningModuleViewModel.TitleId = titleId;
@@ -47,6 +73,11 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleCreateLearningModule(LearningModuleViewModel2 learningModuleViewModel)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(learningModuleViewModel.TitleId);
             learningModuleViewModel.TitleView = titleViewModel;
             ModelState.Remove("TitleView");
@@ -82,6 +113,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteLearningModule(int learningModuleId,int TitleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
 
@@ -105,6 +141,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> EditLearningModule(int learningModuleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             LearningModuleViewModel2 learningModuleViewModel = await terminologyService.GetLearningModuleViewModel(learningModuleId);
             TitleViewModel titleViewModel = await terminologyService.GetTitleViewModel(learningModuleViewModel.TitleId);
             learningModuleViewModel.TitleView = titleViewModel;
@@ -112,6 +153,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> HandleEditLearningModule(LearningModuleViewModel2 learningModuleView)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("TitleView");
             if (!ModelState.IsValid) return View("EditLearningModule",learningModuleView);
             var canUpdate = await terminologyService.UpdateLearningModule(learningModuleView);

@@ -5,11 +5,14 @@ using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.Services.Login;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Class;
 using QuizletWebMvc.ViewModels.User;
 using System.Diagnostics;
 using System.Reflection;
+using System.Security.Claims;
+
 
 namespace QuizletWebMvc.Controllers
 {
@@ -20,18 +23,33 @@ namespace QuizletWebMvc.Controllers
         private readonly ILoginService loginService;
         private readonly IClassService classService;
         private readonly IFirebaseService firebaseService;
+        private readonly ITokenService tokenService;
 
-        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService, IFirebaseService firebaseService, IClassService classService)
+        public HomeController(ILogger<HomeController> logger, IAchivement achivement,ILoginService loginService, 
+                        IFirebaseService firebaseService, IClassService classService,ITokenService tokenService)
         {
             _logger = logger;
             this.achivement = achivement;
             this.loginService = loginService;
             this.firebaseService = firebaseService;
             this.classService = classService; 
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
 
         public async Task<IActionResult> Index()
         {
+            if(!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             UserAchivement userAchivement = new UserAchivement();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -51,6 +69,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> LoadMoreAchivement(int pageNumber)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
             UserAchivement userAchivement = new UserAchivement();
             if(pageNumber==1) 
@@ -99,6 +122,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) 
             {
                 var user = await loginService.GetProfile(userId);
@@ -109,6 +137,11 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Profile(UserAccountViewModel model, IFormFile imageFile, IFormCollection form)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("LevelTerms");
             ModelState.Remove("Image");
             ModelState.Remove("imageFile");
@@ -160,12 +193,22 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public IActionResult ChangePassword()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ChangePasswordViewModel model = new ChangePasswordViewModel();
             return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (!ModelState.IsValid) { return View(model); }
             if(model.NewPassword!=model.ConfirmPassword)
             {
@@ -188,7 +231,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<ActionResult> GetMessages()
         {
-
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
             List<MessageClassRegistration> models = await classService.GetMessageRegister(userId);
 

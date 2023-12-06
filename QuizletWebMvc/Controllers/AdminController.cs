@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using QuizletWebMvc.Services.Admin;
 using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Firebase;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Admin;
+using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -13,25 +15,49 @@ namespace QuizletWebMvc.Controllers
 
         private readonly IAdminService adminService;
         private readonly IFirebaseService firebaseService;
-        public AdminController(IAdminService adminService, IFirebaseService firebaseService)
+        private readonly ITokenService tokenService;
+        public AdminController(IAdminService adminService, IFirebaseService firebaseService, ITokenService tokenService)
         {
             this.adminService = adminService;
             this.firebaseService = firebaseService;
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
         public async Task<IActionResult> LevelTerm()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             List<LevelTerm> levelTerms = await adminService.GetLevelTerm();
             return View(levelTerms);
         }
         [HttpGet]
         public async Task<IActionResult> EditLevelTerm(int levelId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             LevelTerm levelTerm = await adminService.GetLevelTerm(levelId);
             return View(levelTerm);
         }
         [HttpPost]
         public async Task<IActionResult> EditLevelTerm(LevelTerm level)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("LevelName");
             if (!ModelState.IsValid) { return View(level); }
             var state = await adminService.UpdateLevelTerm(level);
@@ -47,6 +73,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> Badge()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             List<Badge> totalBadge = await adminService.GetBadges();
             totalBadge = totalBadge.OrderBy(a=>a.Condition).ToList();
             List<Badge> moduleBadge = new List<Badge>();
@@ -82,6 +113,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBadge(int achivementId,string typeBadge)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Badge badge = await adminService.GetBadge(achivementId);
             string[] temp = badge.AchivementName.Split(',');
             badge.AchivementName = temp[0];
@@ -91,6 +127,11 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> EditBadge(Badge badge, IFormFile imageFile)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("Image");
             ModelState.Remove("imageFile");
             if (!ModelState.IsValid) { return View(badge); }
@@ -120,6 +161,11 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public IActionResult AddBadge(string typeBadge)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             Badge badge = new Badge();
             badge.TypeBadge = typeBadge;
             return View(badge);
@@ -127,6 +173,11 @@ namespace QuizletWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBadge(Badge badge, IFormFile imageFile)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("Image");
             ModelState.Remove("imageFile");
             if (!ModelState.IsValid) { return View(badge); }
@@ -152,6 +203,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> DeleteBadge(int achievementId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             var canDelete = await adminService.DeleteBadge(achievementId);
 
             if (!canDelete)
@@ -168,12 +224,22 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> UserManager()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             List<UserManagerViewModel> users = await adminService.GetUserManagers();
             return View(users);
         }
 
         public async Task<IActionResult> UpdateStateUserManager(int userId,bool state)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             UserState userState = new UserState();
             userState.UserId = userId;
             userState.State = state;

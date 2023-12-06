@@ -2,9 +2,11 @@
 using QuizletWebMvc.Services.Achivement;
 using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Class;
 using QuizletWebMvc.ViewModels.Terminology;
+using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
 {
@@ -13,14 +15,29 @@ namespace QuizletWebMvc.Controllers
         private readonly IClassService classService;
         private readonly ITerminologyService terminologyService;
         private readonly IAchivement achivement;
-        public ClassController(IClassService classService,ITerminologyService terminologyService,IAchivement achivement)
+        private readonly ITokenService tokenService;
+        public ClassController(IClassService classService,ITerminologyService terminologyService,
+                                IAchivement achivement,ITokenService tokenService)
         {
             this.terminologyService = terminologyService;
             this.classService = classService;
             this.achivement = achivement;
+            this.tokenService = tokenService;
+        }
+        private bool CheckCurrentToken()
+        {
+            string token = Request.Cookies["AuthToken"];
+            if (token == null) { return false; }
+            ClaimsPrincipal principal = tokenService.ValidateToken(token);
+            return principal != null;
         }
         public async Task<IActionResult> YourOwnClass()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListClassViewModel listClassViewModel = new ListClassViewModel();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -32,6 +49,11 @@ namespace QuizletWebMvc.Controllers
 
         public IActionResult CreateYourOwnClass()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ClassViewModel cla = new ClassViewModel();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -41,6 +63,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> HandleCreateClass(ClassViewModel classModel)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ModelState.Remove("LearningModule");
             if (!ModelState.IsValid)
             {
@@ -58,11 +85,21 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> EditYourOwnClass(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ClassViewModel cla = await classService.GetClass(classId);
             return View(cla);
         }
         public async Task<IActionResult> HandleEditYourOwnClass(ClassViewModel cla)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             //ModelState.Remove("LearningModule");
             if (!ModelState.IsValid) return View("EditYourOwnClass", cla);
             var canUpdate = await classService.UpdateClass(cla);
@@ -76,6 +113,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteClass(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             var canDelete = await classService.DeleteClass(classId);
 
             if (!canDelete)
@@ -91,6 +133,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> ShowDetailOwnClassLearningModule(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             HttpContext.Session.SetString("CurrentClassId",classId.ToString());
             List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
@@ -103,6 +150,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> TitleSelection(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListChoiceTitle listChoiceTitle = new ListChoiceTitle();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -113,6 +165,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> LearningModuleSelection(int titleId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ViewModels.Class.ListLearningModuleViewModel listLearningModule = new ViewModels.Class.ListLearningModuleViewModel();
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
@@ -123,7 +180,12 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> AddModuleToClass(int learningModuleId,int titleId)
         {
-            if(int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
+            if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 LearningModuleDetail detail = new LearningModuleDetail();
                 detail.ClassId = classId;
@@ -145,6 +207,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteModuleFromClass(int learningModuleId, int titleId,string typePage = "")
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 var check = await classService.DeleteModuleDetail(classId,learningModuleId);
@@ -171,6 +238,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> ShowDetailOwnClassParticipant(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             HttpContext.Session.SetString("CurrentClassId", classId.ToString());
             List<Participant> models = await classService.GetDetailParticipantClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
@@ -182,6 +254,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> SearchAddUserParticipant(string search = "")
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListUserParticipant listModels = new ListUserParticipant();
             HttpContext.Session.SetString("Search", search);
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
@@ -196,11 +273,21 @@ namespace QuizletWebMvc.Controllers
         [HttpGet]
         public IActionResult SearchUser(ListUserParticipant listUserParticipant)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             return RedirectToAction("SearchAddUserParticipant",new { search = listUserParticipant.Search});
         }
 
         public async Task<IActionResult> AddUserToClass(int userId,string search)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 RegisterDetailClass registerDetailClass = new RegisterDetailClass();
@@ -224,6 +311,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> DeleteParticipantFromClass(int userId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 var check = await classService.DeleteParticipantFromClass(classId, userId);
@@ -242,6 +334,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> ShowDetailOwnClassPendingParticipant(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             HttpContext.Session.SetString("CurrentClassId", classId.ToString());
             List<Participant> models = await classService.GetDetailPendingParticipantClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
@@ -253,6 +350,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> UpdateRegisterDetail(int userId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
                 var registerDetail = await classService.GetDetailPendingParticipant(classId, userId);
@@ -286,6 +388,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> RejectRegistration(int classId, int userId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             var check = await classService.DeleteParticipantFromClass(classId, userId);
             if (!check)
             {
@@ -303,6 +410,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> FindRegisterClass(string search)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             HttpContext.Session.SetString("GlobalSearch",search);
             ListRegisterClass listRegisterClass = new ListRegisterClass();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
@@ -314,6 +426,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> ReadFirstTerms(int learningModuleId,string learningModuleName,int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListTermViewModel listTermViewModel = new ListTermViewModel();
             List<TermViewModel> models = await terminologyService.GetTermByLearningModuleId(learningModuleId);
             listTermViewModel.LearningModuleName = learningModuleName;
@@ -326,6 +443,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> RegisterClass(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             RegisterDetailClass registerDetailClass = new RegisterDetailClass();
             registerDetailClass.ClassId = classId;
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
@@ -350,6 +472,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> YourJoinClass()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             ListClassViewModel listClassViewModel = new ListClassViewModel();
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
@@ -360,6 +487,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> ShowDetailJoinClassLearningModule(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             HttpContext.Session.SetString("CurrentClassId", classId.ToString());
             List<ClassLearningModuleViewModel> models = await classService.GetDetailLearningModuleClass(classId);
             ClassViewModel cla = await classService.GetClass(classId);
@@ -378,6 +510,11 @@ namespace QuizletWebMvc.Controllers
         }
         public IActionResult BackToShowDetailJoinClassLearningModule()
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("CurrentClassId"), out int classId))
             {
 
@@ -386,6 +523,11 @@ namespace QuizletWebMvc.Controllers
         }
         public async Task<IActionResult> QuitJoinClass(int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 var check = await classService.DeleteParticipantFromClass(classId, userId);
@@ -405,6 +547,11 @@ namespace QuizletWebMvc.Controllers
 
         public async Task<IActionResult> CopyModule(int titleId,int moduleId, int classId)
         {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
             if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
             {
                 CopyViewModel model = new CopyViewModel();

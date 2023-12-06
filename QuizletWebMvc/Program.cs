@@ -7,12 +7,14 @@ using QuizletWebMvc.Services.Class;
 using QuizletWebMvc.Services.Firebase;
 using QuizletWebMvc.Services.Login;
 using QuizletWebMvc.Services.Terminology;
+using QuizletWebMvc.Services.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://apigateway") });
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ITerminologyService, TerminologyService>();
 builder.Services.AddScoped<IClassService, ClassService>();

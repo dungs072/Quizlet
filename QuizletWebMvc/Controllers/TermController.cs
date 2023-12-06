@@ -7,8 +7,6 @@ using QuizletWebMvc.Services.Terminology;
 using QuizletWebMvc.Services.Token;
 using QuizletWebMvc.ViewModels.Achivement;
 using QuizletWebMvc.ViewModels.Terminology;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Claims;
 
 namespace QuizletWebMvc.Controllers
@@ -225,6 +223,26 @@ namespace QuizletWebMvc.Controllers
             listTermViewModel.LearningModuleViewModel = learningModuleViewModel.Result;
             listTermViewModel.Terms = listTerm.Result;
             return View(listTermViewModel);
+        }
+
+        public IActionResult Search(int moduleId, string searchTerm)
+        {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
+            Task<List<TermViewModel>> listTerm = terminologyService.GetTermByLearningModuleId(moduleId);
+            Task<LearningModuleViewModel2> learningModuleViewModel = terminologyService.GetLearningModuleViewModel(moduleId);
+            ListTermViewModel listTermViewModel = new ListTermViewModel();
+            listTermViewModel.LearningModuleViewModel = learningModuleViewModel.Result;
+            listTermViewModel.Terms = listTerm.Result;
+            if (searchTerm!=null&&searchTerm!="")
+            {
+                List<TermViewModel> searchList = listTerm.Result.Where(a => a.TermName.Contains(searchTerm) || a.Explaination.Contains(searchTerm)).ToList();
+                listTermViewModel.Terms = searchList;
+            }          
+            return View("Term", listTermViewModel);
         }
     }
 }

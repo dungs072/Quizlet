@@ -78,9 +78,15 @@
                                                     <img src="https://firebasestorage.googleapis.com/v0/b/quizlet-c9cab.appspot.com/o/main%2Fdictionary.png?alt=media&token=1e0bf336-73f7-4beb-89a6-3f9ca386e024" alt="Card Image 1">
                                                     
                                                     <div class="btn-column">
-                                                        <a href="@Url.Action("EditLearningModule", "LearningModule", new { learningModuleId = item.LearningModuleId })" class="btn btn-secondary">Edit</a>
-                                                        <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-success">Terminologies</a>
-                                                        <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="LearningModule:@item.LearningModuleId.ToString():@item.TitleId.ToString()">Delete</button>
+                                                        <a href="@Url.Action("EditLearningModule", "LearningModule", new { learningModuleId = item.LearningModuleId })" class="btn btn-secondary">
+                                                             <i class="far fa-edit"></i> Edit
+                                                        </a>
+                                                        <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-success">
+                                                            <i class="fas fa-book"></i> Terminologies
+                                                        </a>
+                                                        <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="LearningModule:@item.LearningModuleId.ToString():@item.TitleId.ToString()">
+                                                             <i class="fas fa-trash-alt"></i> Delete
+                                                        </button>
                                                     </div>
 
                                                 </div>

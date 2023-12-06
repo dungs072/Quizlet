@@ -29,10 +29,10 @@
                                     <p class="card-description">@Model.Describe</p>
                                     <p class="card-description">Created at @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary">Back</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Learning Modules</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Participants</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Pending</a>
+                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i></a>
+                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"><i class="fas fa-graduation-cap"></i> Learning Modules</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"> <i class="fas fa-users"></i> Participants</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"><i class="fas fa-user-clock"></i> Pending</a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -61,15 +61,15 @@
                                                         <td>@item.AddedDate.ToString("dd/MM/yyyy")</td>
                                                         <td>@item.NumberTerms</td>
                                                         <td>
-                                                            <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">More</a>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="DetailOwnClass:@item.LearningModuleId:@Model.ClassId">Delete</button>
+                                                            <a href="@Url.Action("Term", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary"><i class="fas fa-ellipsis-v"></i></a>
+                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="DetailOwnClass:@item.LearningModuleId:@Model.ClassId"><i class="fas fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
                                                     count++;
                                                 }
                                                 <tr>
                                                     <td colspan="6">
-                                                        <a href="@Url.Action("TitleSelection", "Class", new{classId = Model.ClassId})" class="btn btn-success" style="display: block; width: 100%;">Add a learning module</a>
+                                                        <a href="@Url.Action("TitleSelection", "Class", new{classId = Model.ClassId})" class="btn btn-success" style="display: block; width: 100%;"><i class="fas fa-plus"></i> Add a learning module</a>
                                                     </td>
                                                 </tr>
                                             </tbody>

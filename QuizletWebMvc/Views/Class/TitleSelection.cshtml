@@ -32,7 +32,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Class room detail</h4>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class",new{classId = classId})" class="btn btn-outline-primary">Back</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class",new{classId = classId})" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i></a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -54,7 +54,7 @@
                                                     <tr>
                                                         <td>@item.TitleName</td>
                                                         <td>@item.Describe</td>
-                                                        <td><a href="@Url.Action("LearningModuleSelection", "Class",new{titleId = item.TitleId})" class="btn btn-outline-primary">Choose</a></td>
+                                                        <td><a href="@Url.Action("LearningModuleSelection", "Class",new{titleId = item.TitleId})" class="btn btn-outline-primary"><i class="fas fa-check"></i></a></td>
                                                     </tr>
                                                   
                                                 }

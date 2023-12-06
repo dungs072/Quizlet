@@ -67,9 +67,15 @@
                                                         </td>
                                                         <td> @item.Describe </td>
                                                         <td>
-                                                            <a href="@Url.Action("EditTitleModule", "TitleModule", new { titleId = item.TitleId })" class="btn btn-secondary">Edit</a>
-                                                            <a href="@Url.Action("LearningModule", "LearningModule", new { titleId = item.TitleId, titleName = item.TitleName, describe = item.Describe })" class="btn btn-success">Modules</a>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Title:@item.TitleId.ToString()">Delete</button>
+                                                            <a href="@Url.Action("EditTitleModule", "TitleModule", new { titleId = item.TitleId })" class="btn btn-secondary">
+                                                                <i class="far fa-edit"></i> Edit
+                                                            </a>
+                                                            <a href="@Url.Action("LearningModule", "LearningModule", new { titleId = item.TitleId, titleName = item.TitleName, describe = item.Describe })" class="btn btn-success">
+                                                                <i class="fas fa-puzzle-piece"></i> Modules
+                                                            </a>
+                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Title:@item.TitleId.ToString()">
+                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 }

@@ -11,7 +11,7 @@
 <html lang="en">
 <head>
     <partial name="HeaderHome" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
     <style>
         .card-container {
             display: flex;
@@ -153,15 +153,21 @@
                             <h4 class="card-title">@Model.LearningModuleViewModel.LearningModuleName</h4>
                             <p class="card-description">@Model.LearningModuleViewModel.Describe</p>
                             <div class="template-demo">
-                                <a href="@Url.Action("ReturnToLearningModule", "LearningModule", new{titleId = Model.LearningModuleViewModel.TitleId})" class="btn btn-outline-primary">Back</a>
+                                <a href="@Url.Action("ReturnToLearningModule", "LearningModule", new{titleId = Model.LearningModuleViewModel.TitleId})" class="btn btn-outline-primary">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
                                 @if(Model.Terms.Count()<4)
                                 {
                                     
                                 }
                                 else
                                 {
-                                    <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId,isOwned = true})" class="btn btn-outline-primary">Practice</a>
-                                    <a href="@Url.Action("TestTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">Test</a>
+                                    <a href="@Url.Action("PracticeTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId,isOwned = true})" class="btn btn-outline-primary">
+                                        <i class="fas fa-book"></i> Practice
+                                    </a>
+                                    <a href="@Url.Action("TestTerm", "Term", new{learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-outline-primary">
+                                        <i class="fas fa-graduation-cap"></i> Test
+                                    </a>
                                 }
                                 
                             </div>
@@ -226,8 +232,24 @@
                             </div>
                         }
                         
+                        
+
                         <div class="card-body">
-                           
+                            <div>
+                                @using (Html.BeginForm("Search", "Term", FormMethod.Get))
+                                {
+                                    <div>
+                                        <label for="searchQuery">Search:</label>
+                                        <input class="hidden" type="text" id="searchQuery" name="moduleId" value="@Model.LearningModuleViewModel.LearningModuleId" />
+                                        <input type="text" id="searchQuery" name="searchTerm" />
+                                        <button type="submit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                }
+                                
+                            </div>
+                            
                             <p class="card-description">
                             </p>
                             <div class="table-responsive">
@@ -260,15 +282,19 @@
                                                     }
                                                 </td>
                                                 <td>
-                                                    <a href="@Url.Action("EditTerm", "Term", new { termId = item.TermId })" class="btn btn-secondary">Edit</a>
-                                                    <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Term:@item.TermId.ToString():@item.LearningModuleId">Delete</button>
+                                                    <a href="@Url.Action("EditTerm", "Term", new { termId = item.TermId })" class="btn btn-secondary"><i class="far fa-edit"></i></a>
+                                                    <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="Term:@item.TermId.ToString():@item.LearningModuleId">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                             count++;
                                         }
                                         <tr>
                                             <td colspan="5">
-                                                <a href="@Url.Action("CreateTerm", "Term",new {learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-success" style="display: block; width: 100%;">Add a card</a>
+                                                <a href="@Url.Action("CreateTerm", "Term",new {learningModuleId = Model.LearningModuleViewModel.LearningModuleId})" class="btn btn-success" style="display: block; width: 100%;">
+                                                    <i class="fas fa-pencil-alt"></i> Add a card
+                                                </a>
                                             </td>
                                         </tr>
                                     </tbody>

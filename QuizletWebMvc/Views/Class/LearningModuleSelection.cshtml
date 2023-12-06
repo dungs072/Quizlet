@@ -28,7 +28,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Class room detail</h4>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-primary">Back</a>
+                                        <a href="@Url.Action("TitleSelection", "Class",new{titleId = Model.TitleId})" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i></a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -54,11 +54,11 @@
                                                         <td>
                                                             @if(item.IsChoose)
                                                             {
-                                                                <a href="@Url.Action("DeleteModuleFromClass", "Class",new{typePage = "choose",learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-danger">Cancel</a>
+                                                                <a href="@Url.Action("DeleteModuleFromClass", "Class",new{typePage = "choose",learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
                                                             }
                                                             else
                                                             {
-                                                                <a href="@Url.Action("AddModuleToClass", "Class",new{learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-primary">Choose</a>
+                                                                <a href="@Url.Action("AddModuleToClass", "Class",new{learningModuleId = item.LearningModuleId,titleId = Model.TitleId})" class="btn btn-outline-primary"><i class="fas fa-check"></i></a>
                                                             }
                                                         </td>
                                                     </tr>

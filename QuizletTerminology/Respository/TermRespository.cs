@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Firebase.Auth;
 using Firebase.Storage;
 using System.Reflection;
+using System;
 
 namespace QuizletTerminology.Respository
 {
@@ -115,6 +116,10 @@ namespace QuizletTerminology.Respository
             try
             {
                 var NGUOIDUNG = dbContext.nguoidungs.FirstOrDefault(u => (u.Gmail == Gmail));
+                if(NGUOIDUNG==null)
+                {
+                    return new NGUOIDUNG() { UserId = 0 };
+                }
                 if (!NGUOIDUNG.State)
                 {
                     return new NGUOIDUNG() { UserId = 123 };
@@ -577,9 +582,12 @@ namespace QuizletTerminology.Respository
                 {
                     return 1; // no content
                 }
+                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN ON");
                 HOCPHAN module = new HOCPHAN();
                 List<THETHUATNGU> thethuatngus = new List<THETHUATNGU>();
                 CopyLearningModule(hocphan, module);
+                int maxKey = await dbContext.hocphans.MaxAsync(a => a.LearningModuleId);
+                module.LearningModuleId = maxKey + 1;
                 var terms = await dbContext.thethuatngus.Where(a => a.LearningModuleId == model.ModuleId).ToListAsync();
                 foreach (var thuatngu in terms)
                 {
@@ -594,9 +602,11 @@ namespace QuizletTerminology.Respository
                 await dbContext.thethuatngus.AddRangeAsync(thethuatngus);
 
                 //dbContext.chudes.Update(chude);
-
+                
                 await dbContext.SaveChangesAsync();
+                dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT HOCPHAN OFF");
                 transaction.Commit();
+
                 return 0; // Ok()
             }
             catch (Exception ex)

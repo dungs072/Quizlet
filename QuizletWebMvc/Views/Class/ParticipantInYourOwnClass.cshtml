@@ -29,10 +29,10 @@
                                     <p class="card-description">@Model.Describe</p>
                                     <p class="card-description">Created at @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary">Back</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Learning Modules</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Participants</a>
-                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary">Pending</a>
+                                        <a href="@Url.Action("YourOwnClass", "Class")" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i></a>
+                                        <a href="@Url.Action("ShowDetailOwnClassLearningModule", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"><i class="fas fa-graduation-cap"></i> Learning Modules</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"><i class="fas fa-users"></i> Participants</a>
+                                        <a href="@Url.Action("ShowDetailOwnClassPendingParticipant", "Class", new{classId = Model.ClassId})" class="btn btn-outline-primary"><i class="fas fa-user-clock"></i> Pending</a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -69,14 +69,14 @@
                                                         <td>@item.Gmail</td>
                                                         <td>@item.RegisterDate.ToString("dd/MM/yyyy")</td>
                                                         <td>
-                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="ParticipantOwnClass:@item.UserId">Kick out</button>
+                                                            <button class="btn btn-danger deleteButton" data-toggle="modal" data-target="#deleteWarningModal" value="ParticipantOwnClass:@item.UserId"><i class="fas fa-user-slash"></i> Kick out</button>
                                                         </td>
                                                     </tr>
                                                     count++;
                                                 }
                                                 <tr>
                                                     <td colspan="6">
-                                                        <a href="@Url.Action("SearchAddUserParticipant", "Class", new{search = "~"})" class="btn btn-success" style="display: block; width: 100%;">Add participant</a>
+                                                        <a href="@Url.Action("SearchAddUserParticipant", "Class", new{search = "~"})" class="btn btn-success" style="display: block; width: 100%;"><i class="fas fa-plus"></i> Add participant</a>
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -50,7 +50,7 @@
                                     <p class="card-description">@Model.Describe</p>
                                     <p class="card-description">Created at @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
                                     <div class="template-demo">
-                                        <a href="@Url.Action("YourJoinClass", "Class")" class="btn btn-outline-primary">Back</a>
+                                        <a href="@Url.Action("YourJoinClass", "Class")" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i></a>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -80,8 +80,8 @@
                                                         <td>@item.NumberTerms</td>
                                                         <td>
                                                         <td>
-                                                            <button class="btn btn-primary copyButton" data-toggle="modal" data-target="#copyWarningModal" value="CopyModule:@item.LearningModuleId:@item.LearningModuleName">Copy</button>
-                                                            <a href="@Url.Action("TermParticipant", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary">Go to</a>
+                                                            <button class="btn btn-primary copyButton" data-toggle="modal" data-target="#copyWarningModal" value="CopyModule:@item.LearningModuleId:@item.LearningModuleName"> <i class="far fa-copy"></i> Copy</button>
+                                                            <a href="@Url.Action("TermParticipant", "Term", new{learningModuleId = item.LearningModuleId})" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> Go to</a>
                                                         </td>
                                                     </tr>
                                                     count++;

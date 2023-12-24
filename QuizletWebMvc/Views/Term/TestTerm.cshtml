@@ -102,6 +102,11 @@
             top: 0;
             right: 0;
         }
+        .top-left-button{
+            position:absolute;
+            top:0;
+            left:0;
+        }
 
         .scrollable-container {
             width: 100%; /* Set the width of the container as needed */
@@ -365,8 +370,15 @@
                                         @* <button onclick="previousQuestion()">Previous</button> *@
                                         <div class="top-right-button">
                                             <button id="next-button" onclick="nextQuestion()" style="display:none">Next</button>
+                                           
                                         </div>
-                                        <a class="top-left-link btn btn-primary" href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a>
+                                        <div class="top-left-button">
+                                            <button class="btn btn-danger quitButton" data-toggle="modal" data-target="#quitWarningModal" value="Test:@Model.LearningModuleId.ToString()">
+                                                <i class="fas fa-door-open"></i>
+                                            </button>
+                                        </div>
+                                       
+                                        @* <a class="top-left-link btn btn-primary" href="@Url.Action("Term", "Term",new { learningModuleId = Model.LearningModuleId })">Exit</a> *@
                                     </div>
                                 </div>
                             </div>
@@ -398,7 +410,7 @@
                             <div class="col-md-4 grid-margin stretch-card">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="card-title">Transaction History</h4>
+                                        <h4 class="card-title">Test result</h4>
                                         <div style="position: relative;">
                                             <canvas id="doughnutChart" width="300" height="300"></canvas>
                                             <div id="chartText" style="position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
@@ -439,6 +451,7 @@
     <script>
         
     </script>
+    <partial name="Warnings" />
 </body>
 </html>
 

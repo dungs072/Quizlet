@@ -72,6 +72,11 @@
                     var moduleName = stringArray[2];
 
                 }
+                if (stringArray[0] == 'Test') {
+                    var moduleId = parseInt(stringArray[1], 10);
+                    var url = '/Term/Term?learningModuleId=' + moduleId;
+                    window.location.href = url;
+                }
             });
         });
     </script>

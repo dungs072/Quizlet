@@ -16,6 +16,7 @@ namespace QuizletTerminology.Respository
         Task<bool> Create(NGUOIDUNG nguoidung);
         Task<bool> Update(NGUOIDUNG nguoidung);
         Task<bool> ChangePassword(ChangePasswordViewModel model);
+        Task<bool> ChangeGmail(ChangeGmailViewModel model);
         string HashPassword(string password);
         bool VerifyPassword(string hashedPassword, string userInput);
         Task<bool> Delete(int MA_USER);

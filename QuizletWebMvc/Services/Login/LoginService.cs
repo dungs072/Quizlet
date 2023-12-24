@@ -45,6 +45,16 @@ namespace QuizletWebMvc.Services.Login
             return true;
 
         }
+        public async Task<bool> ChangeGmail(ChangeGmailViewModel2 model)
+        {
+            HttpResponseMessage response = await client.PutAsJsonAsync<ChangeGmailViewModel2>(API.API.UserChangeGmail, model);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+
+        }
 
         public async Task<bool> HasDuplicateGmail(string gmail)
         {

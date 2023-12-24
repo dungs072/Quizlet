@@ -1,0 +1,95 @@
+﻿@using QuizletWebMvc.ViewModels.User;
+@model ChangeGmailViewModel;
+
+@{
+    ViewData["Title"] = "Home gmail checking";
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string typeUser = HttpContextAccessor.HttpContext.Session.GetString("TypeUser");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="HeaderHome" />
+
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        @if (typeUser == "Admin")
+        {
+            <partial name="Admin_Navigation" />
+        }
+        else
+        {
+            <partial name="_Navigation" />
+        }
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            @if (typeUser == "Admin")
+            {
+                <partial name="AdminTopNavbar" />
+            }
+            else
+            {
+                <partial name="TopNavbar" />
+            }
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper" id="contentContainer">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2>We just send you a 6 digits code to email: @Model.OldGmail</h2>
+                                    <h2>Please enter this code.</h2>
+                                    @using (Html.BeginForm("GmailChecking", "Home", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.GmailCode)
+                                            @Html.TextBoxFor(model => model.GmailCode, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.GmailCode, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            @Html.LabelFor(model => model.RightGmailCode)
+                                            @Html.TextBoxFor(model => model.RightGmailCode, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.RightGmailCode, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            @Html.LabelFor(model => model.Gmail)
+                                            @Html.TextBoxFor(model => model.Gmail, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Gmail, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            @Html.LabelFor(model => model.OldGmail)
+                                            @Html.TextBoxFor(model => model.OldGmail, new { @class = "form-control" })
+                                        </div>
+
+                                        <!-- Add other form fields as needed -->
+
+                                        <button type="submit" class="btn btn-primary">Send</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="loading" style="display: none;">Loading...</div>
+                <!-- content-wrapper ends -->
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <partial name="FooterHome" />
+</body>
+</html>
+

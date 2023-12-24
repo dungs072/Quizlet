@@ -102,6 +102,21 @@ namespace QuizletTerminology.Controllers
             }
             
         }
+        [HttpPut("ChangeGmail")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> ChangeGmail(ChangeGmailViewModel model)
+        {
+            var result = await termRespository.ChangeGmail(model);
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NoContent();
+            }
+
+        }
 
         [HttpDelete("{MA_USER}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

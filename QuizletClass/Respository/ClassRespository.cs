@@ -378,6 +378,7 @@ namespace QuizletClass.Respository
                 List<UserViewModel> nguoidungs = await client.GetFromJsonAsync<List<UserViewModel>>(Api.Api.UserUrl);
                 foreach (var nguoidung in nguoidungs)
                 {
+                    if(nguoidung.TypeAccount== "Admin") { continue; }
                     if (!nguoidung.Gmail.Contains(search, StringComparison.OrdinalIgnoreCase)) { continue; }
                     if (nguoidung.UserId == currentUserId) { continue; }
                     if (CheckUserHasRegisterToClass(classId, nguoidung.UserId))

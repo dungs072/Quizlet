@@ -8,7 +8,8 @@
         "quizletwebmvc": "StartDebugging",
         "quizletachivement": "StartDebugging",
         "quizletclass": "StartDebugging",
-        "quizletterminology": "StartDebugging"
+        "quizletterminology": "StartDebugging",
+        "quizletwebapi": "StartDebugging"
       }
     }
   }

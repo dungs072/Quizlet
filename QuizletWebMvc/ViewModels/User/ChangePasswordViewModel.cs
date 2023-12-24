@@ -18,4 +18,9 @@ namespace QuizletWebMvc.ViewModels.User
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+    public class ChangeGmailViewModel2
+    {
+        public int UserId { get; set; }
+        public string GmailAddress { get; set; }
+    }
 }

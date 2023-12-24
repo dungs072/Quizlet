@@ -14,4 +14,9 @@ namespace QuizletTerminology.ViewModels
         public string Email { get; set; }
 
     }
+    public class ChangeGmailViewModel
+    {
+        public int UserId { get; set; }
+        public string GmailAddress { get; set; }    
+    }
 }

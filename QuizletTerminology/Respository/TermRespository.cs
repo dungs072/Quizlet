@@ -44,6 +44,23 @@ namespace QuizletTerminology.Respository
                 return true;
             }
         }
+        public async Task<bool> ChangeGmail(ChangeGmailViewModel model)
+        {
+            var user = await dbContext.nguoidungs.FindAsync(model.UserId);
+            if (user == null) { return false; }
+            var isDuplicate = HasDuplicateEmail(model.GmailAddress);
+            if (isDuplicate.Result)
+            {
+                return false;
+            }
+            else
+            {
+                user.Gmail = model.GmailAddress;
+                dbContext.nguoidungs.Update(user);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+        }
 
         public async Task<bool> Create(NGUOIDUNG nguoidung)
         {
@@ -66,7 +83,7 @@ namespace QuizletTerminology.Respository
         {
             Random random = new Random();
             string randomDigits = random.Next(100000, 999999).ToString();
-            HandleSendingDataToEmail(email, "Your Quizlet email code", "Please enter email code: " + randomDigits + " to register new account");
+            HandleSendingDataToEmail(email, "Your Quizlet email code", "Please enter email code: " + randomDigits + " to confirm this is your email");
             return randomDigits;
         }
 
@@ -122,7 +139,7 @@ namespace QuizletTerminology.Respository
                 }
                 if (!NGUOIDUNG.State)
                 {
-                    return new NGUOIDUNG() { UserId = 123 };
+                    return new NGUOIDUNG() { UserId = -123 };
                 }
                 if (NGUOIDUNG != null && VerifyPassword(NGUOIDUNG.Password, Password))
                 {
@@ -187,9 +204,8 @@ namespace QuizletTerminology.Respository
         {
             SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
             smtpClient.Port = 587;
-            smtpClient.Credentials = new NetworkCredential("dungoc1235@gmail.com", "ohcvbrqttevxjjpp");
+            smtpClient.Credentials = new NetworkCredential("dungoc1235@gmail.com", "kkacjdpsrwwwiuur");
             smtpClient.EnableSsl = true;
-
             MailMessage mailMessage = new MailMessage();
             mailMessage.From = new MailAddress("dungoc1235@gmail.com");
             mailMessage.To.Add(toEmail);

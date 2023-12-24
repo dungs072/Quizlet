@@ -226,6 +226,18 @@
       "DownstreamPathTemplate": "/api/User/ChangePassword"
     },
     {
+      "UpstreamPathTemplate": "/api/User/ChangeGmail",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "quizletterminology",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/User/ChangeGmail"
+    },
+    {
       "UpstreamPathTemplate": "/api/Title",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "DownstreamScheme": "http",

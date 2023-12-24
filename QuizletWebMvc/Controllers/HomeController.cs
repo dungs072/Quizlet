@@ -229,6 +229,60 @@ namespace QuizletWebMvc.Controllers
             return View(model);
 
         }
+        [HttpGet]
+        public async Task<IActionResult> ChangeGmail()
+        {
+            if (!CheckCurrentToken())
+            {
+                TempData["Error"] = "Error. Please dont intrude to other personality";
+                return RedirectToAction("Index", "Login");
+            }
+            ChangeGmailViewModel model = new ChangeGmailViewModel();
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                var user = await loginService.GetProfile(userId);
+                model.Gmail = user.Gmail;
+                model.OldGmail = user.Gmail;
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangeGmail(ChangeGmailViewModel changeGmailViewModel)
+        {
+            if (changeGmailViewModel.OldGmail == changeGmailViewModel.Gmail)
+            {
+                TempData["Error"] = "Error. your email you want to change to is the same with the old one";
+                return RedirectToAction("ChangeGmail","Home");
+            }
+            string gmailCode = await loginService.GetEmailCode(changeGmailViewModel.OldGmail);
+            changeGmailViewModel.GmailCode = "";
+            changeGmailViewModel.RightGmailCode = gmailCode;
+            return View("HomeGmailChecking",changeGmailViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GmailChecking(ChangeGmailViewModel changeGmailViewModel)
+        {
+            if (changeGmailViewModel.RightGmailCode != changeGmailViewModel.GmailCode)
+            {
+                TempData["Error"] = "Error. you enter the wrong 6 digits code";
+                return View("HomeGmailChecking", changeGmailViewModel);
+            }
+            if (int.TryParse(HttpContext.Session.GetString("UserId"), out int userId)) { }
+            ChangeGmailViewModel2 model = new ChangeGmailViewModel2();
+            model.UserId = userId;
+            model.GmailAddress = changeGmailViewModel.Gmail;
+            var state = await loginService.ChangeGmail(model);
+            if (state)
+            {
+                TempData["Success"] = "Success. Your email has been changed.\nNew email: " + changeGmailViewModel.Gmail;
+            }
+            else
+            {
+                TempData["Error"] = "Your gmail was registered before. Please enter another one";
+            }
+            
+            return RedirectToAction("ChangeGmail");
+        }
         public async Task<ActionResult> GetMessages()
         {
             if (!CheckCurrentToken())

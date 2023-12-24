@@ -28,6 +28,7 @@ namespace QuizletAchivement.Respository
         {
             try
             {
+                if (CheckContainingSameNameBadge(thanhtuu.AchivementName)) { return false; }
                 await dBContext.thanhtuus.AddAsync(thanhtuu);
                 await dBContext.SaveChangesAsync();
                 return true;
@@ -36,6 +37,10 @@ namespace QuizletAchivement.Respository
             {
                 return false;
             }
+        }
+        private bool CheckContainingSameNameBadge(string name)
+        {
+            return dBContext.thanhtuus.Where(a => a.AchivementName.ToLower().Trim() == name.ToLower().Trim()).Count() > 0;
         }
 
         public async Task<bool> DeleteTHANHTUU(int AchivementId)
@@ -112,6 +117,7 @@ namespace QuizletAchivement.Respository
         {
             try
             {
+                if (CheckContainingSameNameBadgeForUpdate(thanhtuu.AchivementId,thanhtuu.AchivementName)) { return false; }
                 dBContext.thanhtuus.Update(thanhtuu);
                 await dBContext.SaveChangesAsync();
                 return true;
@@ -120,6 +126,10 @@ namespace QuizletAchivement.Respository
             {
                 return false;
             }
+        }
+        private bool CheckContainingSameNameBadgeForUpdate(int achivementId,string name)
+        {
+            return dBContext.thanhtuus.Where(a => a.AchivementId!=achivementId && a.AchivementName.ToLower().Trim() == name.ToLower().Trim()).Count() > 0;
         }
         #endregion
 

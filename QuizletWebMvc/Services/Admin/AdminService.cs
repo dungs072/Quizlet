@@ -45,7 +45,7 @@ namespace QuizletWebMvc.Services.Admin
         public async Task<bool> UpdateBadge(Badge badge)
         {
             HttpResponseMessage response = await client.PutAsJsonAsync<Badge>(API.API.AchivementUrl, badge);
-            if (response.StatusCode == HttpStatusCode.NoContent)
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return false;
             }
@@ -58,7 +58,7 @@ namespace QuizletWebMvc.Services.Admin
         public async Task<bool> CreateBadge(Badge badge)
         {
             HttpResponseMessage response = await client.PostAsJsonAsync<Badge>(API.API.AchivementUrl, badge);
-            if (response.StatusCode == HttpStatusCode.NoContent)
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return false;
             }

@@ -38,7 +38,7 @@ namespace WebMVCQuizlet.Controllers
             if (!ModelState.IsValid) return View(loginViewModel);
 
             var user = await loginService.FindAccount(loginViewModel.EmailAddress,loginViewModel.Password);
-            if(user!=null && user.UserId==123)
+            if(user!=null && user.UserId==-123)
             {
                 TempData["Error"] = "Your account is being locked by admin. Please contact to admin for unlock your account !!!";
                 return View(loginViewModel);

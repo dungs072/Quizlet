@@ -86,7 +86,7 @@
 
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Gmail)
-                                            @Html.TextBoxFor(model => model.Gmail, new { @class = "form-control" })
+                                            @Html.TextBoxFor(model => model.Gmail, new { @class = "form-control", @readonly = "readonly" })
                                             @Html.ValidationMessageFor(model => model.Gmail, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group">

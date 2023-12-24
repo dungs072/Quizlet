@@ -5,6 +5,7 @@
         public static string UserUrl { get { return $"/api/User"; } }
         public static string UserUrlCheck { get { return UserUrl + "/check/"; } }
         public static string UserChangePassword { get { return UserUrl + "/ChangePassword"; } }
+        public static string UserChangeGmail { get { return UserUrl + "/ChangeGmail"; } }
         public static string UserEmailExist { get { return UserUrl + "/EmailExist"; } }
         public static string UserForgetPassword { get { return UserUrl + "/ForgetPassword"; } }
         public static string UserManager { get { return UserUrl + "/UserManager"; } }

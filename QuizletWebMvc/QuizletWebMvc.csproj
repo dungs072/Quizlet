@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Home\ChangeGmail.cshtml" />
     <Content Remove="Views\Home\Profile.cshtml" />
   </ItemGroup>
 
@@ -22,7 +23,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Home\ChangeGmail.cshtml" />
     <None Include="Views\Home\Profile.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Home\ChangeGmail.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Home\ChangeGmail.cshtml" />
   </ItemGroup>
 
 </Project>

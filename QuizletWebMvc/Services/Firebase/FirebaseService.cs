@@ -8,7 +8,7 @@ namespace QuizletWebMvc.Services.Firebase
     {
         private readonly string apiKey = "AIzaSyDdwQpFpqzK-c4emQlK5Sy6pTDMVnh5qiY";
         private readonly string bucket = "quizlet-c9cab.appspot.com";
-        private readonly string gmail = "sa1234@gmail.com";
+        private readonly string gmail = "sa1235@gmail.com";
         private readonly string password = "123456";
         private FirebaseStorage firebaseStorage = null ;
 

@@ -121,17 +121,26 @@ namespace QuizletWebMvc.Services.Terminology
         }
         public async Task<string> DeleteLearningModule(int LearningModuleId, int userId)
         {
-            HttpResponseMessage response = await client.DeleteAsync(API.API.LearningModuleUrl + $"/{LearningModuleId}");
+            
             var canDelete = await client.GetStringAsync(API.API.ClassCanDeleteLearningModule + $"/{LearningModuleId}/{userId}");
-            if(response.StatusCode== HttpStatusCode.BadRequest) 
-            {
-                return "2";
-            }
-            else if(canDelete!="yes")
+            //if(response.StatusCode== HttpStatusCode.BadRequest) 
+            //{
+            //    return "2";
+            //}
+            if(canDelete!="yes")
             {
                 return canDelete;
             }
-            return "1";
+            else
+            {
+                HttpResponseMessage response = await client.DeleteAsync(API.API.LearningModuleUrl + $"/{LearningModuleId}");
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return "2";
+                }
+                return "1";
+            }
+           
         }
 
         public async Task<bool> UpdateLearningModule(LearningModuleViewModel2 learningModuleViewModel)
